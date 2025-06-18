@@ -470,7 +470,7 @@ const MediaOnlyLayout = (props) => {
               },
             },
             cameraDock: {
-              position: CAMERADOCK_POSITION.CONTENT_LEFT,
+              position: cameraDock.position || CAMERADOCK_POSITION.CONTENT_LEFT,
               numCameras: cameraDock.numCameras,
             },
             externalVideo: {
