@@ -879,7 +879,7 @@
     "app.audio.captions.speech.title": "自動文字起こし",
     "app.audio.captions.speech.tip": "他のユーザーが字幕を見られるようにするには、文字起こし機能を有効にする必要があります。",
     "app.audio.captions.speech.captions": "字幕",
-    "app.audio.captions.speech.captionsToggleTooltip": "ユーザーが文字起こしを有効にしたため、字幕の言語トラックが利用可能となりました",
+    "app.audio.captions.speech.captionsToggleTooltip": "ユーザーが文字起こしを有効にしたため、字幕の言語トラックが利用可能となりました。",
     "app.audio.captions.speech.noAvailableCaptions": "利用可能な字幕はありません。ユーザーが文字起こしを有効すれば、字幕の言語トラックが利用可能となります。",
     "app.audio.captions.speech.transcriptionDescription": "他のユーザーが字幕を見られるようにするには、文字起こし機能を有効にする必要があります。",
     "app.audio.captions.speech.disabled": "無効",
