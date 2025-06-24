@@ -164,6 +164,7 @@ const NotesGraphql: React.FC<NotesGraphqlProps> = (props) => {
         </>
       ) : renderHeaderOnMedia()}
       <PadContainer
+        isOnMediaArea={isOnMediaArea}
         externalId={NOTES_CONFIG.id}
         hasPermission={hasPermission}
         isResizing={isResizing}
