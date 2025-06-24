@@ -40,7 +40,7 @@ const PadContent: React.FC<PadContentProps> = ({
   );
 };
 
-const PadContentContainer: React.FC<PadContentContainerProps> = ({ externalId, isOnMediaArea}) => {
+const PadContentContainer: React.FC<PadContentContainerProps> = ({ externalId, isOnMediaArea }) => {
   const [content, setContent] = useState('');
   const { data: contentDiffData } = useDeduplicatedSubscription<GetPadContentDiffStreamResponse>(
     GET_PAD_CONTENT_DIFF_STREAM,
