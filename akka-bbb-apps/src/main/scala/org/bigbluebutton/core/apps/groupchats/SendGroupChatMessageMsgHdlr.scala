@@ -59,6 +59,8 @@ trait SendGroupChatMessageMsgHdlr extends HandlerHelpers {
         } else {
           chatLocked = permissions.disablePubChat
         }
+      } else {
+        hasModMembers = true
       }
     }
 

@@ -47,6 +47,8 @@ trait CreateGroupChatReqMsgHdlr extends SystemConfiguration {
         } else {
           chatLocked = true
         }
+      } else {
+        hasModMembers = true
       }
     }
 
