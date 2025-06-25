@@ -18,8 +18,8 @@ case class RateLimiting(
 
 case class EventPersistence(
     isEnabled:                 Boolean,
-    maximumPayloadSizeInBytes: Int,
-    rateLimiting:              RateLimiting
+    maximumPayloadSizeInBytes: Option[Int],
+    rateLimiting:              Option[RateLimiting]
 )
 
 case class DataChannel(
