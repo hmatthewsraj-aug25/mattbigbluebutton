@@ -23,6 +23,7 @@ trait CreateGroupChatReqMsgHdlr extends SystemConfiguration {
     var privateChatDisabled: Boolean = false
     var chatLocked: Boolean = false
     var hasModMembers: Boolean = false
+    val isPrivateChat: Boolean = msg.body.access == GroupChatAccess.PRIVATE
 
     if (msg.body.access == GroupChatAccess.PRIVATE) {
       privateChatDisabled = liveMeeting.props.meetingProp.disabledFeatures.contains("privateChat")
@@ -55,7 +56,7 @@ trait CreateGroupChatReqMsgHdlr extends SystemConfiguration {
     // Check if this message was sent while the lock settings was being changed.
     val isDelayedMessage = System.currentTimeMillis() - MeetingStatus2x.getPermissionsChangedOn(liveMeeting.status) < 5000
 
-    if ((privateChatDisabled && !hasModMembers) ||
+    if ((isPrivateChat && privateChatDisabled && !hasModMembers) ||
       (
         applyPermissionCheck &&
         chatLocked &&

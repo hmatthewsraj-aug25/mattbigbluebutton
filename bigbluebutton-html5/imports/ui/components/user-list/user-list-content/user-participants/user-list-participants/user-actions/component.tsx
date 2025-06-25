@@ -395,6 +395,7 @@ const UserActions: React.FC<UserActionsProps> = ({
         const moderatorOverride = currentUser.isModerator
           && allowedToChatPrivately;
         const regularUserCondition = (isPrivateChatEnabled
+          && isChatEnabled
           && !lockSettings?.disablePrivateChat
           && !isVoiceOnlyUser(user.userId)
           && !isBreakout)
