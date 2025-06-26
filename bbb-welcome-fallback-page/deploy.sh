@@ -16,6 +16,11 @@ fi
 npm run build
 #postbuild will rename static to welcome-page-static, as /static is reserved to etherpad
 
+sudo rm build/asset-manifest.json
+
+sudo rm -r ../bigbluebutton-config/assets/welcome-page-static
+sudo cp -r build/* ../bigbluebutton-config/assets
+
 sudo rm -r /var/www/bigbluebutton-default/assets/welcome-page-static
 sudo cp -r build/* /var/www/bigbluebutton-default/assets
 echo ''
