@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
@@ -10,8 +9,6 @@ import {
   useMutation,
 } from '@apollo/client';
 import Styled from './styles';
-import GET_TIMER, { GetTimerResponse, TimerData } from '../../../core/graphql/queries/timer';
-import logger from '/imports/startup/client/logger';
 import { layoutDispatch } from '../../layout/context';
 import { ACTIONS, PANELS } from '../../layout/enums';
 import {
@@ -24,10 +21,9 @@ import {
   TIMER_STOP,
   TIMER_SWITCH_MODE,
 } from '../mutations';
-import useTimeSync from '/imports/ui/core/local-states/useTimeSync';
 import humanizeSeconds from '/imports/utils/humanizeSeconds';
-import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedSubscription';
-import connectionStatus from '/imports/ui/core/graphql/singletons/connectionStatus';
+import useTimer from '/imports/ui/core/hooks/useTimer';
+import { TimerData } from '/imports/ui/core/graphql/queries/timer';
 
 const MAX_HOURS = 23;
 const MILLI_IN_HOUR = 3600000;
@@ -108,7 +104,7 @@ const intlMessages = defineMessages({
   },
 });
 
-interface TimerPanelProps extends Omit<TimerData, 'elapsed'> {
+interface TimerPanelProps extends Omit<TimerData, 'active' | 'elapsed' | 'startedAt' | 'startedOn'| 'accumulated'> {
   timePassed: number;
 }
 
@@ -118,8 +114,6 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   time,
   running,
   timePassed,
-  startedOn,
-  active,
 }) => {
   const [timerReset] = useMutation(TIMER_RESET);
   const [timerStart] = useMutation(TIMER_START);
@@ -132,20 +126,12 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   const intl = useIntl();
   const layoutContextDispatch = layoutDispatch();
 
-  const [runningTime, setRunningTime] = useState<number>(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
-
   const [displayHours, setDisplayHours] = useState(0);
   const [displayMinutes, setDisplayMinutes] = useState(0);
   const [displaySeconds, setDisplaySeconds] = useState(0);
   const [focusedUnit, setFocusedUnit] = useState<'hours' | 'minutes' | 'seconds'>('seconds');
   const [lastSelectedTrack, setLastSelectedTrack] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [initialTime, setInitialTime] = useState(time);
-
-  useEffect(() => {
-    setInitialTime(time);
-  }, [time]);
 
   useEffect(() => {
     if (songTrack && songTrack !== 'noTrack') {
@@ -166,7 +152,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
 
   useEffect(() => {
     if (running && !isEditing) {
-      const timeInSeconds = Math.max(0, Math.floor(runningTime / 1000));
+      const timeInSeconds = Math.max(0, Math.floor(timePassed / 1000));
       const h = Math.floor(timeInSeconds / 3600);
       const m = Math.floor((timeInSeconds % 3600) / 60);
       const s = timeInSeconds % 60;
@@ -175,7 +161,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
       setDisplayMinutes(m);
       setDisplaySeconds(s);
     }
-  }, [runningTime, running, isEditing]);
+  }, [timePassed, running, isEditing]);
 
   const headerMessage = useMemo(() => {
     return stopwatch ? intlMessages.stopwatch : intlMessages.timer;
@@ -287,67 +273,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     timerStop();
     timerReset();
     setIsEditing(false);
-    if (stopwatch) {
-      setRunningTime(0);
-    } else {
-      setRunningTime(initialTime);
-
-      const timeInSeconds = Math.floor(initialTime / 1000);
-      const h = Math.floor(timeInSeconds / 3600);
-      const m = Math.floor((timeInSeconds % 3600) / 60);
-      const s = timeInSeconds % 60;
-      setDisplayHours(h);
-      setDisplayMinutes(m);
-      setDisplaySeconds(s);
-    }
-  }, [initialTime, stopwatch, timerStop, timerReset]);
-
-  useEffect(() => {
-    setRunningTime(timePassed);
-  }, []);
-
-  useEffect(() => {
-    if (!running) {
-      setRunningTime(timePassed);
-    }
-    if (startedOn === 0) {
-      setRunningTime(timePassed);
-    }
-  }, [startedOn, timePassed, running]);
-
-  useEffect(() => {
-    if (running) {
-      setRunningTime(timePassed < 0 ? 0 : timePassed);
-      intervalRef.current = setInterval(() => {
-        setRunningTime((prev) => {
-          const calcTime = (Math.round(prev / 1000) * 1000);
-          if (stopwatch) {
-            return (calcTime < 0 ? 0 : calcTime) + 1000;
-          }
-          const t = (calcTime) - 1000;
-          return t < 0 ? 0 : t;
-        });
-      }, 1000);
-    } else if (!running) {
-      clearInterval(intervalRef.current);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, [running]);
-
-  useEffect(() => {
-    if (!running) return;
-    const serverTime = timePassed >= 0 ? timePassed : 0;
-    setRunningTime((prev) => {
-      if (Math.abs(serverTime - prev) > 2000) return serverTime;
-      return prev;
-    });
-  }, [timePassed, stopwatch, startedOn]);
-
-  useEffect(() => {
-    if (!active) {
-      closePanel();
-    }
-  }, [active]);
+  }, [timerStop, timerReset]);
 
   const timerMusicOptions = useMemo(() => {
     const TIMER_CONFIG = window.meetingClientSettings.public.timer;
@@ -392,7 +318,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     );
   }, [songTrack, stopwatch, running]);
 
-  const isPaused = !running && (stopwatch ? runningTime > 0 : runningTime < time);
+  const isPaused = !running && (stopwatch ? timePassed > 0 : timePassed < time);
 
   let controlButtons;
   if (running) {
@@ -440,8 +366,6 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
               const newStartTime = (displayHours * MILLI_IN_HOUR)
                 + (displayMinutes * MILLI_IN_MINUTE)
                 + (displaySeconds * MILLI_IN_SECOND);
-
-              setInitialTime(newStartTime);
 
               if (newStartTime !== time) {
                 timerSetTime({ variables: { time: newStartTime } });
@@ -493,7 +417,6 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
                 timerStop();
                 timerReset();
                 switchTimer(true);
-                setRunningTime(0);
               }}
               disabled={stopwatch || running}
               color={stopwatch ? 'primary' : 'secondary'}
@@ -506,7 +429,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
               aria-hidden
               data-test="timerCurrent"
             >
-              {humanizeSeconds(Math.floor(runningTime / 1000))}
+              {humanizeSeconds(Math.floor(timePassed / 1000))}
             </Styled.TimerCurrent>
           ) : (
             <Styled.TimeInputWrapper
@@ -598,14 +521,11 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
 };
 
 const TimerPanelContaier: React.FC = () => {
-  const [timeSync] = useTimeSync();
   const [timerActivate] = useMutation(TIMER_ACTIVATE);
 
   const {
-    loading: timerLoading,
-    error: timerError,
     data: timerData,
-  } = useDeduplicatedSubscription<GetTimerResponse>(GET_TIMER);
+  } = useTimer();
 
   const activateTimer = useCallback(() => {
     const TIMER_CONFIG = window.meetingClientSettings.public.timer;
@@ -616,47 +536,26 @@ const TimerPanelContaier: React.FC = () => {
     return timerActivate({ variables: { stopwatch, running, time } });
   }, []);
 
-  if (timerLoading || !timerData) return null;
-
-  if (timerError) {
-    connectionStatus.setSubscriptionFailed(true);
-    logger.error(
-      {
-        logCode: 'subscription_Failed',
-        extraInfo: {
-          error: timerError,
-        },
-      },
-      'Subscription failed to load',
-    );
+  const currentTimer = timerData;
+  if (!currentTimer?.active) {
+    activateTimer();
     return null;
   }
-
-  const timer = timerData.timer[0];
-
-  const currentDate: Date = new Date();
-  const startedAtDate: Date = new Date(timer.startedAt);
-  const adjustedCurrent: Date = new Date(currentDate.getTime() + timeSync);
-  const timeDifferenceMs: number = adjustedCurrent.getTime() - startedAtDate.getTime();
-
-  const timePassed = timer.stopwatch ? (
-    Math.floor(((timer.running ? timeDifferenceMs : 0) + timer.accumulated))
-  ) : (
-    Math.floor(((timer.time) - (timer.accumulated + (timer.running ? timeDifferenceMs : 0)))));
-
-  if (!timer.active) activateTimer();
+  const {
+    stopwatch,
+    songTrack,
+    running,
+    time,
+    timePassed = 0,
+  } = currentTimer;
 
   return (
     <TimerPanel
-      stopwatch={timer.stopwatch ?? false}
-      songTrack={timer.songTrack ?? 'noTrack'}
-      running={timer.running ?? false}
+      stopwatch={stopwatch}
+      songTrack={songTrack}
+      running={running}
       timePassed={timePassed}
-      accumulated={timer.accumulated}
-      active
-      time={timer.time}
-      startedOn={timer.startedOn}
-      startedAt={timer.startedAt}
+      time={time}
     />
   );
 };

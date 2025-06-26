@@ -37,7 +37,6 @@ import ActionsBarContainer from '../actions-bar/container';
 import PushLayoutEngine from '../layout/push-layout/pushLayoutEngine';
 import NotesContainer from '/imports/ui/components/notes/component';
 import AppService from '/imports/ui/components/app/service';
-import TimeSync from './app-graphql/time-sync/component';
 import PresentationUploaderToastContainer from '/imports/ui/components/presentation/presentation-toast/presentation-uploader-toast/container';
 import BreakoutJoinConfirmationContainerGraphQL from '../breakout-join-confirmation/breakout-join-confirmation-graphql/component';
 import FloatingWindowContainer from '/imports/ui/components/floating-window/container';
@@ -314,7 +313,6 @@ class App extends Component {
           <ScreenReaderAlertAdapter />
           <PluginsEngineManager pluginConfig={pluginConfig} />
           <FloatingWindowContainer />
-          <TimeSync />
           <Notifications />
           <PushLayoutEngine
             shouldShowScreenshare={shouldShowScreenshare}
