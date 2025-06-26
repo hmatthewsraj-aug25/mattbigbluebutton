@@ -58,20 +58,29 @@ class Dashboard extends React.Component {
       });
     });
 
-    Promise.all([fetchMessages('en'), fetchMessages(getLanguage())])
-      .then((values) => {
-        let mergedMessages = {};
+    const fallbackLang = 'en';
+    const userLang = getLanguage();
 
-        if (values[0]) {
-          mergedMessages = Object.assign(mergedMessages, values[0]);
+    fetchMessages(fallbackLang)
+      .then((enMessages) => {
+        let mergedMessages = { ...enMessages };
+
+        if (userLang !== fallbackLang) {
+          fetchMessages(userLang)
+            .then((userMessages) => {
+              mergedMessages = Object.assign(mergedMessages, userMessages);
+              this.setState({ intlMessages: mergedMessages });
+            })
+            .catch(() => {
+              this.setState({ intlMessages: mergedMessages });
+            });
+        } else {
+          this.setState({ intlMessages: mergedMessages });
         }
-
-        if (values[1]) {
-          mergedMessages = Object.assign(mergedMessages, values[1]);
-        }
-
-        this.setState({ intlMessages: mergedMessages });
-      }).catch(() => {});
+      })
+      .catch(() => {
+        this.setState({ intlMessages: {} });
+      });
   }
 
   setRtl() {
