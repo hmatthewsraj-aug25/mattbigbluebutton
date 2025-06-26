@@ -7,7 +7,7 @@ import scala.jdk.CollectionConverters._
 object ExternalVideoUrlParser {
   private val reHmsParam: Regex = """(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?""".r
   private val reHhmmssParam: Regex = """(?:(\d+):)?(\d+):(\d+)""".r
-  private val youtubeShortsMatchUrl: Regex = """https?:\/\/([^/]+/Panopto)(/Pages/Viewer\.aspx\?id=)([-a-zA-Z0-9]+)""".r
+  private val youtubeShortsMatchUrl: Regex = """^(?:https?:\/\/)?(?:www\.)?(youtube\.com/shorts)/.+$""".r
   private val panoptoMatchUrl: Regex = """https?:\/\/([^/]+/Panopto)(/Pages/Viewer\.aspx\?id=)([-a-zA-Z0-9]+)""".r
   private val youtubeMatchUrl: Regex = """^(?:https?:\/\/)?(?:www\.)?(youtube\.com|youtu.be)/.+$""".r
 
