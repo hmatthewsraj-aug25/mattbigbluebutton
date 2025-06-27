@@ -8,27 +8,34 @@ import {
 } from 'bigbluebutton-html-plugin-sdk/dist/cjs/core/enum';
 import { DataConsumptionHooks } from 'bigbluebutton-html-plugin-sdk/dist/cjs/data-consumption/enums';
 
-import { HookWithArgumentsContainerProps } from './types';
+import { SubscriptionHookWithArgumentsContainerProps } from './types';
 import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedSubscription';
 import usePreviousValue from '/imports/ui/hooks/usePreviousValue';
+import { SubscriptionStructure } from '/imports/ui/core/singletons/subscriptionStore';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const CustomSubscriptionHookContainer = (props: HookWithArgumentsContainerProps) => {
+const CustomSubscriptionHookContainer = (props: SubscriptionHookWithArgumentsContainerProps) => {
   const { hookArguments, numberOfUses } = props;
   const { query: queryFromPlugin, variables } = hookArguments;
   const previousNumberOfUses = usePreviousValue(numberOfUses);
 
-  let customSubscriptionData: any;
+  let customSubscriptionData: SubscriptionStructure<any>;
   try {
     const subscriptionResult = useDeduplicatedSubscription(gql`${queryFromPlugin}`, {
       variables,
     });
     customSubscriptionData = subscriptionResult;
   } catch (err) {
-    logger.error(
-      `Error while querying custom subscriptions for plugins (query: ${queryFromPlugin}) (Error: ${err})`,
-    );
-    customSubscriptionData = 'Error';
+    const errorMessage = `
+      Error while querying custom subscriptions for plugins (query: ${queryFromPlugin}) (Error: ${err})`;
+    logger.error(errorMessage);
+    customSubscriptionData = {
+      data: null,
+      count: 0,
+      error: new Error(errorMessage),
+      loading: false,
+      sub: null,
+    };
   }
 
   const updateCustomSubscriptionForPlugin = () => {
