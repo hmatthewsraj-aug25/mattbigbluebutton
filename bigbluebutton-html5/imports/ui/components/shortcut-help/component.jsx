@@ -343,7 +343,7 @@ const ShortcutHelpComponent = ({
   generalShortcutItems.splice(3, 0, ptt);
   generalShortcutItems.push( renderItem(
     `${intl.formatMessage(intlMessages.openCustomPoll)}`,
-    isMacos ? `Cmd + Opt + P` : `Ctrl + Alt + P`
+    isMacos ? `Ctrl + Opt + P` : `Ctrl + Alt + P`
   ));
 
   const shortcutItems = [];

@@ -231,10 +231,14 @@ class App extends Component {
 
   customPollShortcutHandler(e) {
     const {
-      altKey, ctrlKey, metaKey, keyCode,
+      altKey, ctrlKey, shiftKey, keyCode,
     } = e;
     const { layoutContextDispatch } = this.props;
-    const isPollShortcut = altKey && keyCode === KEY_CODES.P && (ctrlKey || metaKey);
+
+    const isPollShortcut =
+      ctrlKey &&
+      altKey &&
+      keyCode === KEY_CODES.P;
 
     if (isPollShortcut) {
       if (Session.equals('pollInitiated', true)) {
@@ -254,6 +258,7 @@ class App extends Component {
       Session.setItem('customPollShortcut', true);
     }
   }
+
 
   logJoin() {
     const { isJoinLogged } = this.state;
