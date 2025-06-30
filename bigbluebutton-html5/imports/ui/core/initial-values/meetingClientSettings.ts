@@ -481,7 +481,10 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
       maxCustom: 5,
       maxTypedAnswerLength: 45,
       chatMessage: true,
-      quickPollConfirmationStep: false,
+      quickPoll: {
+        confirmationStep: true,
+        confirmationStepModifierKey: 'shift',
+      },
     },
     captions: {
       enabled: true,

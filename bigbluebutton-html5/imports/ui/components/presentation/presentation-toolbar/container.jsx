@@ -165,11 +165,21 @@ const PresentationToolbarContainer = (props) => {
     skipToSlide(nextSlideNum);
   };
 
-  const startPoll = (pollType, pollId, answers = [], question, isMultipleResponse = false) => {
+  const startPoll = (
+    pollType,
+    pollId,
+    answers = [],
+    question,
+    isMultipleResponse = false,
+    modifierKey = false,
+  ) => {
     Session.setItem('openPanel', 'poll');
     Session.setItem('forcePollOpen', true);
 
-    if (window.meetingClientSettings.public.poll.quickPollConfirmationStep) {
+    const POLL_CONFIG = window.meetingClientSettings.public.poll;
+    const { confirmationStep } = modifierKey && POLL_CONFIG.quickPoll;
+
+    if (confirmationStep) {
       Session.setItem('quickPollVariables', {
         pollType,
         secretPoll: false,

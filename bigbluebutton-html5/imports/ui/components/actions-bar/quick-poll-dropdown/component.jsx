@@ -68,6 +68,12 @@ const QuickPollDropdown = (props) => {
   // Function to create a regex pattern
   const createPattern = (values) => new RegExp(`.*(${escapeRegExp(values[0])}\\/${escapeRegExp(values[1])}|${escapeRegExp(values[1])}\\/${escapeRegExp(values[0])}).*`, 'gmi');
 
+  const hasModifierKey = (e) => {
+    const POLL_CONFIG = window.meetingClientSettings.public.poll;
+    const modifierKey = POLL_CONFIG.quickPoll.confirmationStepModifierKey;
+    return e[`${modifierKey}Key`];
+  };
+
   const yesValue = intl.formatMessage(intlMessages.yesOptionLabel);
   const noValue = intl.formatMessage(intlMessages.noOptionLabel);
   const abstentionValue = intl.formatMessage(intlMessages.abstentionOptionLabel);
@@ -281,13 +287,15 @@ const QuickPollDropdown = (props) => {
           <Dropdown.DropdownListItem
             label={intl.formatMessage(intlMessages.typedRespLabel)}
             key={uniqueId('quick-poll-item')}
-            onClick={() => {
+            onClick={(e) => {
               if (activePoll) {
                 stopPoll();
               }
               setTimeout(() => {
                 handleClickQuickPoll(_layoutContextDispatch);
-                funcStartPoll(type, slideId, letterAnswers, pollData?.question);
+                funcStartPoll(
+                  type, slideId, letterAnswers, pollData?.question, false, hasModifierKey(e),
+                );
               }, CANCELED_POLL_DELAY);
             }}
             question={pollData?.question}
@@ -327,13 +335,15 @@ const QuickPollDropdown = (props) => {
         <Dropdown.DropdownListItem
           label={itemLabel}
           key={uniqueId('quick-poll-item')}
-          onClick={() => {
+          onClick={(e) => {
             if (activePoll) {
               stopPoll();
             }
             setTimeout(() => {
               handleClickQuickPoll(_layoutContextDispatch);
-              funcStartPoll(type, slideId, letterAnswers, pollQuestion, pollData?.multiResp);
+              funcStartPoll(
+                type, slideId, letterAnswers, pollQuestion, pollData?.multiResp, hasModifierKey(e),
+              );
             }, CANCELED_POLL_DELAY);
           }}
           answers={letterAnswers}
@@ -379,15 +389,22 @@ const QuickPollDropdown = (props) => {
       aria-label={intl.formatMessage(intlMessages.quickPollLabel)}
       label={quickPollLabel}
       tooltipLabel={intl.formatMessage(intlMessages.quickPollLabel)}
-      onClick={() => {
+      onClick={(e) => {
         if (activePoll) {
           stopPoll();
         }
 
         setTimeout(() => {
           handleClickQuickPoll(layoutContextDispatch);
+          const modifierKey = hasModifierKey(e);
           if (singlePollType === 'R-' || singlePollType === 'TF' || singlePollType === 'YN') {
-            startPoll(singlePollType, currentSlide.id, answers, pollQuestion, multiResponse);
+            startPoll(
+              singlePollType,
+              currentSlide.id,
+              answers, pollQuestion,
+              multiResponse,
+              modifierKey,
+            );
           } else {
             startPoll(
               pollTypes.Custom,
@@ -395,6 +412,7 @@ const QuickPollDropdown = (props) => {
               optionsWithLabels,
               pollQuestion,
               multiResponse,
+              modifierKey
             );
           }
         }, CANCELED_POLL_DELAY);

@@ -583,7 +583,9 @@ public:
     maxCustom: 5
     maxTypedAnswerLength: 45
     chatMessage: true
-    quickPollConfirmationStep: true
+    quickPoll:
+      confirmationStep: true
+      confirmationStepModifierKey: shift # shift|ctrl|alt
   captions:
     enabled: true
     id: captions
