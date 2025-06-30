@@ -177,7 +177,7 @@ const PresentationToolbarContainer = (props) => {
     Session.setItem('forcePollOpen', true);
 
     const POLL_CONFIG = window.meetingClientSettings.public.poll;
-    const { confirmationStep } = modifierKey && POLL_CONFIG.quickPoll;
+    const confirmationStep = modifierKey && POLL_CONFIG.quickPoll.confirmationStep;
 
     if (confirmationStep) {
       Session.setItem('quickPollVariables', {
