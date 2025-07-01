@@ -27,8 +27,8 @@ const PluginPresentationAreaUiCommandsHandler = () => {
     window.addEventListener(PresentationAreaEnum.CLOSE, handlePresentationAreaClose);
 
     return () => {
-      window.addEventListener(PresentationAreaEnum.OPEN, handlePresentationAreaOpen);
-      window.addEventListener(PresentationAreaEnum.OPEN, handlePresentationAreaClose);
+      window.removeEventListener(PresentationAreaEnum.OPEN, handlePresentationAreaOpen);
+      window.removeEventListener(PresentationAreaEnum.CLOSE, handlePresentationAreaClose);
     };
   }, []);
   return null;
