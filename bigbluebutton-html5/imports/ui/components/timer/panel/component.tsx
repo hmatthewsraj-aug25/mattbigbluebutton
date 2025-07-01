@@ -16,6 +16,7 @@ import { layoutDispatch } from '../../layout/context';
 import { ACTIONS, PANELS } from '../../layout/enums';
 import {
   TIMER_ACTIVATE,
+  TIMER_DEACTIVATE,
   TIMER_RESET,
   TIMER_SET_SONG_TRACK,
   TIMER_SET_TIME,
@@ -68,6 +69,10 @@ const intlMessages = defineMessages({
   reset: {
     id: 'app.timer.button.reset',
     description: 'Timer reset button',
+  },
+  deactivate: {
+    id: 'app.timer.button.deactivate',
+    description: 'Timer deactivate button',
   },
   hours: {
     id: 'app.timer.hours',
@@ -122,6 +127,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   const [timerSwitchMode] = useMutation(TIMER_SWITCH_MODE);
   const [timerSetSongTrack] = useMutation(TIMER_SET_SONG_TRACK);
   const [timerSetTime] = useMutation(TIMER_SET_TIME);
+  const [timerDeactivate] = useMutation(TIMER_DEACTIVATE);
 
   const intl = useIntl();
   const layoutContextDispatch = layoutDispatch();
@@ -132,6 +138,20 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   const [displayHours, setDisplayHours] = useState(0);
   const [displayMinutes, setDisplayMinutes] = useState(0);
   const [displaySeconds, setDisplaySeconds] = useState(0);
+  const [focusedUnit, setFocusedUnit] = useState<'hours' | 'minutes' | 'seconds'>('seconds');
+  const [lastSelectedTrack, setLastSelectedTrack] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [initialTime, setInitialTime] = useState(time);
+
+  useEffect(() => {
+    setInitialTime(time);
+  }, [time]);
+
+  useEffect(() => {
+    if (songTrack && songTrack !== 'noTrack') {
+      setLastSelectedTrack(songTrack);
+    }
+  }, [songTrack]);
 
   useEffect(() => {
     const timeInSeconds = Math.floor(time / 1000);
@@ -143,6 +163,19 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     setDisplayMinutes(m);
     setDisplaySeconds(s);
   }, [time]);
+
+  useEffect(() => {
+    if (running && !isEditing) {
+      const timeInSeconds = Math.max(0, Math.floor(runningTime / 1000));
+      const h = Math.floor(timeInSeconds / 3600);
+      const m = Math.floor((timeInSeconds % 3600) / 60);
+      const s = timeInSeconds % 60;
+
+      setDisplayHours(h);
+      setDisplayMinutes(m);
+      setDisplaySeconds(s);
+    }
+  }, [runningTime, running, isEditing]);
 
   const headerMessage = useMemo(() => {
     return stopwatch ? intlMessages.stopwatch : intlMessages.timer;
@@ -156,6 +189,15 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     timerSetSongTrack({ variables: { track } });
   };
 
+  const handleMusicSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isEnabled = event.target.checked;
+    if (isEnabled) {
+      setTrack(lastSelectedTrack || 'track1');
+    } else {
+      setTrack('noTrack');
+    }
+  };
+
   const syncTimeWithBackend = useCallback(() => {
     const newTimeInMillis = (displayHours * MILLI_IN_HOUR)
       + (displayMinutes * MILLI_IN_MINUTE)
@@ -163,10 +205,8 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
 
     if (newTimeInMillis !== time) {
       timerSetTime({ variables: { time: newTimeInMillis } });
-      timerStop();
-      timerReset();
     }
-  }, [displayHours, displayMinutes, displaySeconds, time, timerSetTime, timerStop, timerReset]);
+  }, [displayHours, displayMinutes, displaySeconds, time, timerSetTime]);
 
   const handleHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value || '0', 10);
@@ -186,6 +226,38 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     setDisplaySeconds(Math.max(0, Math.min(value, 59)));
   };
 
+  const changeTime = useCallback((amountInSeconds: number) => {
+    if (running) return;
+
+    const currentTimeInSeconds = (displayHours * 3600) + (displayMinutes * 60) + displaySeconds;
+    let newTotalSeconds = currentTimeInSeconds + amountInSeconds;
+
+    const maxSeconds = (MAX_HOURS * 3600) + (59 * 60) + 59;
+    newTotalSeconds = Math.max(0, Math.min(newTotalSeconds, maxSeconds));
+
+    const h = Math.floor(newTotalSeconds / 3600);
+    const m = Math.floor((newTotalSeconds % 3600) / 60);
+    const s = newTotalSeconds % 60;
+
+    setDisplayHours(h);
+    setDisplayMinutes(m);
+    setDisplaySeconds(s);
+  }, [running, displayHours, displayMinutes, displaySeconds]);
+
+  const handleIncrement = useCallback(() => {
+    let incrementAmount = 1;
+    if (focusedUnit === 'minutes') incrementAmount = 60;
+    if (focusedUnit === 'hours') incrementAmount = 3600;
+    changeTime(incrementAmount);
+  }, [focusedUnit, changeTime]);
+
+  const handleDecrement = useCallback(() => {
+    let decrementAmount = -1;
+    if (focusedUnit === 'minutes') decrementAmount = -60;
+    if (focusedUnit === 'hours') decrementAmount = -3600;
+    changeTime(decrementAmount);
+  }, [focusedUnit, changeTime]);
+
   const closePanel = useCallback(() => {
     layoutContextDispatch({
       type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
@@ -197,21 +269,42 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     });
   }, []);
 
+  const handleDeactivate = useCallback(() => {
+    timerDeactivate();
+    closePanel();
+  }, [timerDeactivate, closePanel]);
+
   const handleReset = useCallback(() => {
     timerStop();
     timerReset();
-    setRunningTime(time);
-  }, [time, timerStop, timerReset]);
+    setIsEditing(false);
+    if (stopwatch) {
+      setRunningTime(0);
+    } else {
+      setRunningTime(initialTime);
+
+      const timeInSeconds = Math.floor(initialTime / 1000);
+      const h = Math.floor(timeInSeconds / 3600);
+      const m = Math.floor((timeInSeconds % 3600) / 60);
+      const s = timeInSeconds % 60;
+      setDisplayHours(h);
+      setDisplayMinutes(m);
+      setDisplaySeconds(s);
+    }
+  }, [initialTime, stopwatch, timerStop, timerReset]);
 
   useEffect(() => {
     setRunningTime(timePassed);
   }, []);
 
   useEffect(() => {
+    if (!running) {
+      setRunningTime(timePassed);
+    }
     if (startedOn === 0) {
       setRunningTime(timePassed);
     }
-  }, [startedOn]);
+  }, [startedOn, timePassed, running]);
 
   useEffect(() => {
     if (running) {
@@ -247,117 +340,111 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     }
   }, [active]);
 
-  const timerControls = useMemo(() => {
-    const label = running ? intlMessages.stop : intlMessages.start;
-    const color = running ? 'danger' : 'primary';
+  const timerMusicOptions = useMemo(() => {
     const TIMER_CONFIG = window.meetingClientSettings.public.timer;
+    if (!TIMER_CONFIG.music.enabled) return null;
 
     return (
-      <div>
-        {!stopwatch ? (
-          <Styled.StopwatchTime>
-            <Styled.StopwatchTimeInput>
-              <Styled.TimerInput
-                type="number"
-                disabled={stopwatch || running}
-                value={String(displayHours).padStart(2, '0')}
-                maxLength={2}
-                max={MAX_HOURS}
-                min="0"
-                onChange={handleHoursChange}
-                onBlur={syncTimeWithBackend}
-                data-test="hoursInput"
-              />
-              <Styled.StopwatchTimeInputLabel>
-                {intl.formatMessage(intlMessages.hours)}
-              </Styled.StopwatchTimeInputLabel>
-            </Styled.StopwatchTimeInput>
-            <Styled.StopwatchTimeColon>:</Styled.StopwatchTimeColon>
-            <Styled.StopwatchTimeInput>
-              <Styled.TimerInput
-                type="number"
-                disabled={stopwatch || running}
-                value={String(displayMinutes).padStart(2, '0')}
-                maxLength={2}
-                max="59"
-                min="0"
-                onChange={handleMinutesChange}
-                onBlur={syncTimeWithBackend}
-                data-test="minutesInput"
-              />
-              <Styled.StopwatchTimeInputLabel>
-                {intl.formatMessage(intlMessages.minutes)}
-              </Styled.StopwatchTimeInputLabel>
-            </Styled.StopwatchTimeInput>
-            <Styled.StopwatchTimeColon>:</Styled.StopwatchTimeColon>
-            <Styled.StopwatchTimeInput>
-              <Styled.TimerInput
-                type="number"
-                disabled={stopwatch || running}
-                value={String(displaySeconds).padStart(2, '0')}
-                maxLength={2}
-                max="59"
-                min="0"
-                onChange={handleSecondsChange}
-                onBlur={syncTimeWithBackend}
-                data-test="secondsInput"
-              />
-              <Styled.StopwatchTimeInputLabel>
-                {intl.formatMessage(intlMessages.seconds)}
-              </Styled.StopwatchTimeInputLabel>
-            </Styled.StopwatchTimeInput>
-          </Styled.StopwatchTime>
-        ) : null}
-        {TIMER_CONFIG.music.enabled && !stopwatch
-          ? (
-            <Styled.TimerSongsWrapper>
-              <Styled.TimerSongsTitle stopwatch={stopwatch}>
-                {intl.formatMessage(intlMessages.songs)}
-              </Styled.TimerSongsTitle>
-              <Styled.TimerTracks>
-                {TRACKS.map((track) => (
-                  <Styled.TimerTrackItem key={track}>
-                    <label htmlFor={track}>
-                      <input
-                        type="radio"
-                        name="track"
-                        id={track}
-                        value={track}
-                        checked={songTrack === track}
-                        onChange={(event) => setTrack(event.target.value)}
-                        disabled={stopwatch || running}
-                      />
-                      {intl.formatMessage(intlMessages[track as keyof typeof intlMessages])}
-                    </label>
-                  </Styled.TimerTrackItem>
-                ))}
-              </Styled.TimerTracks>
-            </Styled.TimerSongsWrapper>
-          ) : null}
-        <Styled.TimerControls>
-          <Styled.TimerControlButton
-            color={color}
-            label={intl.formatMessage(label)}
-            onClick={() => {
-              if (running) {
-                timerStop();
-              } else {
-                syncTimeWithBackend();
-                timerStart();
-              }
-            }}
-            data-test="startStopTimer"
-          />
-          <Styled.TimerControlButton
-            color="secondary"
-            label={intl.formatMessage(intlMessages.reset)}
-            onClick={handleReset}
-            data-test="resetTimerStopWatch"
-          />
-        </Styled.TimerControls>
-      </div>
+      <Styled.TimerSongsWrapper>
+        <Styled.MusicSwitchLabel
+          control={(
+            <Styled.MaterialSwitch
+              checked={(songTrack !== 'noTrack') && !stopwatch}
+              onChange={handleMusicSwitchChange}
+              disabled={running || stopwatch}
+            />
+          )}
+          label={intl.formatMessage(intlMessages.songs)}
+        />
+        {(songTrack !== 'noTrack' && !stopwatch) && (
+          <Styled.TimerTracks>
+            {TRACKS.map((track) => {
+              if (track === 'noTrack') return null;
+              return (
+                <Styled.TimerTrackItem key={track}>
+                  <label htmlFor={track}>
+                    <input
+                      type="radio"
+                      name="track"
+                      id={track}
+                      value={track}
+                      checked={songTrack === track}
+                      onChange={(event) => setTrack(event.target.value)}
+                      disabled={running || stopwatch}
+                    />
+                    {intl.formatMessage(intlMessages[track as keyof typeof intlMessages])}
+                  </label>
+                </Styled.TimerTrackItem>
+              );
+            })}
+          </Styled.TimerTracks>
+        )}
+      </Styled.TimerSongsWrapper>
     );
-  }, [songTrack, stopwatch, time, running, displayHours, displayMinutes, displaySeconds, handleReset]);
+  }, [songTrack, stopwatch, running]);
+
+  const isPaused = !running && (stopwatch ? runningTime > 0 : runningTime < time);
+
+  let controlButtons;
+  if (running) {
+    controlButtons = (
+      <Styled.ButtonRow>
+        <Styled.ResetButton
+          color="secondary"
+          label={intl.formatMessage(intlMessages.reset)}
+          onClick={handleReset}
+          data-test="resetTimerStopWatch"
+        />
+        <Styled.ControlButton
+          color="danger"
+          label={intl.formatMessage(intlMessages.stop)}
+          onClick={timerStop}
+          data-test="startStopTimer"
+        />
+      </Styled.ButtonRow>
+    );
+  } else if (isPaused) {
+    controlButtons = (
+      <Styled.ButtonRow>
+        <Styled.ResetButton
+          color="secondary"
+          label={intl.formatMessage(intlMessages.reset)}
+          onClick={handleReset}
+          data-test="resetTimerStopWatch"
+        />
+        <Styled.ControlButton
+          color="primary"
+          label={intl.formatMessage(intlMessages.start)}
+          onClick={timerStart}
+          data-test="startStopTimer"
+        />
+      </Styled.ButtonRow>
+    );
+  } else {
+    controlButtons = (
+      <Styled.ButtonRow>
+        <Styled.ControlButton
+          color="primary"
+          label={intl.formatMessage(intlMessages.start)}
+          onClick={() => {
+            if (!stopwatch) {
+              const newStartTime = (displayHours * MILLI_IN_HOUR)
+                + (displayMinutes * MILLI_IN_MINUTE)
+                + (displaySeconds * MILLI_IN_SECOND);
+
+              setInitialTime(newStartTime);
+
+              if (newStartTime !== time) {
+                timerSetTime({ variables: { time: newStartTime } });
+              }
+            }
+            timerStart();
+          }}
+          data-test="startStopTimer"
+        />
+      </Styled.ButtonRow>
+    );
+  }
 
   return (
     <>
@@ -365,7 +452,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
         title={intl.formatMessage(intlMessages.title)}
         leftButtonProps={{
           onClick: closePanel,
-          'aria-label': intl.formatMessage(intlMessages.hideTimerLabel, { 0: intl.formatMessage(intlMessages.timer) }),
+          'aria-label': intl.formatMessage(intlMessages.hideTimerLabel, { 0: intl.formatMessage(headerMessage) }),
           label: intl.formatMessage(headerMessage),
         }}
         rightButtonProps={{
@@ -380,23 +467,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
       <Styled.Separator />
       <Styled.TimerScrollableContent id="timer-scroll-box">
         <Styled.TimerContent>
-          <Styled.TimerCurrent
-            aria-hidden
-            data-test="timerCurrent"
-          >
-            {humanizeSeconds(Math.floor(runningTime / 1000))}
-          </Styled.TimerCurrent>
           <Styled.TimerType>
-            <Styled.TimerSwitchButton
-              label={intl.formatMessage(intlMessages.stopwatch)}
-              onClick={() => {
-                timerStop();
-                switchTimer(true);
-              }}
-              disabled={stopwatch || running}
-              color={stopwatch ? 'primary' : 'secondary'}
-              data-test="stopwatchButton"
-            />
             <Styled.TimerSwitchButton
               label={intl.formatMessage(intlMessages.timer)}
               onClick={() => {
@@ -407,8 +478,101 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
               color={!stopwatch ? 'primary' : 'secondary'}
               data-test="timerButton"
             />
+            <Styled.TimerSwitchButton
+              label={intl.formatMessage(intlMessages.stopwatch)}
+              onClick={() => {
+                timerStop();
+                timerReset();
+                switchTimer(true);
+                setRunningTime(0);
+              }}
+              disabled={stopwatch || running}
+              color={stopwatch ? 'primary' : 'secondary'}
+              data-test="stopwatchButton"
+            />
           </Styled.TimerType>
-          {timerControls}
+
+          {stopwatch ? (
+            <Styled.TimerCurrent
+              aria-hidden
+              data-test="timerCurrent"
+            >
+              {humanizeSeconds(Math.floor(runningTime / 1000))}
+            </Styled.TimerCurrent>
+          ) : (
+            <Styled.TimeInputWrapper
+              onFocus={() => setIsEditing(true)}
+              onBlur={() => {
+                setIsEditing(false);
+                syncTimeWithBackend();
+              }}
+            >
+              <Styled.IncrementDecrementButton
+                color="primary"
+                label="-"
+                onClick={handleDecrement}
+                disabled={running}
+              />
+              <Styled.TimeInputGroup>
+                <>
+                  <Styled.TimerInput
+                    type="number"
+                    disabled={running && !isEditing}
+                    value={String(displayHours).padStart(2, '0')}
+                    maxLength={2}
+                    max={MAX_HOURS}
+                    min="0"
+                    onChange={handleHoursChange}
+                    onFocus={() => setFocusedUnit('hours')}
+                    data-test="hoursInput"
+                  />
+                  <Styled.TimeInputColon>:</Styled.TimeInputColon>
+                  <Styled.TimerInput
+                    type="number"
+                    disabled={running && !isEditing}
+                    value={String(displayMinutes).padStart(2, '0')}
+                    maxLength={2}
+                    max="59"
+                    min="0"
+                    onChange={handleMinutesChange}
+                    onFocus={() => setFocusedUnit('minutes')}
+                    data-test="minutesInput"
+                  />
+                  <Styled.TimeInputColon>:</Styled.TimeInputColon>
+                  <Styled.TimerInput
+                    type="number"
+                    disabled={running && !isEditing}
+                    value={String(displaySeconds).padStart(2, '0')}
+                    maxLength={2}
+                    max="59"
+                    min="0"
+                    onChange={handleSecondsChange}
+                    onFocus={() => setFocusedUnit('seconds')}
+                    data-test="secondsInput"
+                  />
+                </>
+              </Styled.TimeInputGroup>
+              <Styled.IncrementDecrementButton
+                color="primary"
+                label="+"
+                onClick={handleIncrement}
+                disabled={running}
+              />
+            </Styled.TimeInputWrapper>
+          )}
+
+          {timerMusicOptions}
+
+          <Styled.FooterSeparator />
+          <Styled.ControlsContainer>
+            {controlButtons}
+            <Styled.DeactivateButton
+              color="default"
+              label={intl.formatMessage(intlMessages.deactivate)}
+              onClick={handleDeactivate}
+              data-test="deactivateTimer"
+            />
+          </Styled.ControlsContainer>
         </Styled.TimerContent>
       </Styled.TimerScrollableContent>
     </>
@@ -427,7 +591,7 @@ const TimerPanelContaier: React.FC = () => {
 
   const activateTimer = useCallback(() => {
     const TIMER_CONFIG = window.meetingClientSettings.public.timer;
-    const stopwatch = true;
+    const stopwatch = false;
     const running = false;
     const time = TIMER_CONFIG.time * MILLI_IN_MINUTE;
 

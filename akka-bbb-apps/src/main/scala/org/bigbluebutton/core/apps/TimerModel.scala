@@ -3,7 +3,7 @@ package org.bigbluebutton.core.apps
 object TimerModel {
   def createTimer(
       model:          TimerModel,
-      stopwatch:      Boolean = true,
+      stopwatch:      Boolean = false,
       time:           Int = 0,
       accumulated:    Int = 0,
       track:          String = "noTrack",
@@ -111,7 +111,7 @@ class TimerModel {
   private var accumulated: Int = 0
   private var running: Boolean = false
   private var time: Int = 0
-  private var stopwatch: Boolean = true
+  private var stopwatch: Boolean = false
   private var track: String = "noTrack"
   private var isActive: Boolean = false
 }
