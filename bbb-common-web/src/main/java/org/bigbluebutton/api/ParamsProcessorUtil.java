@@ -131,6 +131,7 @@ public class ParamsProcessorUtil {
 		private boolean defaultLockSettingsLockOnJoinConfigurable;
 		private boolean defaultLockSettingsHideViewersCursor;
         private boolean defaultLockSettingsHideViewersAnnotation;
+        private boolean defaultLockSettingsPresentationUpload;
 
     private Long maxPresentationFileUpload = 30000000L; // 30MB
 
@@ -388,6 +389,12 @@ public class ParamsProcessorUtil {
                 lockSettingsHideViewersAnnotation = Boolean.parseBoolean(lockSettingsHideViewersAnnotationParam);
 			}
 
+            Boolean lockSettingsPresentationUpload = defaultLockSettingsPresentationUpload;
+            String lockSettingsPresentationUploadParam = params.get(ApiParams.LOCK_SETTINGS_PRESENTATION_UPLOAD);
+            if (!StringUtils.isEmpty(lockSettingsPresentationUploadParam)) {
+                lockSettingsPresentationUpload = Boolean.parseBoolean(lockSettingsPresentationUploadParam);
+            }
+
 			return new LockSettingsParams(lockSettingsDisableCam,
 							lockSettingsDisableMic,
 							lockSettingsDisablePrivateChat,
@@ -397,7 +404,9 @@ public class ParamsProcessorUtil {
 							lockSettingsLockOnJoin,
 							lockSettingsLockOnJoinConfigurable,
                             lockSettingsHideViewersCursor,
-                            lockSettingsHideViewersAnnotation);
+                            lockSettingsHideViewersAnnotation,
+                            lockSettingsPresentationUpload
+                    );
 		}
 
     private ArrayList<Group> processGroupsParams(Map<String, String> params) {

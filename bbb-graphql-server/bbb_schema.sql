@@ -209,7 +209,8 @@ create unlogged table "meeting_lockSettings" (
     "lockOnJoin"             boolean,
     "lockOnJoinConfigurable" boolean,
     "hideViewersCursor"      boolean,
-    "hideViewersAnnotation"  boolean
+    "hideViewersAnnotation"  boolean,
+    "disablePresentationUpload"  boolean
 );
 create index "idx_meeting_lockSettings_meetingId" on "meeting_lockSettings"("meetingId");
 
@@ -218,6 +219,7 @@ SELECT
 	mls."meetingId",
 	mls."disableCam",
 	mls."disableMic",
+    mls."disablePresentationUpload",
 	mls."disablePrivateChat",
 	mls."disablePublicChat",
 	mls."disableNotes",
@@ -230,6 +232,7 @@ SELECT
 	CASE WHEN
 	mls."disableCam" IS TRUE THEN TRUE
 	WHEN mls."disableMic"  IS TRUE THEN TRUE
+    WHEN mls."disablePresentationUpload"  IS TRUE THEN TRUE
 	WHEN mls."disablePrivateChat"  IS TRUE THEN TRUE
 	WHEN mls."disablePublicChat"  IS TRUE THEN TRUE
 	WHEN mls."disableNotes"  IS TRUE THEN TRUE
@@ -1393,6 +1396,7 @@ SELECT pres_presentation."meetingId",
     pres_presentation."uploadTemporaryId",
     pres_presentation."uploadInProgress",
     pres_presentation."uploadCompleted",
+    pres_presentation."uploadUserId",
     pres_presentation."totalPages",
     (   SELECT count(*)
         FROM pres_page

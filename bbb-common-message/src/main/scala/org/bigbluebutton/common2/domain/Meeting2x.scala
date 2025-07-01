@@ -72,7 +72,8 @@ case class LockSettingsProps(
     lockOnJoin:             Boolean,
     lockOnJoinConfigurable: Boolean,
     hideViewersCursor:      Boolean,
-    hideViewersAnnotation:  Boolean
+    hideViewersAnnotation:  Boolean,
+    disablePresentationUpload: Boolean
 )
 
 case class SystemProps(
