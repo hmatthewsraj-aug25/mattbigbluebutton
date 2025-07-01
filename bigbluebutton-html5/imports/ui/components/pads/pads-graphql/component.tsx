@@ -26,6 +26,7 @@ interface PadContainerGraphqlProps {
   isResizing: boolean;
   isRTL: boolean;
   amIPresenter: boolean;
+  isOnMediaArea?: boolean;
 }
 
 interface PadGraphqlProps extends Omit<PadContainerGraphqlProps, 'hasPermission'> {
@@ -33,6 +34,7 @@ interface PadGraphqlProps extends Omit<PadContainerGraphqlProps, 'hasPermission'
   sessionIds: Array<string>;
   padId: string | undefined;
   amIPresenter: boolean;
+  isOnMediaArea: boolean;
 }
 
 const PadGraphql: React.FC<PadGraphqlProps> = (props) => {
@@ -44,6 +46,7 @@ const PadGraphql: React.FC<PadGraphqlProps> = (props) => {
     sessionIds,
     padId,
     amIPresenter,
+    isOnMediaArea,
   } = props;
   const [padURL, setPadURL] = useState<string | undefined>();
   const intl = useIntl();
@@ -57,7 +60,7 @@ const PadGraphql: React.FC<PadGraphqlProps> = (props) => {
   }, [isRTL, hasSession, intl.locale]);
 
   if (!hasSession) {
-    return <PadContent externalId={externalId} />;
+    return <PadContent externalId={externalId} isOnMediaArea={isOnMediaArea} />;
   }
 
   return (
@@ -88,6 +91,7 @@ const PadContainerGraphql: React.FC<PadContainerGraphqlProps> = (props) => {
     isRTL,
     isResizing,
     amIPresenter,
+    isOnMediaArea = false,
   } = props;
 
   const { data: hasPadData } = useDeduplicatedSubscription<HasPadSubscriptionResponse>(
@@ -120,6 +124,7 @@ const PadContainerGraphql: React.FC<PadContainerGraphqlProps> = (props) => {
       sessionIds={Array.from(sessionIds)}
       padId={session?.sharedNotes?.padId}
       amIPresenter={amIPresenter}
+      isOnMediaArea={isOnMediaArea}
     />
   );
 };
