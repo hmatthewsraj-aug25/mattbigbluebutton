@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 type ContainerProps = {
-  isResizing: boolean;
+  preventInteraction: boolean;
   isMinimized: boolean;
 };
 
@@ -11,7 +11,7 @@ export const Container = styled.div<ContainerProps>`
   background: var(--color-black);
   z-index: 5;
   display: grid;
-  ${({ isResizing }) => isResizing && `
+  ${({ preventInteraction }) => preventInteraction && `
     pointer-events: none;
   `}
   ${({ isMinimized }) => isMinimized && `

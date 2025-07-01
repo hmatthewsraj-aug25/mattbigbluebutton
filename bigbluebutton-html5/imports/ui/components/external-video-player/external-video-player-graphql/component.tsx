@@ -75,6 +75,7 @@ interface ExternalVideoPlayerProps {
   isBot: boolean;
   videoUrl: string;
   isResizing: boolean;
+  isLocalChange: boolean;
   fullscreenContext: boolean;
   externalVideo: ExternalVideo;
   playing: boolean;
@@ -104,6 +105,7 @@ const ExternalVideoPlayer: React.FC<ExternalVideoPlayerProps> = ({
   currentVolume,
   isMuted,
   isResizing,
+  isLocalChange,
   externalVideo,
   fullscreenContext,
   videoUrl,
@@ -468,7 +470,7 @@ const ExternalVideoPlayer: React.FC<ExternalVideoPlayerProps> = ({
         right,
         zIndex: externalVideo.zIndex,
       }}
-      isResizing={isResizing}
+      preventInteraction={isResizing && isLocalChange}
       isMinimized={isMinimized}
     >
       <Styled.VideoPlayerWrapper
@@ -676,7 +678,7 @@ const ExternalVideoPlayerContainer: React.FC = () => {
   const cameraDock = layoutSelectInput((i: Input) => i.cameraDock);
   const sidebarContent = layoutSelectInput((i: Input) => i.sidebarContent);
   const { isOpen: isSidebarContentOpen } = sidebarContent;
-  const { isResizing } = cameraDock;
+  const { isResizing, isLocalChange } = cameraDock;
   const layoutContextDispatch = layoutDispatch();
   const fullscreen = layoutSelect((i: Layout) => i.fullscreen);
   const { element } = fullscreen;
@@ -709,6 +711,7 @@ const ExternalVideoPlayerContainer: React.FC = () => {
       playing={playing}
       playerPlaybackRate={playerPlaybackRate}
       isResizing={isResizing}
+      isLocalChange={isLocalChange}
       fullscreenContext={fullscreenContext}
       externalVideo={externalVideo}
       getCurrentTime={getCurrentTime}

@@ -24,6 +24,7 @@ interface PadContainerGraphqlProps {
   externalId: string;
   hasPermission: boolean;
   isResizing: boolean;
+  isLocalChange: boolean;
   isRTL: boolean;
   amIPresenter: boolean;
   isOnMediaArea?: boolean;
@@ -42,6 +43,7 @@ const PadGraphql: React.FC<PadGraphqlProps> = (props) => {
     externalId,
     hasSession,
     isResizing,
+    isLocalChange,
     isRTL,
     sessionIds,
     padId,
@@ -69,10 +71,8 @@ const PadGraphql: React.FC<PadGraphqlProps> = (props) => {
         title="pad"
         src={padURL}
         aria-describedby="padEscapeHint"
-        style={{
-          pointerEvents: isResizing ? 'none' : 'inherit',
-        }}
         amIPresenter={amIPresenter}
+        preventInteraction={isResizing && isLocalChange}
       />
       <Styled.Hint
         id="padEscapeHint"
@@ -90,6 +90,7 @@ const PadContainerGraphql: React.FC<PadContainerGraphqlProps> = (props) => {
     hasPermission,
     isRTL,
     isResizing,
+    isLocalChange,
     amIPresenter,
     isOnMediaArea = false,
   } = props;
@@ -121,6 +122,7 @@ const PadContainerGraphql: React.FC<PadContainerGraphqlProps> = (props) => {
       externalId={externalId}
       isRTL={isRTL}
       isResizing={isResizing}
+      isLocalChange={isLocalChange}
       sessionIds={Array.from(sessionIds)}
       padId={session?.sharedNotes?.padId}
       amIPresenter={amIPresenter}
