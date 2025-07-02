@@ -199,14 +199,23 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   };
 
   const syncTimeWithBackend = useCallback(() => {
-    const newTimeInMillis = (displayHours * MILLI_IN_HOUR)
-      + (displayMinutes * MILLI_IN_MINUTE)
-      + (displaySeconds * MILLI_IN_SECOND);
+    const h = displayHours;
+    const m = displayMinutes;
+    let s = displaySeconds;
+
+    if (!stopwatch && h === 0 && m === 0 && s === 0) {
+      s = 1;
+      setDisplaySeconds(1);
+    }
+
+    const newTimeInMillis = (h * MILLI_IN_HOUR)
+      + (m * MILLI_IN_MINUTE)
+      + (s * MILLI_IN_SECOND);
 
     if (newTimeInMillis !== time) {
       timerSetTime({ variables: { time: newTimeInMillis } });
     }
-  }, [displayHours, displayMinutes, displaySeconds, time, timerSetTime]);
+  }, [displayHours, displayMinutes, displaySeconds, time, timerSetTime, stopwatch]);
 
   const handleHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value || '0', 10);
@@ -524,6 +533,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
                   <Styled.TimerInput
                     type="number"
                     readOnly={running && !isEditing}
+                    disabled={running && !isEditing}
                     value={String(displayHours).padStart(2, '0')}
                     maxLength={2}
                     max={MAX_HOURS}
@@ -536,6 +546,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
                   <Styled.TimerInput
                     type="number"
                     readOnly={running && !isEditing}
+                    disabled={running && !isEditing}
                     value={String(displayMinutes).padStart(2, '0')}
                     maxLength={2}
                     max="59"
@@ -548,6 +559,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
                   <Styled.TimerInput
                     type="number"
                     readOnly={running && !isEditing}
+                    disabled={running && !isEditing}
                     value={String(displaySeconds).padStart(2, '0')}
                     maxLength={2}
                     max="59"
