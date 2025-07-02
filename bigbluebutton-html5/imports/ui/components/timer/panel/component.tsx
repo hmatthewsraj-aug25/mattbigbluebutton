@@ -501,10 +501,16 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
             </Styled.TimerCurrent>
           ) : (
             <Styled.TimeInputWrapper
-              onFocus={() => setIsEditing(true)}
+              onFocus={() => {
+                if (!running) {
+                  setIsEditing(true);
+                }
+              }}
               onBlur={() => {
-                setIsEditing(false);
-                syncTimeWithBackend();
+                if (!running) {
+                  setIsEditing(false);
+                  syncTimeWithBackend();
+                }
               }}
             >
               <Styled.IncrementDecrementButton
@@ -517,7 +523,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
                 <>
                   <Styled.TimerInput
                     type="number"
-                    disabled={running && !isEditing}
+                    readOnly={running && !isEditing}
                     value={String(displayHours).padStart(2, '0')}
                     maxLength={2}
                     max={MAX_HOURS}
@@ -529,7 +535,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
                   <Styled.TimeInputColon>:</Styled.TimeInputColon>
                   <Styled.TimerInput
                     type="number"
-                    disabled={running && !isEditing}
+                    readOnly={running && !isEditing}
                     value={String(displayMinutes).padStart(2, '0')}
                     maxLength={2}
                     max="59"
@@ -541,7 +547,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
                   <Styled.TimeInputColon>:</Styled.TimeInputColon>
                   <Styled.TimerInput
                     type="number"
-                    disabled={running && !isEditing}
+                    readOnly={running && !isEditing}
                     value={String(displaySeconds).padStart(2, '0')}
                     maxLength={2}
                     max="59"
