@@ -56,6 +56,7 @@ select_permissions:
         - published
         - publishedAt
         - questionText
+        - quiz
         - secret
         - type
       filter:

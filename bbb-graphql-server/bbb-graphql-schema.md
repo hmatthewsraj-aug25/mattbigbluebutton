@@ -413,6 +413,7 @@ Permission: Restricted to User Viewing Self-Related Data
 - `published`
 - `publishedAt`
 - `questionText`
+- `quiz`
 - `secret`
 - `type`
 ### Relationships:

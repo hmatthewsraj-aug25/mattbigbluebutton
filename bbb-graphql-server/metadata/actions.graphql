@@ -378,14 +378,17 @@ type Mutation {
     pollType: String!
     secretPoll: Boolean!
     question: String!
-    isMultipleResponse: Boolean!
+    multipleResponse: Boolean!
+    quiz: Boolean!
     answers: [String]
+    correctAnswer: String
   ): Boolean
 }
 
 type Mutation {
   pollPublishResult(
     pollId: String!
+    showAnswer: Boolean
   ): Boolean
 }
 
@@ -748,4 +751,3 @@ input AudioGroupParticipant {
   participantType: String!
   active: Boolean!
 }
-

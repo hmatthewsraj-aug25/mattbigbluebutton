@@ -1653,6 +1653,7 @@ CREATE UNLOGGED TABLE "poll" (
 "type" varchar(30),
 "secret" boolean,
 "multipleResponses" boolean,
+"quiz" boolean,
 "ended" boolean,
 "published" boolean,
 "publishedAt" timestamp with time zone,

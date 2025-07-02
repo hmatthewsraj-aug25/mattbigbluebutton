@@ -12,6 +12,7 @@ case class PollDbModel(
     pollType:          String,
     secret:            Boolean,
     multipleResponses: Boolean,
+    quiz:              Boolean,
     ended:             Boolean,
     published:         Boolean,
     publishedAt:       Option[java.sql.Timestamp]
@@ -25,10 +26,11 @@ class PollDbTableDef(tag: Tag) extends Table[PollDbModel](tag, None, "poll") {
   val pollType = column[String]("type")
   val secret = column[Boolean]("secret")
   val multipleResponses = column[Boolean]("multipleResponses")
+  val quiz = column[Boolean]("quiz")
   val ended = column[Boolean]("ended")
   val published = column[Boolean]("published")
   val publishedAt = column[Option[java.sql.Timestamp]]("publishedAt")
-  val * = (pollId, meetingId, ownerId, questionText, pollType, secret, multipleResponses, ended, published, publishedAt) <> (PollDbModel.tupled, PollDbModel.unapply)
+  val * = (pollId, meetingId, ownerId, questionText, pollType, secret, multipleResponses, quiz, ended, published, publishedAt) <> (PollDbModel.tupled, PollDbModel.unapply)
 }
 
 object PollDAO {
@@ -46,6 +48,7 @@ object PollDAO {
             pollType = question.questionType,
             secret = poll.isSecret,
             multipleResponses = question.multiResponse,
+            quiz = question.quiz,
             ended = false,
             published = false,
             publishedAt = None
