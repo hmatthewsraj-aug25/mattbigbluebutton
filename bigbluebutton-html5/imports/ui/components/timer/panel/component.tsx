@@ -106,6 +106,7 @@ const intlMessages = defineMessages({
 
 interface TimerPanelProps extends Omit<TimerData, 'active' | 'elapsed' | 'startedAt' | 'startedOn'| 'accumulated'> {
   timePassed: number;
+  isPaused: boolean;
 }
 
 const TimerPanel: React.FC<TimerPanelProps> = ({
@@ -114,6 +115,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   time,
   running,
   timePassed,
+  isPaused,
 }) => {
   const [timerReset] = useMutation(TIMER_RESET);
   const [timerStart] = useMutation(TIMER_START);
@@ -317,8 +319,6 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
       </Styled.TimerSongsWrapper>
     );
   }, [songTrack, stopwatch, running]);
-
-  const isPaused = !running && (stopwatch ? timePassed > 0 : timePassed < time);
 
   let controlButtons;
   if (running) {
@@ -547,6 +547,7 @@ const TimerPanelContaier: React.FC = () => {
     running,
     time,
     timePassed = 0,
+    startedAt,
   } = currentTimer;
 
   return (
@@ -556,6 +557,7 @@ const TimerPanelContaier: React.FC = () => {
       running={running}
       timePassed={timePassed}
       time={time}
+      isPaused={!running && startedAt !== null}
     />
   );
 };
