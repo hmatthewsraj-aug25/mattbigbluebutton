@@ -191,7 +191,7 @@ class LearningDashboardActor(
       case m: PollStartedEvtMsg                     => handlePollStartedEvtMsg(m)
       case m: UserRespondedToPollRecordMsg          => handleUserRespondedToPollRecordMsg(m)
       case m: PollShowResultEvtMsg                  => handlePollShowResultEvtMsg(m)
-      case m: PollStoppedEvtMsg                     => handlePollStoppedEvtMsg(m)
+//      case m: PollStoppedEvtMsg                     => handlePollStoppedEvtMsg(m)
 
       case _                          => // message not to be handled.
     }
