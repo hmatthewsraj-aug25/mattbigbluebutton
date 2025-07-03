@@ -957,19 +957,39 @@ class AudioManager {
     }, 'Audio stream has become inactive');
 
     if (stream === this.inputStream) {
+      const currentDeviceId = this.inputDeviceId ?? 'none';
+      const originalLabel = this.inputStream?.getAudioTracks()[0]?.label;
       this.inputStream = null;
 
-      // Reset the input device (and consequently the stream) if it's inactive
-      if (this.isUsingAudio()) {
-        this.liveChangeInputDevice(DEFAULT_INPUT_DEVICE_ID).catch((error) => {
-          logger.error({
-            logCode: 'audiomanager_stream_inactive_device_reset_failed',
-            extraInfo: {
-              errorName: error.name,
-              errorMessage: error.message,
-            },
-          }, `Failed to reset input device after stream became inactive: ${error.message}`);
-        });
+      if (this.isUsingAudio() && originalLabel) {
+        const checkDevice = async () => {
+          try {
+            await this.enumerateDevices();
+            const found = this.inputDevices.find(d => d.label === originalLabel);
+            // Abort if the device was manually changed
+            if (this.inputStream && this.inputDeviceId !== currentDeviceId) {
+              logger.info({ logCode: 'audiomanager_stream_changed' }, `Audio stream changed from ${currentDeviceId} to ${this.inputDeviceId}, abort waiting`);
+              return;
+            }
+            if (found && this.inputStream) {
+              // Reset the stream as the audio device ID is always 'default' between connections and the change won't be detected by the handler
+              this.inputStream.getTracks().forEach(track => track.stop());
+              this.inputStream = null;
+              await this.liveChangeInputDevice(DEFAULT_INPUT_DEVICE_ID);
+              logger.info({ logCode: 'audiomanager_stream_reconnected' }, `Reconnected to: ${originalLabel}, ${getStoredAudioInputDeviceId()}`);
+            } else {
+              // Change to the new reported default and try again because audio captions start generating on top of the new "default" named device
+              if (!this.inputStream) {
+                await this.liveChangeInputDevice(DEFAULT_INPUT_DEVICE_ID);
+                logger.info({ logCode: 'audiomanager_stream_fallback' }, 'Original device not present, using fallback');
+              }
+              setTimeout(checkDevice, 2000);
+            }
+          } catch (error) {
+            setTimeout(checkDevice, 2000);
+          }
+        };
+        setTimeout(checkDevice, 2000);
       }
     }
   }
