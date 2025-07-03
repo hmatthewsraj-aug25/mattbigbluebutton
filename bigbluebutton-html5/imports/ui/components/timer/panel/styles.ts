@@ -175,7 +175,7 @@ const TimerTrackItem = styled.div`
   ${TimerRow}
 `;
 
-const TimerInput = styled.input`
+const TimerInput = styled.input<{isSelected: boolean}>`
   background: none;
   border: none;
   border-bottom: 2px solid #e9e9ed;
@@ -199,6 +199,10 @@ const TimerInput = styled.input`
     outline: none;
     border-bottom: 2px solid ${colorPrimary};
   }
+  ${({ isSelected }) => (isSelected && `
+    outline: none;
+    border-bottom: 2px solid ${colorPrimary};   
+  `)};
 
   &:disabled,
   &[disabled] {

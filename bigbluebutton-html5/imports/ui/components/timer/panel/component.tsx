@@ -128,42 +128,18 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   const intl = useIntl();
   const layoutContextDispatch = layoutDispatch();
 
-  const [displayHours, setDisplayHours] = useState(0);
-  const [displayMinutes, setDisplayMinutes] = useState(0);
-  const [displaySeconds, setDisplaySeconds] = useState(0);
   const [focusedUnit, setFocusedUnit] = useState<'hours' | 'minutes' | 'seconds'>('seconds');
   const [lastSelectedTrack, setLastSelectedTrack] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const timeInSeconds = Math.max(0, Math.floor(timePassed / 1000));
+  const hours = Math.floor(timeInSeconds / 3600);
+  const minutes = Math.floor((timeInSeconds % 3600) / 60);
+  const seconds = timeInSeconds % 60;
 
   useEffect(() => {
     if (songTrack && songTrack !== 'noTrack') {
       setLastSelectedTrack(songTrack);
     }
   }, [songTrack]);
-
-  useEffect(() => {
-    const timeInSeconds = Math.floor(time / 1000);
-    const h = Math.floor(timeInSeconds / 3600);
-    const m = Math.floor((timeInSeconds % 3600) / 60);
-    const s = timeInSeconds % 60;
-
-    setDisplayHours(h);
-    setDisplayMinutes(m);
-    setDisplaySeconds(s);
-  }, [time]);
-
-  useEffect(() => {
-    if (running && !isEditing) {
-      const timeInSeconds = Math.max(0, Math.floor(timePassed / 1000));
-      const h = Math.floor(timeInSeconds / 3600);
-      const m = Math.floor((timeInSeconds % 3600) / 60);
-      const s = timeInSeconds % 60;
-
-      setDisplayHours(h);
-      setDisplayMinutes(m);
-      setDisplaySeconds(s);
-    }
-  }, [timePassed, running, isEditing]);
 
   const headerMessage = useMemo(() => {
     return stopwatch ? intlMessages.stopwatch : intlMessages.timer;
@@ -186,47 +162,52 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     }
   };
 
-  const syncTimeWithBackend = useCallback(() => {
-    const h = displayHours;
-    const m = displayMinutes;
-    let s = displaySeconds;
-
+  const syncTimeWithBackend = useCallback((h: number, m: number, s: number) => {
+    let valid_seconds = s;
     if (!stopwatch && h === 0 && m === 0 && s === 0) {
-      s = 1;
-      setDisplaySeconds(1);
+      valid_seconds = 1;
     }
 
     const newTimeInMillis = (h * MILLI_IN_HOUR)
       + (m * MILLI_IN_MINUTE)
-      + (s * MILLI_IN_SECOND);
+      + (valid_seconds * MILLI_IN_SECOND);
 
     if (newTimeInMillis !== time) {
       timerSetTime({ variables: { time: newTimeInMillis } });
+      if (isPaused) {
+        // The timer needs to be reset here because the time
+        // already passed has to be zero
+        timerReset();
+      }
     }
-  }, [displayHours, displayMinutes, displaySeconds, time, timerSetTime, stopwatch]);
+  }, [time, timerSetTime, stopwatch, isPaused]);
 
   const handleHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value || '0', 10);
     if (Number.isNaN(value)) return;
-    setDisplayHours(Math.max(0, Math.min(value, MAX_HOURS)));
+    const newHours = Math.max(0, Math.min(value, MAX_HOURS));
+    syncTimeWithBackend(newHours, minutes, seconds);
   };
 
   const handleMinutesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value || '0', 10);
     if (Number.isNaN(value)) return;
-    setDisplayMinutes(Math.max(0, Math.min(value, 59)));
+    const newMinutes = Math.max(0, Math.min(value, 59));
+    syncTimeWithBackend(hours, newMinutes, seconds);
   };
 
   const handleSecondsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value || '0', 10);
+    const hasHourOrMinutes = hours > 0 || minutes > 0;
+    const value = parseInt(event.target.value || (hasHourOrMinutes ? '0' : '1'), 10);
     if (Number.isNaN(value)) return;
-    setDisplaySeconds(Math.max(0, Math.min(value, 59)));
+    const newSeconds = Math.max(hasHourOrMinutes ? 0 : 1, Math.min(value, 59));
+    syncTimeWithBackend(hours, hours, newSeconds);
   };
 
   const changeTime = useCallback((amountInSeconds: number) => {
     if (running) return;
 
-    const currentTimeInSeconds = (displayHours * 3600) + (displayMinutes * 60) + displaySeconds;
+    const currentTimeInSeconds = (hours * 3600) + (minutes * 60) + seconds;
     let newTotalSeconds = currentTimeInSeconds + amountInSeconds;
 
     const maxSeconds = (MAX_HOURS * 3600) + (59 * 60) + 59;
@@ -236,10 +217,8 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     const m = Math.floor((newTotalSeconds % 3600) / 60);
     const s = newTotalSeconds % 60;
 
-    setDisplayHours(h);
-    setDisplayMinutes(m);
-    setDisplaySeconds(s);
-  }, [running, displayHours, displayMinutes, displaySeconds]);
+    syncTimeWithBackend(h, m, s);
+  }, [running, hours, minutes, seconds]);
 
   const handleIncrement = useCallback(() => {
     let incrementAmount = 1;
@@ -274,7 +253,6 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   const handleReset = useCallback(() => {
     timerStop();
     timerReset();
-    setIsEditing(false);
   }, [timerStop, timerReset]);
 
   const timerMusicOptions = useMemo(() => {
@@ -363,9 +341,9 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
           label={intl.formatMessage(intlMessages.start)}
           onClick={() => {
             if (!stopwatch) {
-              const newStartTime = (displayHours * MILLI_IN_HOUR)
-                + (displayMinutes * MILLI_IN_MINUTE)
-                + (displaySeconds * MILLI_IN_SECOND);
+              const newStartTime = (hours * MILLI_IN_HOUR)
+                + (minutes * MILLI_IN_MINUTE)
+                + (seconds * MILLI_IN_SECOND);
 
               if (newStartTime !== time) {
                 timerSetTime({ variables: { time: newStartTime } });
@@ -432,19 +410,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
               {humanizeSeconds(Math.floor(timePassed / 1000))}
             </Styled.TimerCurrent>
           ) : (
-            <Styled.TimeInputWrapper
-              onFocus={() => {
-                if (!running) {
-                  setIsEditing(true);
-                }
-              }}
-              onBlur={() => {
-                if (!running) {
-                  setIsEditing(false);
-                  syncTimeWithBackend();
-                }
-              }}
-            >
+            <Styled.TimeInputWrapper>
               <Styled.IncrementDecrementButton
                 color="primary"
                 label="-"
@@ -455,41 +421,44 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
                 <>
                   <Styled.TimerInput
                     type="number"
-                    readOnly={running && !isEditing}
-                    disabled={running && !isEditing}
-                    value={String(displayHours).padStart(2, '0')}
+                    readOnly={running}
+                    disabled={running}
+                    value={String(hours).padStart(2, '0')}
                     maxLength={2}
                     max={MAX_HOURS}
                     min="0"
                     onChange={handleHoursChange}
                     onFocus={() => setFocusedUnit('hours')}
                     data-test="hoursInput"
+                    isSelected={!running && focusedUnit === 'hours'}
                   />
                   <Styled.TimeInputColon>:</Styled.TimeInputColon>
                   <Styled.TimerInput
                     type="number"
-                    readOnly={running && !isEditing}
-                    disabled={running && !isEditing}
-                    value={String(displayMinutes).padStart(2, '0')}
+                    readOnly={running}
+                    disabled={running}
+                    value={String(minutes).padStart(2, '0')}
                     maxLength={2}
                     max="59"
                     min="0"
                     onChange={handleMinutesChange}
                     onFocus={() => setFocusedUnit('minutes')}
                     data-test="minutesInput"
+                    isSelected={!running && focusedUnit === 'minutes'}
                   />
                   <Styled.TimeInputColon>:</Styled.TimeInputColon>
                   <Styled.TimerInput
                     type="number"
-                    readOnly={running && !isEditing}
-                    disabled={running && !isEditing}
-                    value={String(displaySeconds).padStart(2, '0')}
+                    readOnly={running}
+                    disabled={running}
+                    value={String(seconds).padStart(2, '0')}
                     maxLength={2}
                     max="59"
                     min="0"
                     onChange={handleSecondsChange}
                     onFocus={() => setFocusedUnit('seconds')}
                     data-test="secondsInput"
+                    isSelected={!running && focusedUnit === 'seconds'}
                   />
                 </>
               </Styled.TimeInputGroup>
