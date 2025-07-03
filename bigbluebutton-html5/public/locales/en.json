@@ -441,6 +441,7 @@
     "app.poll.removePollOpt": "Removed Poll option {option}",
     "app.poll.emptyPollOpt": "Blank",
     "app.poll.quiz": "Quiz",
+    "app.poll.quiz.showCorrectAnswer": "Show correct answer",
     "app.poll.tabSelector.ariaLabel": "Quiz and Poll Tab Selector",
     "app.polling.pollingTitle": "Polling options",
     "app.polling.pollQuestionTitle": "Polling Question",

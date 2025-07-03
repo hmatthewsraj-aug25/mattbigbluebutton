@@ -612,7 +612,7 @@ const ShowCorrectAnswerLabel = styled.label`
   display: flex;
   align-items: center;
   font-size: ${fontSizeSmall};
-  margin-bottom: 0.2rem;
+  margin-bottom: 1rem;
 
   & > * {
     margin: 0 .5rem 0 0;

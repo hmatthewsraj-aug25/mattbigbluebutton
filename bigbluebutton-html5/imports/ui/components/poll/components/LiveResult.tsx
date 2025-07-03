@@ -78,6 +78,10 @@ const intlMessages = defineMessages({
     id: 'app.poll.abstention',
     description: 'Poll Abstention option value',
   },
+  showCorrectAnswerLabel: {
+    id: 'app.poll.quiz.showCorrectAnswer',
+    description: 'Label for checkbox to show correct answer in quiz poll',
+  },
 });
 
 interface LiveResultProps {
@@ -176,7 +180,7 @@ const LiveResult: React.FC<LiveResultProps> = ({
                 setShouldShowCorrectAnswers(e.target.checked);
               }}
             />
-            Show correct answer
+            {intl.formatMessage(intlMessages.showCorrectAnswerLabel)}
           </Styled.ShowCorrectAnswerLabel>
         )
       }
