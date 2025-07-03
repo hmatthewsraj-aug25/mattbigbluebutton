@@ -470,6 +470,8 @@ export interface Poll {
   maxTypedAnswerLength: number
   chatMessage: boolean
   quickPollConfirmationStep: boolean
+  quiz: boolean
+  correctAnswerMarker: string
 }
 
 export interface Captions {

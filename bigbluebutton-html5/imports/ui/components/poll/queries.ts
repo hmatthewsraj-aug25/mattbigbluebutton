@@ -15,6 +15,7 @@ export interface ResponseInfo {
 }
 
 export interface PollInfo {
+  quiz: boolean;
   published: boolean;
   pollId: string;
   secret: boolean;
@@ -61,6 +62,7 @@ subscription getCurrentPollData {
       questionText
       ended
       multipleResponses
+      quiz
       users {
         user {
           name

@@ -606,6 +606,23 @@ const TabSelectorWrapper = styled.div`
   margin-bottom: 1rem;
 `;
 
+const ShowCorrectAnswerLabel = styled.label`
+  font-size: ${fontSizeSmall};
+  font-weight: bolder;
+  display: flex;
+  align-items: center;
+  font-size: ${fontSizeSmall};
+  margin-bottom: 0.2rem;
+
+  & > * {
+    margin: 0 .5rem 0 0;
+
+    [dir="rtl"] & {
+      margin: 0 0 0 .5rem;
+    }
+  }
+`;
+
 export default {
   ToggleLabel,
   PollOptionInput,
@@ -660,4 +677,5 @@ export default {
   DndTextArea,
   CorrectAnswerCheckbox,
   TabSelectorWrapper,
+  ShowCorrectAnswerLabel,
 };

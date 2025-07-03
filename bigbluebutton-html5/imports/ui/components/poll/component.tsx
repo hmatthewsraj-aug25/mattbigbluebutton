@@ -235,6 +235,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   hasPoll,
 }) => {
   const POLL_SETTINGS = window.meetingClientSettings.public.poll;
+  const QUIZ_ENABLED = POLL_SETTINGS.quiz;
   const ALLOW_CUSTOM_INPUT = POLL_SETTINGS.allowCustomResponseInput;
   const MAX_CUSTOM_FIELDS = POLL_SETTINGS.maxCustom;
   const [stopPoll] = useMutation(POLL_CANCEL);
@@ -262,7 +263,9 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     pollType: string;
     question: string;
     secretPoll: boolean;
-    answers: string[]
+    answers: string[];
+    isQuiz: boolean;
+    correctAnswer: string;
   };
 
   useEffect(() => {
@@ -273,6 +276,8 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
         pollType,
         question,
         secretPoll,
+        isQuiz,
+        correctAnswer,
       } = quickPollVariables;
       const isCustom = pollType === pollTypes.Custom;
 
@@ -292,7 +297,11 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           ? pollTypes.Letter
           : pollType,
       );
-
+      setIsQuiz(isQuiz);
+      setCorrectAnswer({
+        text: correctAnswer ?? '',
+        index: answers.indexOf(correctAnswer) ?? -1,
+      });
       if (answers.length) {
         setOptList(answers.map((answer) => ({ val: answer })));
         return;
@@ -558,16 +567,27 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     if (hasPoll) return <LiveResultContainer />;
     return (
       <>
-        <QuizAndPollTabSelector
-          isQuiz={isQuiz}
-          onTabChange={(isQuiz: boolean) => {
-            setIsQuiz(isQuiz);
-            if (isQuiz) {
-              setIsMultipleResponse(false);
-              setSecretPoll(false);
-            }
-          }}
-        />
+        {
+          QUIZ_ENABLED && (
+            <QuizAndPollTabSelector
+              isQuiz={isQuiz}
+              onTabChange={(isQuiz: boolean) => {
+                setIsQuiz(isQuiz);
+                if (isQuiz) {
+                  setMultipleResponse(false);
+                  setSecretPoll(false);
+                  if (type === pollTypes.Response) {
+                    setType(pollTypes.TrueFalse);
+                    setOptList([
+                      { val: intl.formatMessage(intlMessages.true) },
+                      { val: intl.formatMessage(intlMessages.false) },
+                    ]);
+                  }
+                }
+              }}
+            />
+          )
+        }
         {
           ALLOW_CUSTOM_INPUT && (
             <Styled.CustomInputRow>
@@ -624,6 +644,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           type={type}
           setOptList={setOptList}
           setType={setType}
+          isQuiz={isQuiz}
         />
         <ResponseChoices
           type={type}

@@ -163,6 +163,8 @@ const ResponseArea: React.FC<ResponseAreaProps> = ({
           setError={setError}
           setIsPolling={setIsPolling}
           key="startPollButton"
+          isQuiz={isQuiz}
+          correctAnswerText={correctAnswer.text}
         />
       </Styled.ResponseArea>
     );

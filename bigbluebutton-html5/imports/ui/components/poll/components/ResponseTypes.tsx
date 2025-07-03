@@ -71,6 +71,7 @@ interface ResponseTypesProps {
   setType: (type: string | null) => void;
   type: string | null;
   setOptList: (optList: Array<{ val: string }>) => void;
+  isQuiz: boolean;
 }
 
 const ResponseTypes: React.FC<ResponseTypesProps> = ({
@@ -78,6 +79,7 @@ const ResponseTypes: React.FC<ResponseTypesProps> = ({
   setType,
   type,
   setOptList,
+  isQuiz,
 }) => {
   const intl = useIntl();
   if (!customInput) {
@@ -138,16 +140,20 @@ const ResponseTypes: React.FC<ResponseTypesProps> = ({
               ]);
             }}
           />
-          <Styled.PollConfigButton
-            selected={type === pollTypes.Response}
-            small={false}
-            full
-            label={intl.formatMessage(intlMessages.userResponse)}
-            aria-describedby="poll-config-button"
-            data-test="userResponseBtn"
-            color="default"
-            onClick={() => { setType(pollTypes.Response); }}
-          />
+          {
+            !isQuiz && (
+              <Styled.PollConfigButton
+                selected={type === pollTypes.Response}
+                small={false}
+                full
+                label={intl.formatMessage(intlMessages.userResponse)}
+                aria-describedby="poll-config-button"
+                data-test="userResponseBtn"
+                color="default"
+                onClick={() => { setType(pollTypes.Response); }}
+              />
+            )
+          }
         </Styled.ResponseType>
       </div>
     );

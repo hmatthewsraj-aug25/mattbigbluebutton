@@ -89,6 +89,7 @@ interface LiveResultProps {
   pollId: string;
   users: Array<UserInfo>;
   isSecret: boolean;
+  isQuiz: boolean;
 }
 
 const LiveResult: React.FC<LiveResultProps> = ({
@@ -100,6 +101,7 @@ const LiveResult: React.FC<LiveResultProps> = ({
   pollId,
   users,
   isSecret,
+  isQuiz,
 }) => {
   const CHAT_CONFIG = window.meetingClientSettings.public.chat;
   const PUBLIC_CHAT_KEY = CHAT_CONFIG.public_group_id;
@@ -107,13 +109,14 @@ const LiveResult: React.FC<LiveResultProps> = ({
   const intl = useIntl();
   const [pollPublishResult] = useMutation(POLL_PUBLISH_RESULT);
   const [stopPoll] = useMutation(POLL_CANCEL);
+  const [shouldShowCorrectAnswer, setShouldShowCorrectAnswers] = React.useState(false);
 
   const layoutContextDispatch = layoutDispatch();
-  const publishPoll = useCallback((pId: string) => {
+  const publishPoll = useCallback((pId: string, showAnswer: boolean) => {
     pollPublishResult({
       variables: {
         pollId: pId,
-        showAnswer: false,
+        showAnswer,
       },
     });
   }, []);
@@ -159,13 +162,31 @@ const LiveResult: React.FC<LiveResultProps> = ({
           </BarChart>
         </ResponsiveContainer>
       </Styled.Stats>
+      {
+        isQuiz && (
+          <Styled.ShowCorrectAnswerLabel
+            htmlFor="showCorrectAnswerCheckbox"
+            data-test="showCorrectAnswerCheckbox"
+          >
+            <input
+              id="showCorrectAnswerCheckbox"
+              type="checkbox"
+              checked={shouldShowCorrectAnswer}
+              onChange={(e) => {
+                setShouldShowCorrectAnswers(e.target.checked);
+              }}
+            />
+            Show correct answer
+          </Styled.ShowCorrectAnswerLabel>
+        )
+      }
       {numberOfAnswerCount >= 0
         ? (
           <Styled.ButtonsActions>
             <Styled.PublishButton
               onClick={() => {
                 Session.setItem('pollInitiated', false);
-                publishPoll(pollId);
+                publishPoll(pollId, shouldShowCorrectAnswer);
                 stopPoll();
                 layoutContextDispatch({
                   type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
@@ -294,6 +315,7 @@ const LiveResultContainer: React.FC = () => {
       animations={animations}
       pollId={pollId}
       users={users}
+      isQuiz={currentPoll.quiz}
     />
   );
 };
