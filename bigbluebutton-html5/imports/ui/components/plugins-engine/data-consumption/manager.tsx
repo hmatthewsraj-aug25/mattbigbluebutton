@@ -24,9 +24,10 @@ import { User } from '/imports/ui/Types/user';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
 import { Meeting } from '/imports/ui/Types/meeting';
 import MeetingHookContainer from './domain/meeting/from-core/hook-manager';
-import updateHookUsage from './utils';
+import { updateHookUsage } from './utils';
 import { ObjectToCustomQueryHookContainerMap, QueryHookWithArgumentContainerToRender, QueryHookWithArgumentsContainerProps } from './domain/shared/custom-query/types';
 import CustomQueryHookContainer from './domain/shared/custom-query/hook-manager';
+import CustomDataConsumptionHooksErrorBoundary from './error-boundary/handler';
 
 const hooksMap:{
   [key: string]: React.FunctionComponent<GeneralHookManagerProps>
@@ -182,11 +183,16 @@ const PluginDataConsumptionManager: React.FC = () => {
         SubscriptionHooksWithArgumentContainerToRun.map((hookWithArguments) => {
           const HookComponent = hookWithArguments.componentToRender;
           return (
-            <HookComponent
-              numberOfUses={hookWithArguments.numberOfUses}
-              key={makeCustomHookIdentifierFromArgs(hookWithArguments.hookArguments)}
-              hookArguments={hookWithArguments.hookArguments}
-            />
+            <CustomDataConsumptionHooksErrorBoundary
+              hookWithArguments={hookWithArguments}
+              dataConsumptionHook={DataConsumptionHooks.CUSTOM_SUBSCRIPTION}
+              setDataConsumptionHookWithArgumentUtilizationCount={setSubscriptionHookWithArgumentUtilizationCount}
+            >
+              <HookComponent
+                numberOfUses={hookWithArguments.numberOfUses}
+                hookArguments={hookWithArguments.hookArguments}
+              />
+            </CustomDataConsumptionHooksErrorBoundary>
           );
         })
       }
@@ -194,14 +200,20 @@ const PluginDataConsumptionManager: React.FC = () => {
         QueryHooksWithArgumentContainerToRun.map((hookWithArguments) => {
           const HookComponent = hookWithArguments.componentToRender;
           return (
-            <HookComponent
-              key={makeCustomHookIdentifierFromArgs(hookWithArguments.hookArguments)}
-              hookArguments={hookWithArguments.hookArguments}
-              resolveQuery={() => {
-                updateHookUsage(() => {}, () => {}, setQueryHookWithArgumentUtilizationCount,
-                  DataConsumptionHooks.CUSTOM_QUERY, -1, hookWithArguments.hookArguments);
-              }}
-            />
+            <CustomDataConsumptionHooksErrorBoundary
+              hookWithArguments={hookWithArguments}
+              dataConsumptionHook={DataConsumptionHooks.CUSTOM_QUERY}
+              setDataConsumptionHookWithArgumentUtilizationCount={setQueryHookWithArgumentUtilizationCount}
+            >
+              <HookComponent
+                key={makeCustomHookIdentifierFromArgs(hookWithArguments.hookArguments)}
+                hookArguments={hookWithArguments.hookArguments}
+                resolveQuery={() => {
+                  updateHookUsage(() => {}, () => {}, setQueryHookWithArgumentUtilizationCount,
+                    DataConsumptionHooks.CUSTOM_QUERY, -1, hookWithArguments.hookArguments);
+                }}
+              />
+            </CustomDataConsumptionHooksErrorBoundary>
           );
         })
       }

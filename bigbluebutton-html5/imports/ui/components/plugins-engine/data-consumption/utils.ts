@@ -11,20 +11,24 @@ import { ObjectToCustomQueryHookContainerMap } from './domain/shared/custom-quer
 import { ObjectToCustomHookContainerMap } from './types';
 
 const hookUsageSetStateCallback = (
-  mapObj: Map<string, Map<string, ObjectToCustomHookContainerMap>>,
+  removeEntry: boolean, mapObj: Map<string, Map<string, ObjectToCustomHookContainerMap>>,
   hookName: string, delta: number, hookArguments?: DataConsumptionArguments,
 ) => {
   if (hookArguments) {
     const hookArgumentsAsKey = makeCustomHookIdentifierFromArgs(hookArguments);
     // Create object from the hook with argument
-    const mapToBeSet = new Map<string, ObjectToCustomSubscriptionHookContainerMap>(mapObj.get(hookName)?.entries());
-    mapToBeSet.set(hookArgumentsAsKey, {
-      count: (mapObj.get(hookName)?.get(hookArgumentsAsKey)?.count || 0) + delta,
-      hookArguments,
-    } as ObjectToCustomSubscriptionHookContainerMap);
+    const mapToBeSet = new Map<string, ObjectToCustomHookContainerMap>(mapObj.get(hookName)?.entries());
+    if (removeEntry) {
+      mapToBeSet.delete(hookArgumentsAsKey);
+    } else {
+      mapToBeSet.set(hookArgumentsAsKey, {
+        count: (mapObj.get(hookName)?.get(hookArgumentsAsKey)?.count || 0) + delta,
+        hookArguments,
+      });
+    }
 
     // Create new map with argument
-    const newMap = new Map<string, Map<string, ObjectToCustomSubscriptionHookContainerMap>>(mapObj.entries());
+    const newMap = new Map<string, Map<string, ObjectToCustomHookContainerMap>>(mapObj.entries());
     newMap.set(hookName, mapToBeSet);
     return newMap;
   } return mapObj;
@@ -47,13 +51,23 @@ const updateHookUsage = (
     });
   } else if (hookName === DataConsumptionHooks.CUSTOM_QUERY) {
     setQueryHookWithArgumentUtilizationCount((mapObj) => hookUsageSetStateCallback(
-      mapObj, hookName, delta, hookArguments,
+      false, mapObj, hookName, delta, hookArguments,
     ));
   } else {
     setSubscriptionHookWithArgumentUtilizationCount((mapObj) => hookUsageSetStateCallback(
-      mapObj, hookName, delta, hookArguments,
+      false, mapObj, hookName, delta, hookArguments,
     ));
   }
 };
 
-export default updateHookUsage;
+const deleteSubscriptionHookEntry = (
+  setDataConsumptionHookWithArgumentUtilizationCount: React.Dispatch<
+    React.SetStateAction<Map<string, Map<string, ObjectToCustomSubscriptionHookContainerMap>>>>,
+  hookName: string, hookArguments?: DataConsumptionArguments,
+) => {
+  setDataConsumptionHookWithArgumentUtilizationCount((mapObj) => hookUsageSetStateCallback(
+    true, mapObj, hookName, 0, hookArguments,
+  ));
+};
+
+export { updateHookUsage, deleteSubscriptionHookEntry };

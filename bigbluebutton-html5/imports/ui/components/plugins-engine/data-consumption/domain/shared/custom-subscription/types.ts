@@ -5,7 +5,6 @@ import React from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SubscriptionHookWithArgumentsContainerProps {
-  key: string;
   numberOfUses: number;
   hookArguments: CustomSubscriptionArguments;
 }
