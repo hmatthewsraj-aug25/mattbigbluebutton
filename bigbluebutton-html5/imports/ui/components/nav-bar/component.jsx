@@ -174,7 +174,7 @@ class NavBar extends Component {
     if (breakoutNum && breakoutNum > 0) {
       if (breakoutName && meetingName) {
         const defaultBreakoutName = intl.formatMessage(intlMessages.defaultBreakoutName, {
-          0: breakoutNum,
+          roomNumber: breakoutNum,
         });
 
         if (breakoutName === defaultBreakoutName) {

@@ -81,7 +81,7 @@ const UserListParticipants: React.FC<UserListParticipantsProps> = ({
   return (
     (
       <Styled.UserListColumn
-      // @ts-ignore
+        // @ts-ignore
         onKeyDown={rove}
         tabIndex={0}
         ref={userListRef}
@@ -131,7 +131,7 @@ const UserListParticipantsContainer: React.FC<UserListParticipantsContainerProps
   return (
     <>
       <UserListParticipants
-        count={count}
+        count={count ?? 0}
       />
     </>
   );

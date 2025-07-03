@@ -426,6 +426,7 @@ exports.userBannedMessage2 = 'div[id="app"] >> div >> div:nth-child(2)';
 exports.meetingEndedModalTitle = 'div[data-test="meetingEndedModal"]';
 exports.unmuteUser = 'li[data-test="unmuteUser"]';
 exports.ejectCamera = 'li[data-test="ejectCamera"]';
+exports.clearStatus = 'li[data-test="clearStatus"]';
 
 // Lock Viewers
 exports.lockViewersButton = 'button[data-test="lockViewersButton"]';
@@ -492,13 +493,13 @@ exports.wbLayer = 'div[data-testid="layer"]';
 exports.wbToolbar = 'div[class^="tlui-toolbar__tools tlui-toolbar__tools__mobile"]';
 exports.wbShapesButton = 'button[data-testid="tools.more"]';
 exports.wbHandButton = 'button[data-testid="tools.hand"]';
-exports.wbRectangleShape = 'button[data-testid="tools.more.rectangle"]';
+exports.wbRectangleShape = 'button[data-testid$=".rectangle"]';
 exports.wbEllipseShape = 'button[data-testid="tools.more.ellipse"]';
 exports.wbTriangleShape = 'button[data-testid="tools.more.triangle"]';
 exports.wbLineShape = 'button[data-testid="tools.more.line"]';
 exports.wbPencilShape = 'button[data-testid="tools.draw"]';
 exports.wbStickyNoteShape = 'button[data-testid="tools.note"]';
-exports.wbTextShape = 'button[data-testid="tools.text"]';
+exports.wbTextShape = 'button[data-testid$=".text"]';
 exports.wbTypedText = 'div[data-shape="text"]';
 exports.wbTypedStickyNote = 'div[data-shape-type="note"]';
 exports.wbDrawnShape = 'div[data-shape-type="geo"]';

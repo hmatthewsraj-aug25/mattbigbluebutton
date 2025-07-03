@@ -98,7 +98,7 @@ const JoinVideoButton: React.FC<JoinVideoButtonProps> = ({
 
   const [propsToPassModal, setPropsToPassModal] = useState<{ isVisualEffects?: boolean }>({});
   const [forceOpen, setForceOpen] = useState(false);
-  const [isVideoPreviewModalOpen, setVideoPreviewModalIsOpen] = useState(false);
+  const [isVideoPreviewModalOpen, setIsVideoPreviewModalOpen] = useState(false);
   const [wasSelfViewDisabled, setWasSelfViewDisabled] = useState(false);
 
   useEffect(() => {
@@ -127,7 +127,7 @@ const JoinVideoButton: React.FC<JoinVideoButtonProps> = ({
           exit();
         } else {
           setForceOpen(isMobileSharingCamera);
-          setVideoPreviewModalIsOpen(true);
+          setIsVideoPreviewModalOpen(true);
         }
     }
   }, JOIN_VIDEO_DELAY_MILLISECONDS);
@@ -135,7 +135,7 @@ const JoinVideoButton: React.FC<JoinVideoButtonProps> = ({
   const handleOpenAdvancedOptions = (callback?: () => void) => {
     if (callback) callback();
     setForceOpen(isDesktopSharingCamera);
-    setVideoPreviewModalIsOpen(true);
+    setIsVideoPreviewModalOpen(true);
   };
 
   const getMessageFromStatus = () => {
@@ -257,7 +257,7 @@ const JoinVideoButton: React.FC<JoinVideoButtonProps> = ({
             },
             forceOpen,
             priority: 'low',
-            setIsOpen: setVideoPreviewModalIsOpen,
+            setIsOpen: setIsVideoPreviewModalOpen,
             isOpen: isVideoPreviewModalOpen,
           }}
           isVisualEffects={propsToPassModal.isVisualEffects}

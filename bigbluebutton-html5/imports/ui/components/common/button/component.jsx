@@ -78,12 +78,12 @@ const propTypes = {
    * Optional SVG / html object can be passed to the button as an icon
    * Has to be styled before being sent to the Button
    * (e.g width, height, position and percentage-based object's coordinates)
-   * @defaultvalue undefined
+   * @defaultValue undefined
    */
   customIcon: PropTypes.node,
 
   /**
-   * Defines the buttom loading state
+   * Defines the button loading state
    * @defaultValue false
    */
   loading: PropTypes.bool,
@@ -93,6 +93,13 @@ const propTypes = {
   * @defaultValue undefined
   */
   hovercolor: PropTypes.string,
+  
+  /**
+   * Defines a data-test attribute for testing purposes
+   * @type {string}
+   * @defaultValue ''
+   */
+  dataTest: PropTypes.string,
 };
 
 const defaultProps = {
@@ -106,6 +113,7 @@ const defaultProps = {
   hideLabel: false,
   tooltipLabel: '',
   loading: false,
+  dataTest: '',
 };
 
 export default class Button extends BaseButton {
@@ -179,6 +187,7 @@ export default class Button extends BaseButton {
       block,
       loading,
       hoverColor,
+      dataTest,
       ...otherProps
     } = this.props;
 
@@ -195,6 +204,7 @@ export default class Button extends BaseButton {
         iconRight={iconRight}
         loading={loading}
         hoverColor={hoverColor}
+        data-test={dataTest}
         {...remainingProps}
       >
         {this.renderIcon()}
@@ -215,6 +225,7 @@ export default class Button extends BaseButton {
       block,
       loading,
       hoverColor,
+      dataTest,
       ...otherProps
     } = this.props;
 
@@ -231,6 +242,7 @@ export default class Button extends BaseButton {
         circle={circle}
         block={block}
         loading={loading}
+        data-test={dataTest}
         animations={animations}
         {...remainingProps}
       >

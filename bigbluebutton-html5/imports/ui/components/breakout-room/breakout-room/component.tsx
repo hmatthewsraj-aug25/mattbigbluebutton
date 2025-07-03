@@ -213,8 +213,8 @@ const BreakoutRoom: React.FC<BreakoutRoomProps> = ({
           showChangeTimeForm={showChangeTimeForm}
           isModerator={isModerator}
           durationInSeconds={durationInSeconds}
-          toggleShowChangeTimeForm={setShowChangeTimeForm}
           createdTime={createdTime}
+          toggleShowChangeTimeForm={setShowChangeTimeForm}
         />
         {isModerator ? <BreakoutMessageForm /> : null}
         {isModerator ? <Styled.Separator /> : null}
@@ -231,7 +231,7 @@ const BreakoutRoom: React.FC<BreakoutRoomProps> = ({
                   <Styled.BreakoutRoomList key={`breakoutRoomList-${breakout.breakoutRoomId}`}>
                     <Styled.BreakoutRoomListNameLabel data-test={breakout.shortName} aria-hidden>
                       {breakout.isDefaultName
-                        ? intl.formatMessage(intlMessages.breakoutRoom, { 0: breakout.sequence })
+                        ? intl.formatMessage(intlMessages.breakoutRoom, { roomNumber: breakout.sequence })
                         : breakout.shortName}
                       <Styled.UsersAssignedNumberLabel>
                         (
