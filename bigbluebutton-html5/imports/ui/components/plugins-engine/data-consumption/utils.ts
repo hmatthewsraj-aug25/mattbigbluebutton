@@ -60,7 +60,7 @@ const updateHookUsage = (
   }
 };
 
-const deleteSubscriptionHookEntry = (
+const deleteDataConsumptionHookEntry = (
   setDataConsumptionHookWithArgumentUtilizationCount: React.Dispatch<
     React.SetStateAction<Map<string, Map<string, ObjectToCustomSubscriptionHookContainerMap>>>>,
   hookName: string, hookArguments?: DataConsumptionArguments,
@@ -70,4 +70,4 @@ const deleteSubscriptionHookEntry = (
   ));
 };
 
-export { updateHookUsage, deleteSubscriptionHookEntry };
+export { updateHookUsage, deleteDataConsumptionHookEntry };

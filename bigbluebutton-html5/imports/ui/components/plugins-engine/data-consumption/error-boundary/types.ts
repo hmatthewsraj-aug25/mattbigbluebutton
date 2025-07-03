@@ -11,19 +11,3 @@ export interface CustomDataConsumptionHooksErrorBoundaryProps {
       >>>>,
   children: React.ReactNode;
 }
-
-export interface ErrorInformation {
-  errorMessage: string;
-  errorCode: string;
-  dataConsumptionInformation: {
-    query: string,
-    variables?: object,
-  }
-}
-
-export interface DataConsumptionFallbackHandlerProps {
-  errorInformation: ErrorInformation;
-  hook: DataConsumptionHooks;
-  setDataConsumptionHookWithArgumentUtilizationCount: React.Dispatch<
-    React.SetStateAction<Map<string, Map<string, ObjectToCustomSubscriptionHookContainerMap>>>>;
-}
