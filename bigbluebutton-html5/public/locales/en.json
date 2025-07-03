@@ -440,6 +440,8 @@
     "app.poll.liveResult.secretLabel": "This is an anonymous poll. Individual responses are not shown.",
     "app.poll.removePollOpt": "Removed Poll option {option}",
     "app.poll.emptyPollOpt": "Blank",
+    "app.poll.quiz": "Quiz",
+    "app.poll.tabSelector.ariaLabel": "Quiz and Poll Tab Selector",
     "app.polling.pollingTitle": "Polling options",
     "app.polling.pollQuestionTitle": "Polling Question",
     "app.polling.submitLabel": "Submit",

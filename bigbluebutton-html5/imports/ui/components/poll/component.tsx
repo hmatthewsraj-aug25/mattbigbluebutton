@@ -21,6 +21,7 @@ import LiveResultContainer from './components/LiveResult';
 import Session from '/imports/ui/services/storage/in-memory';
 import SessionStorage from '/imports/ui/services/storage/session';
 import { useStorageKey } from '../../services/storage/hooks';
+import QuizAndPollTabSelector from './components/QuizAndPollTabSelector';
 
 const intlMessages = defineMessages({
   pollPaneTitle: {
@@ -241,6 +242,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   const intl = useIntl();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [customInput, setCustomInput] = React.useState(false);
+  const [isQuiz, setIsQuiz] = React.useState(false);
   const [question, setQuestion] = useState<string[] | string>('');
   const [questionAndOptions, setQuestionAndOptions] = useState<string[] | string>('');
   const [optList, setOptList] = useState<Array<{val: string}>>([]);
@@ -250,6 +252,10 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   const [warning, setWarning] = useState<string | null>('');
   const [isPasting, setIsPasting] = useState(false);
   const [type, setType] = useState<string | null>('');
+  const [correctAnswer, setCorrectAnswer] = useState<{
+    text: string;
+    index: number;
+  }>({ text: '', index: -1 });
 
   const quickPollVariables = useStorageKey('quickPollVariables') as {
     multipleResponse: boolean;
@@ -409,6 +415,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     const caretStart = e.target.selectionStart ?? 0;
     const caretEnd = e.target.selectionEnd ?? 0;
     let questionAndOptionsList: string[] = [];
+    const oldValue = list[index]?.val;
     list[index] = { val: validatedVal };
 
     if (questionAndOptions.length > 0) {
@@ -420,6 +427,24 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     setQuestionAndOptions(questionAndOptionsList.length > 0
       ? questionAndOptionsList.join('\n') : '');
     setError(clearError ? null : error);
+
+    if (
+      // should be the same index to avoid duplicate answers
+      correctAnswer.index === index
+      // Validated value should not be empty
+      // and correct answer should match the old value
+      && (validatedVal && correctAnswer.text === oldValue)) {
+      setCorrectAnswer({
+        text: validatedVal,
+        index,
+      });
+      // if the correct answer is empty should be invalidated
+    } else if (correctAnswer.index === index && validatedVal === '') {
+      setCorrectAnswer({
+        text: '',
+        index: -1,
+      });
+    }
 
     input.focus();
     input.selectionStart = caretStart - charsRemovedCount;
@@ -533,6 +558,16 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     if (hasPoll) return <LiveResultContainer />;
     return (
       <>
+        <QuizAndPollTabSelector
+          isQuiz={isQuiz}
+          onTabChange={(isQuiz: boolean) => {
+            setIsQuiz(isQuiz);
+            if (isQuiz) {
+              setIsMultipleResponse(false);
+              setSecretPoll(false);
+            }
+          }}
+        />
         {
           ALLOW_CUSTOM_INPUT && (
             <Styled.CustomInputRow>
@@ -612,6 +647,9 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           handleRemoveOption={handleRemoveOption}
           customInput={customInput}
           questionAndOptions={questionAndOptions}
+          isQuiz={isQuiz}
+          correctAnswer={correctAnswer}
+          setCorrectAnswer={setCorrectAnswer}
         />
       </>
     );

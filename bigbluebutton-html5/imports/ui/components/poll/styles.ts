@@ -352,6 +352,7 @@ const Question = styled.div`
 const OptionWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const ResponseArea = styled.div`
@@ -540,6 +541,7 @@ const ButtonsActions = styled.div`
   display: flex;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
 `;
 
 // @ts-ignore - Button is a JS Component
@@ -588,6 +590,20 @@ const DndTextArea = styled.textarea<{ active: boolean }>`
   ${({ active }) => !active && `
     background: ${colorWhite};
   `}
+`;
+
+const CorrectAnswerCheckbox = styled.input`
+  width: 1.5rem;
+  height: 1.5rem;
+`;
+
+const TabSelectorWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
 `;
 
 export default {
@@ -642,4 +658,6 @@ export default {
   Separator,
   THeading,
   DndTextArea,
+  CorrectAnswerCheckbox,
+  TabSelectorWrapper,
 };

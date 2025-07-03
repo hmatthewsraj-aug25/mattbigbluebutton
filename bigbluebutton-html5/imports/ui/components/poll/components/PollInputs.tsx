@@ -28,6 +28,12 @@ interface PollInputsProps {
   handleRemoveOption: (i: number) => void;
   type: string | null;
   error: string | null;
+  isQuiz: boolean;
+  correctAnswer: {
+    text: string;
+    index: number;
+  };
+  setCorrectAnswer: (param: {text: string, index: number }) => void;
 }
 
 const PollInputs: React.FC<PollInputsProps> = ({
@@ -36,6 +42,9 @@ const PollInputs: React.FC<PollInputsProps> = ({
   handleRemoveOption,
   type,
   error,
+  isQuiz,
+  correctAnswer,
+  setCorrectAnswer,
 }) => {
   const POLL_SETTINGS = window.meetingClientSettings.public.poll;
   const MAX_CUSTOM_FIELDS = POLL_SETTINGS.maxCustom;
@@ -60,6 +69,22 @@ const PollInputs: React.FC<PollInputsProps> = ({
             onCut={(e) => { e.stopPropagation(); }}
             onCopy={(e) => { e.stopPropagation(); }}
           />
+          {isQuiz && (
+            <Styled.CorrectAnswerCheckbox
+              type="checkbox"
+              id={`correct-answer-${i}`}
+              checked={correctAnswer.index === i && correctAnswer.text === o.val}
+              disabled={o.val.length === 0}
+              onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
+                if (ev.target.checked) {
+                  setCorrectAnswer({
+                    text: o.val,
+                    index: i,
+                  });
+                }
+              }}
+            />
+          )}
           {optList.length > MIN_OPTIONS_LENGTH && (
             <Styled.DeletePollOptionButton
               label={intl.formatMessage(intlMessages.delete)}
