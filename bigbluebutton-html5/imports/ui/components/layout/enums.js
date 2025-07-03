@@ -3,6 +3,9 @@ export const LAYOUT_TYPE = {
   SMART_LAYOUT: 'smart',
   PRESENTATION_FOCUS: 'presentationFocus',
   VIDEO_FOCUS: 'videoFocus',
+  CUSTOM_2X8: 'custom2x8', // 2 большие сверху, 8 маленьких снизу
+  CUSTOM_1X8: 'custom1x8', // 1 большая сверху, 8 маленьких снизу
+  CUSTOM_CENTER_6_4: 'customCenter6_4', // центр большая, снизу 6, справа 4
 };
 
 export const DEVICE_TYPE = {

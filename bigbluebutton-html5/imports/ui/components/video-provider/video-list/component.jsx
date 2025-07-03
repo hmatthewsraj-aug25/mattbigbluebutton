@@ -297,10 +297,216 @@ class VideoList extends Component {
       swapLayout,
       handleVideoFocus,
       focusedId,
+      layoutType,
+      pinnedUsers = [], // массив закрепленных пользователей для больших окон
     } = this.props;
     const numOfStreams = streams.length;
-
     let videoItems = streams;
+
+    // Кастомная раскладка: 2 большие сверху, 8 маленьких снизу
+    if (layoutType === 'custom2x8') {
+      // pinnedUsers: [userId1, userId2] — кто в больших окнах
+      const bigUsers = pinnedUsers.slice(0, 2);
+      const smallUsers = videoItems.filter(item => !bigUsers.includes(item.userId)).slice(0, 8);
+      const bigItems = videoItems.filter(item => bigUsers.includes(item.userId));
+      // Остальные — на следующий ряд (overflow)
+      const overflow = videoItems.filter(item => !bigUsers.includes(item.userId)).slice(8);
+      return (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+            {bigItems.map(item => (
+              <Styled.VideoListItem key={item.userId} style={{ flex: 1, minWidth: 0, minHeight: 180, maxWidth: 320 }}>
+                <VideoListItemContainer
+                  {...item}
+                  numOfStreams={numOfStreams}
+                  focused={false}
+                  swapLayout={swapLayout}
+                  onHandleVideoFocus={handleVideoFocus}
+                  onVideoItemMount={onVideoItemMount}
+                  onVideoItemUnmount={onVideoItemUnmount}
+                  onVirtualBgDrop={onVirtualBgDrop}
+                />
+              </Styled.VideoListItem>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {smallUsers.map(item => (
+              <Styled.VideoListItem key={item.userId} style={{ width: 120, minHeight: 90, margin: 2 }}>
+                <VideoListItemContainer
+                  {...item}
+                  numOfStreams={numOfStreams}
+                  focused={false}
+                  swapLayout={swapLayout}
+                  onHandleVideoFocus={handleVideoFocus}
+                  onVideoItemMount={onVideoItemMount}
+                  onVideoItemUnmount={onVideoItemUnmount}
+                  onVirtualBgDrop={onVirtualBgDrop}
+                />
+              </Styled.VideoListItem>
+            ))}
+          </div>
+          {overflow.length > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', marginTop: 8 }}>
+              {overflow.map(item => (
+                <Styled.VideoListItem key={item.userId} style={{ width: 120, minHeight: 90, margin: 2, opacity: 0.7 }}>
+                  <VideoListItemContainer
+                    {...item}
+                    numOfStreams={numOfStreams}
+                    focused={false}
+                    swapLayout={swapLayout}
+                    onHandleVideoFocus={handleVideoFocus}
+                    onVideoItemMount={onVideoItemMount}
+                    onVideoItemUnmount={onVideoItemUnmount}
+                    onVirtualBgDrop={onVirtualBgDrop}
+                  />
+                </Styled.VideoListItem>
+              ))}
+            </div>
+          )}
+        </>
+      );
+    }
+    // Кастомная раскладка: 1 большая сверху, 8 маленьких снизу
+    if (layoutType === 'custom1x8') {
+      const bigUser = pinnedUsers[0];
+      const bigItem = videoItems.find(item => item.userId === bigUser);
+      const smallUsers = videoItems.filter(item => item.userId !== bigUser).slice(0, 8);
+      const overflow = videoItems.filter(item => item.userId !== bigUser).slice(8);
+      return (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+            {bigItem && (
+              <Styled.VideoListItem key={bigItem.userId} style={{ flex: 1, minWidth: 0, minHeight: 180, maxWidth: 320 }}>
+                <VideoListItemContainer
+                  {...bigItem}
+                  numOfStreams={numOfStreams}
+                  focused={false}
+                  swapLayout={swapLayout}
+                  onHandleVideoFocus={handleVideoFocus}
+                  onVideoItemMount={onVideoItemMount}
+                  onVideoItemUnmount={onVideoItemUnmount}
+                  onVirtualBgDrop={onVirtualBgDrop}
+                />
+              </Styled.VideoListItem>
+            )}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {smallUsers.map(item => (
+              <Styled.VideoListItem key={item.userId} style={{ width: 120, minHeight: 90, margin: 2 }}>
+                <VideoListItemContainer
+                  {...item}
+                  numOfStreams={numOfStreams}
+                  focused={false}
+                  swapLayout={swapLayout}
+                  onHandleVideoFocus={handleVideoFocus}
+                  onVideoItemMount={onVideoItemMount}
+                  onVideoItemUnmount={onVideoItemUnmount}
+                  onVirtualBgDrop={onVirtualBgDrop}
+                />
+              </Styled.VideoListItem>
+            ))}
+          </div>
+          {overflow.length > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', marginTop: 8 }}>
+              {overflow.map(item => (
+                <Styled.VideoListItem key={item.userId} style={{ width: 120, minHeight: 90, margin: 2, opacity: 0.7 }}>
+                  <VideoListItemContainer
+                    {...item}
+                    numOfStreams={numOfStreams}
+                    focused={false}
+                    swapLayout={swapLayout}
+                    onHandleVideoFocus={handleVideoFocus}
+                    onVideoItemMount={onVideoItemMount}
+                    onVideoItemUnmount={onVideoItemUnmount}
+                    onVirtualBgDrop={onVirtualBgDrop}
+                  />
+                </Styled.VideoListItem>
+              ))}
+            </div>
+          )}
+        </>
+      );
+    }
+    // Кастомная раскладка: центр большая, снизу 6, справа 4
+    if (layoutType === 'customCenter6_4') {
+      const bigUser = pinnedUsers[0];
+      const bigItem = videoItems.find(item => item.userId === bigUser);
+      const bottomUsers = videoItems.filter(item => item.userId !== bigUser).slice(0, 6);
+      const rightUsers = videoItems.filter(item => item.userId !== bigUser).slice(6, 10);
+      const overflow = videoItems.filter(item => item.userId !== bigUser).slice(10);
+      return (
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', minHeight: 320 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {bigItem && (
+                <Styled.VideoListItem key={bigItem.userId} style={{ minWidth: 220, minHeight: 220, maxWidth: 400 }}>
+                  <VideoListItemContainer
+                    {...bigItem}
+                    numOfStreams={numOfStreams}
+                    focused={false}
+                    swapLayout={swapLayout}
+                    onHandleVideoFocus={handleVideoFocus}
+                    onVideoItemMount={onVideoItemMount}
+                    onVideoItemUnmount={onVideoItemUnmount}
+                    onVirtualBgDrop={onVirtualBgDrop}
+                  />
+                </Styled.VideoListItem>
+              )}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
+              {bottomUsers.map(item => (
+                <Styled.VideoListItem key={item.userId} style={{ width: 110, minHeight: 80, margin: 2 }}>
+                  <VideoListItemContainer
+                    {...item}
+                    numOfStreams={numOfStreams}
+                    focused={false}
+                    swapLayout={swapLayout}
+                    onHandleVideoFocus={handleVideoFocus}
+                    onVideoItemMount={onVideoItemMount}
+                    onVideoItemUnmount={onVideoItemUnmount}
+                    onVirtualBgDrop={onVirtualBgDrop}
+                  />
+                </Styled.VideoListItem>
+              ))}
+            </div>
+          </div>
+          <div style={{ width: 140, display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 8 }}>
+            {rightUsers.map(item => (
+              <Styled.VideoListItem key={item.userId} style={{ width: 120, minHeight: 80, margin: 2 }}>
+                <VideoListItemContainer
+                  {...item}
+                  numOfStreams={numOfStreams}
+                  focused={false}
+                  swapLayout={swapLayout}
+                  onHandleVideoFocus={handleVideoFocus}
+                  onVideoItemMount={onVideoItemMount}
+                  onVideoItemUnmount={onVideoItemUnmount}
+                  onVirtualBgDrop={onVirtualBgDrop}
+                />
+              </Styled.VideoListItem>
+            ))}
+          </div>
+          {overflow.length > 0 && (
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, display: 'flex', justifyContent: 'center', flexWrap: 'wrap', marginTop: 8 }}>
+              {overflow.map(item => (
+                <Styled.VideoListItem key={item.userId} style={{ width: 110, minHeight: 80, margin: 2, opacity: 0.7 }}>
+                  <VideoListItemContainer
+                    {...item}
+                    numOfStreams={numOfStreams}
+                    focused={false}
+                    swapLayout={swapLayout}
+                    onHandleVideoFocus={handleVideoFocus}
+                    onVideoItemMount={onVideoItemMount}
+                    onVideoItemUnmount={onVideoItemUnmount}
+                    onVirtualBgDrop={onVirtualBgDrop}
+                  />
+                </Styled.VideoListItem>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
 
     return videoItems.map((item) => {
       const { userId, name } = item;

@@ -80,6 +80,21 @@ const LayoutModalComponent = (props) => {
       id: 'app.layout.modal.layoutBtnDesc',
       description: 'label for singular layout',
     },
+    custom2x8Layout: {
+      id: 'app.layout.style.custom2x8',
+      description: 'label for custom 2x8 layout',
+      defaultMessage: '2x8 (2 large top, 8 small bottom)',
+    },
+    custom1x8Layout: {
+      id: 'app.layout.style.custom1x8',
+      description: 'label for custom 1x8 layout',
+      defaultMessage: '1x8 (1 large top, 8 small bottom)',
+    },
+    customCenter6_4Layout: {
+      id: 'app.layout.style.customCenter6_4',
+      description: 'label for custom center 6+4 layout',
+      defaultMessage: 'Center 6+4 (center large, 6 bottom, 4 right)',
+    },
   });
 
   const handleSwitchLayout = (e) => {
@@ -121,9 +136,16 @@ const LayoutModalComponent = (props) => {
     return null;
   };
 
+  const customLayouts = [
+    LAYOUT_TYPE.CUSTOM_2X8,
+    LAYOUT_TYPE.CUSTOM_1X8,
+    LAYOUT_TYPE.CUSTOM_CENTER_6_4,
+  ];
+
   const renderLayoutButtons = () => (
     <Styled.ButtonsContainer>
-      {Object.values(LAYOUT_TYPE)
+      {[...Object.values(LAYOUT_TYPE), ...customLayouts]
+        .filter((layout, idx, arr) => arr.indexOf(layout) === idx) // avoid duplicates
         .map((layout) => (
           <Styled.ButtonLayoutContainer key={layout}>
             <Styled.LayoutBtn
@@ -136,7 +158,7 @@ const LayoutModalComponent = (props) => {
                 )}
               onClick={() => {
                 handleSwitchLayout(layout);
-                if (layout === LAYOUT_TYPE.CUSTOM_LAYOUT && application.selectedLayout !== layout) {
+                if ((layout === LAYOUT_TYPE.CUSTOM_LAYOUT || customLayouts.includes(layout)) && application.selectedLayout !== layout) {
                   document.getElementById('layout')?.setAttribute('data-cam-position', CAMERADOCK_POSITION.CONTENT_TOP);
                 }
               }}
@@ -144,7 +166,7 @@ const LayoutModalComponent = (props) => {
               aria-describedby="layout-btn-desc"
               data-test={`${layout}Layout`}
             />
-            <Styled.LabelLayoutNames aria-hidden>{intl.formatMessage(intlMessages[`${layout}Layout`])}</Styled.LabelLayoutNames>
+            <Styled.LabelLayoutNames aria-hidden>{intl.formatMessage(intlMessages[`${layout}Layout`] || {id: layout})}</Styled.LabelLayoutNames>
           </Styled.ButtonLayoutContainer>
         ))}
     </Styled.ButtonsContainer>

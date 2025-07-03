@@ -11,6 +11,12 @@ const VideoListContainer = ({ children, ...props }) => {
   const layoutContextDispatch = layoutDispatch();
   const { streams } = props;
 
+  // pinnedUsers: массив userId, которые должны быть в больших окнах (можно реализовать через state/props или context)
+  // Здесь пример: по ролям — модераторы и презентер всегда в больших окнах
+  const pinnedUsers = (streams || [])
+    .filter(s => s.role === 'MODERATOR' || s.role === 'PRESENTER')
+    .map(s => s.userId);
+
   return (
     !streams.length
       ? null
@@ -19,6 +25,7 @@ const VideoListContainer = ({ children, ...props }) => {
           layoutType,
           cameraDock,
           layoutContextDispatch,
+          pinnedUsers, // добавлено
           ...props,
         }}
         >
