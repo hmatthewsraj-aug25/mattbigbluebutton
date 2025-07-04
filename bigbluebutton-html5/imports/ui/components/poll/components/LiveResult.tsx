@@ -82,6 +82,10 @@ const intlMessages = defineMessages({
     id: 'app.poll.quiz.showCorrectAnswer',
     description: 'Label for checkbox to show correct answer in quiz poll',
   },
+  correctAnswerTitle: {
+    id: 'app.poll.quiz.liveResult.title.correct',
+    description: 'Title for correct answer in quiz poll live result',
+  },
 });
 
 interface LiveResultProps {
@@ -234,11 +238,16 @@ const LiveResult: React.FC<LiveResultProps> = ({
       {
         !isSecret
           ? (
-            <table>
+            <Styled.LiveResultTable>
               <tbody>
                 <tr>
                   <Styled.THeading>{intl.formatMessage(intlMessages.usersTitle)}</Styled.THeading>
                   <Styled.THeading>{intl.formatMessage(intlMessages.responsesTitle)}</Styled.THeading>
+                  {
+                    isQuiz ? (
+                      <Styled.THeading>{intl.formatMessage(intlMessages.correctAnswerTitle)}</Styled.THeading>
+                    ) : null
+                  }
                 </tr>
                 {
                   users.map((user) => (
@@ -252,11 +261,23 @@ const LiveResult: React.FC<LiveResultProps> = ({
                           }).join()
                         }
                       </Styled.ResultRight>
+                      {
+                        isQuiz ? user.optionDescIds.length > 0 && (
+                          <Styled.ResultRight>
+                            {user.optionDescIds.filter((opt) => {
+                              const response = responses.find((r) => r.optionDesc === opt);
+                              return response && response.correctOption;
+                            }).length > 0
+                              ? '✅'
+                              : '❌'}
+                          </Styled.ResultRight>
+                        ) : null
+                      }
                     </tr>
                   ))
                 }
               </tbody>
-            </table>
+            </Styled.LiveResultTable>
           )
           : (
             <div>

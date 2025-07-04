@@ -113,8 +113,8 @@ const QuickPollDropdown = (props) => {
   // Join lines into a single question string
   const question = [questionLines.join(' ').trim()];
 
-  const correctAnswer = lines.find((line) =>
-    line.endsWith(QUIZ_CORRECT_ANSWER_MARKER) && !question.includes(line))?.slice(0, -2);
+  const correctAnswer = lines.find((line) => line.endsWith(QUIZ_CORRECT_ANSWER_MARKER)
+  && !question.includes(line))?.slice(0, -QUIZ_CORRECT_ANSWER_MARKER.length);
 
   // Check explicitly if options exist or if the question ends with '?'
   const hasExplicitQuestionMark = /\?$/.test(question);
@@ -157,7 +157,7 @@ const QuickPollDropdown = (props) => {
   if (optionsPoll) {
     optionsPoll = optionsPoll.map((opt) => {
       const cleanedOpt = opt.endsWith(QUIZ_CORRECT_ANSWER_MARKER)
-        ? opt.slice(0, -2)
+        ? opt.slice(0, -QUIZ_CORRECT_ANSWER_MARKER.length)
         : opt;
 
       const formattedOpt = cleanedOpt.substring(0, MAX_CHAR_LIMIT);

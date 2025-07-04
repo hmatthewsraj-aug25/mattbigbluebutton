@@ -399,6 +399,7 @@ const ResultLeft = styled.td`
 
 const ResultRight = styled.td`
   padding-bottom: .25rem;
+  padding-right: 0.5rem;
   word-break: break-all;
 `;
 
@@ -623,6 +624,10 @@ const ShowCorrectAnswerLabel = styled.label`
   }
 `;
 
+const LiveResultTable = styled.table`
+  width: 100%;
+`;
+
 export default {
   ToggleLabel,
   PollOptionInput,
@@ -678,4 +683,5 @@ export default {
   CorrectAnswerCheckbox,
   TabSelectorWrapper,
   ShowCorrectAnswerLabel,
+  LiveResultTable,
 };

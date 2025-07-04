@@ -9,6 +9,7 @@ export interface UserInfo {
 }
 
 export interface ResponseInfo {
+  correctOption: boolean;
   optionResponsesCount: number;
   optionDesc: string;
   pollResponsesCount: number;
@@ -71,6 +72,7 @@ subscription getCurrentPollData {
         optionDescIds
       }
       responses {
+        correctOption
         optionResponsesCount
         optionDesc
         pollResponsesCount

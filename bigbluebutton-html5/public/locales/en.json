@@ -445,6 +445,7 @@
     "app.poll.quiz.showCorrectAnswer": "Show correct answer",
     "app.poll.quiz.options.title": "Quiz options",
     "app.poll.quiz.options.tooltip": "Select this answer as the correct one",
+    "app.poll.quiz.liveResult.title.correct": "Correct",
     "app.poll.quiz.options.responseNotSecret": "Quiz – the presenter can see your answer.",
     "app.poll.tabSelector.ariaLabel": "Quiz and Poll Tab Selector",
     "app.polling.pollingTitle": "Polling options",
