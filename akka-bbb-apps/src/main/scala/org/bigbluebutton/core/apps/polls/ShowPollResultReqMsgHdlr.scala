@@ -72,12 +72,14 @@ trait ShowPollResultReqMsgHdlr extends RightsManagementTrait {
 
         // Add Chat message with result
         ChatMessageDAO.insertSystemMsg(liveMeeting.props.meetingProp.intId, GroupChatApp.MAIN_PUBLIC_CHAT, "", GroupChatMessageType.POLL, resultAsSimpleMap, "")
+
+        //Add whiteboard annotation
         for {
           pod <- state.presentationPodManager.getDefaultPod()
           currentPres <- pod.getCurrentPresentation()
         } {
           if (currentPres.current) {
-            Polls.handleShowPollResultReqMsgForAnnotation(state, msg.header.userId, msg.body.pollId, liveMeeting, result, bus)
+            Polls.handleShowPollResultReqMsgForAnnotation(state, msg.header.userId, msg.body.pollId, msg.body.showAnswer, liveMeeting, result, bus)
           }
         }
 

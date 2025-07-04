@@ -199,6 +199,7 @@ const PresentationToolbarContainer = (props) => {
           secretPoll: false,
           question,
           multipleResponse,
+          quiz: false,
           answers,
           isQuiz: QUIZ_ENABLED ? isQuiz : false,
           correctAnswer: QUIZ_ENABLED ? correctAnswer : '',

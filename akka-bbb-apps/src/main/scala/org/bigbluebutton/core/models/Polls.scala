@@ -104,7 +104,15 @@ object Polls {
     }
   }
 
-  def handleShowPollResultReqMsgForAnnotation(state: MeetingState2x, requesterId: String, pollId: String, lm: LiveMeeting, result: SimplePollResultOutVO, bus: MessageBus): Unit = {
+  def handleShowPollResultReqMsgForAnnotation(
+      state:       MeetingState2x,
+      requesterId: String,
+      pollId:      String,
+      showAnswer:  Boolean,
+      lm:          LiveMeeting,
+      result:      SimplePollResultOutVO,
+      bus:         MessageBus
+  ): Unit = {
     def send(poll: SimplePollResultOutVO, shape: scala.collection.immutable.Map[String, Object]): Option[AnnotationVO] = {
       for {
         pod <- state.presentationPodManager.getDefaultPod()
@@ -126,7 +134,7 @@ object Polls {
       annot <- send(result, shape)
     } yield {
       lm.wbModel.addAnnotations(annot.wbId, lm.props.meetingProp.intId, requesterId, Array[AnnotationVO](annot), isPresenter = false, isModerator = false)
-      showPollResult(pollId, lm.polls)
+      showPollResult(pollId, lm.polls, showAnswer)
       // Send annotations with the result to recordings
       val annotationRouting = Routing.addMsgToClientRouting(MessageTypes.BROADCAST_TO_MEETING, lm.props.meetingProp.intId, requesterId)
       val annotationEnvelope = BbbCoreEnvelope(SendWhiteboardAnnotationsEvtMsg.NAME, annotationRouting)
@@ -432,13 +440,13 @@ object Polls {
     }
   }
 
-  def showPollResult(pollId: String, polls: Polls) {
+  def showPollResult(pollId: String, polls: Polls, showAnswer: Boolean) {
     polls.get(pollId) foreach {
       p =>
-        p.showResult
+        p.showResult()
         polls.currentPoll = Some(p)
+        PollDAO.updatePublished(pollId, showAnswer = (showAnswer && p.questions(0).quiz))
     }
-    PollDAO.updatePublished(pollId)
   }
 
   def respondToQuestion(pollId: String, questionID: Int, responseIDs: Seq[Int], responder: Responder, polls: Polls) {
