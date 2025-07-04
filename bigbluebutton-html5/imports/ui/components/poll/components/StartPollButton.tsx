@@ -10,6 +10,10 @@ const intlMessages = defineMessages({
     id: 'app.poll.start.label',
     description: '',
   },
+  startQuizLabel: {
+    id: 'app.poll.quiz.start.label',
+    description: '',
+  },
   questionErr: {
     id: 'app.poll.questionErr',
     description: 'question text area error label',
@@ -105,7 +109,7 @@ const StartPollButton: React.FC<StartPollButtonProps> = ({
   return (
     <Styled.StartPollBtn
       data-test="startPoll"
-      label={intl.formatMessage(intlMessages.startPollLabel)}
+      label={isQuiz ? intl.formatMessage(intlMessages.startQuizLabel) : intl.formatMessage(intlMessages.startPollLabel)}
       color="primary"
       disabled={hasNotMinOptions}
       title={hasNotMinOptions ? intl.formatMessage(intlMessages.minOptionsErr) : ''}
