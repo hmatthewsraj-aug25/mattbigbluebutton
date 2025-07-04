@@ -92,6 +92,7 @@ const QuickPollDropdown = (props) => {
   );
 
   const lines = content.split('\n');
+
   const questionLines = [];
   let isOptionSection = false;
   const options = [];
@@ -410,7 +411,7 @@ const QuickPollDropdown = (props) => {
               answers,
               pollQuestion,
               multiResponse,
-              correctAnswer.length > 0,
+              correctAnswer?.length > 0,
               correctAnswer,
             );
           } else {
@@ -420,7 +421,7 @@ const QuickPollDropdown = (props) => {
               optionsWithLabels,
               pollQuestion,
               multiResponse,
-              correctAnswer.length > 0,
+              correctAnswer?.length > 0,
               correctAnswer,
             );
           }
