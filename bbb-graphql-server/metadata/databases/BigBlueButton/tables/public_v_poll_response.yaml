@@ -16,7 +16,6 @@ select_permissions:
         - optionResponsesCount
         - pollId
         - pollResponsesCount
-        - published
         - questionText
         - type
       filter:
