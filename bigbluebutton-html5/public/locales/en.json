@@ -443,7 +443,7 @@
     "app.poll.quiz": "Quiz",
     "app.poll.quiz.error": "Quiz has not correct answers selected. Please select at least one correct answer.",
     "app.poll.quiz.start.label": "Start Quiz",
-    "app.poll.quiz.showCorrectAnswer": "Show correct answer",
+    "app.poll.quiz.showCorrectAnswer": "Show correct answer to all users",
     "app.poll.quiz.options.title": "Quiz options",
     "app.poll.quiz.options.tooltip": "Select this answer as the correct one",
     "app.poll.quiz.options.correct": "Correct Answer",
