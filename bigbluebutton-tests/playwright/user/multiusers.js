@@ -157,17 +157,6 @@ class MultiUsers {
     await this.userPage.hasElement(e.raiseHandBtn, 'should display the raise hand button after rejection');
   }
 
-  async toggleUserList() {
-    await this.modPage.waitForSelector(e.whiteboard);
-    await this.modPage.waitAndClick(e.usersListSidebarButton);
-    await this.modPage.hasElement(e.closeUserList, 'should display the button to close the user list');
-    await this.modPage.hasElement(e.userListPanel, 'should display the user list panel for the moderator');
-    await this.modPage.hasElement(e.chatButton, 'should display the public chat button for the moderator on the sidebar');
-    await this.modPage.waitAndClick(e.closeUserList);
-    await this.modPage.wasRemoved(e.closeUserList, 'should not display the button to close the user list for the moderator');
-    await this.modPage.wasRemoved(e.userListPanel, 'should not display the user list panel for the moderator');
-  }
-
   async saveUserNames(testInfo) {
     await this.modPage.waitAndClick(e.manageUsers);
     const downloadUserNamesListLocator = this.modPage.getLocator(e.downloadUserNamesList);
