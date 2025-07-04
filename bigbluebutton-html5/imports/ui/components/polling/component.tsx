@@ -258,7 +258,11 @@ const PollingGraphql: React.FC<PollingGraphqlProps> = (props) => {
       <div>
         {poll.questionText.length === 0 && (
           <Styled.PollingTitle>
-            {intl.formatMessage(intlMessages.pollingTitleLabel)}
+            {
+              poll.quiz
+                ? intl.formatMessage(intlMessages.quizTitleLabel)
+                : intl.formatMessage(intlMessages.pollingTitleLabel)
+            }
           </Styled.PollingTitle>
         )}
         <Styled.MultipleResponseAnswersTable>
@@ -327,7 +331,11 @@ const PollingGraphql: React.FC<PollingGraphqlProps> = (props) => {
         {poll.questionText.length > 0 && (
           <Styled.QHeader>
             <Styled.QTitle>
-              {intl.formatMessage(intlMessages.pollQuestionTitle)}
+              {
+                poll.quiz
+                  ? intl.formatMessage(intlMessages.quizTitleLabel)
+                  : intl.formatMessage(intlMessages.pollQuestionTitle)
+              }
             </Styled.QTitle>
             <Styled.QText data-test="pollQuestion">
               {poll.questionText}

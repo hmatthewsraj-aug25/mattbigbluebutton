@@ -89,6 +89,8 @@ const StartPollButton: React.FC<StartPollButtonProps> = ({
     secretPoll: boolean,
     question: string | string[],
     multipleResponse: boolean,
+    isQuiz: boolean = false,
+    correctAnswerText: string = '',
     answers: (string | null)[] = [],
   ) => {
     const pollId = PUBLIC_CHAT_KEY;
@@ -158,10 +160,19 @@ const StartPollButton: React.FC<StartPollButtonProps> = ({
               secretPoll,
               question,
               multipleResponse,
+              isQuiz,
+              correctAnswerText,
               verifiedOptions?.filter(Boolean),
             );
           } else {
-            startPoll(verifiedPollType, secretPoll, question, multipleResponse);
+            startPoll(
+              verifiedPollType,
+              secretPoll,
+              question,
+              multipleResponse,
+              isQuiz,
+              correctAnswerText,
+            );
           }
         }
       }}
