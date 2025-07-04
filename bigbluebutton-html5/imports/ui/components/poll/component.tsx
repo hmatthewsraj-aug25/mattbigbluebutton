@@ -11,7 +11,12 @@ import { addAlert } from '../screenreader-alert/service';
 import { PANELS, ACTIONS } from '../layout/enums';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
 import { POLL_CANCEL } from './mutations';
-import { getSplittedQuestionAndOptions, pollTypes, validateInput } from './service';
+import {
+  getSplittedQuestionAndOptions,
+  pollTypes,
+  pollTypesKeys,
+  validateInput,
+} from './service';
 import Toggle from '/imports/ui/components/common/switch/component';
 import Styled from './styles';
 import ResponseChoices from './components/ResponseChoices';
@@ -246,7 +251,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   const [isQuiz, setIsQuiz] = React.useState(false);
   const [question, setQuestion] = useState<string[] | string>('');
   const [questionAndOptions, setQuestionAndOptions] = useState<string[] | string>('');
-  const [optList, setOptList] = useState<Array<{val: string}>>([]);
+  const [optList, setOptList] = useState<Array<{key: string, val: string}>>([]);
   const [error, setError] = useState<string | null>(null);
   const [multipleResponse, setMultipleResponse] = useState(false);
   const [secretPoll, setSecretPoll] = useState(false);
@@ -303,7 +308,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
         index: answers.indexOf(correctAnswer) ?? -1,
       });
       if (answers.length) {
-        setOptList(answers.map((answer) => ({ val: answer })));
+        setOptList(answers.map((answer) => ({ key: pollTypesKeys[answer] ?? answer, val: answer })));
         return;
       }
 
@@ -313,6 +318,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E',
         };
         const optList = Array.from({ length }).map((_, idx) => ({
+          key: pollTypesKeys[optionChars[idx + 1]] ?? optionChars[idx + 1],
           val: optionChars[idx + 1],
         }));
         setOptList(optList);
@@ -322,23 +328,44 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
       switch (pollType) {
         case pollTypes.TrueFalse: {
           setOptList([
-            { val: intl.formatMessage(intlMessages.true) },
-            { val: intl.formatMessage(intlMessages.false) },
+            {
+              key: pollTypesKeys.true,
+              val: intl.formatMessage(intlMessages.true),
+            },
+            {
+              key: pollTypesKeys.false,
+              val: intl.formatMessage(intlMessages.false),
+            },
           ]);
           break;
         }
         case pollTypes.YesNo: {
           setOptList([
-            { val: intl.formatMessage(intlMessages.yes) },
-            { val: intl.formatMessage(intlMessages.no) },
+            {
+              key: pollTypesKeys.yes,
+              val: intl.formatMessage(intlMessages.yes),
+            },
+            {
+              key: pollTypesKeys.no,
+              val: intl.formatMessage(intlMessages.no),
+            },
           ]);
           break;
         }
         case pollTypes.YesNoAbstention: {
           setOptList([
-            { val: intl.formatMessage(intlMessages.yes) },
-            { val: intl.formatMessage(intlMessages.no) },
-            { val: intl.formatMessage(intlMessages.abstention) },
+            {
+              key: pollTypesKeys.yes,
+              val: intl.formatMessage(intlMessages.yes),
+            },
+            {
+              key: pollTypesKeys.no,
+              val: intl.formatMessage(intlMessages.no),
+            },
+            {
+              key: pollTypesKeys.abstention,
+              val: intl.formatMessage(intlMessages.abstention),
+            },
           ]);
           break;
         }
@@ -379,7 +406,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
       customInput: boolean;
       question: string[] | string;
       questionAndOptions: string[] | string;
-      optList: { val: string }[];
+      optList: { key: string, val: string }[];
       error: string;
       multipleResponse: boolean;
       secretPoll: boolean;
@@ -425,7 +452,10 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     const caretEnd = e.target.selectionEnd ?? 0;
     let questionAndOptionsList: string[] = [];
     const oldValue = list[index]?.val;
-    list[index] = { val: validatedVal };
+    list[index] = {
+      key: type !== pollTypes.Custom ? pollTypesKeys[validatedVal] ?? validatedVal : '',
+      val: validatedVal
+    };
 
     if (questionAndOptions.length > 0) {
       const QnO = questionAndOptions as string;
@@ -518,7 +548,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   };
 
   const handleAddOption = () => {
-    setOptList([...optList, { val: '' }]);
+    setOptList([...optList, { key: '', val: '' }]);
   };
 
   const handleToggle = () => {
@@ -531,10 +561,10 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     if (optList.length === 0) {
       setType(pollTypes.Letter);
       setOptList([
-        { val: '' },
-        { val: '' },
-        { val: '' },
-        { val: '' },
+        { key: '', val: '' },
+        { key: '', val: '' },
+        { key: '', val: '' },
+        { key: '', val: '' },
       ]);
     }
   };
@@ -579,8 +609,14 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
                   if (type === pollTypes.Response) {
                     setType(pollTypes.TrueFalse);
                     setOptList([
-                      { val: intl.formatMessage(intlMessages.true) },
-                      { val: intl.formatMessage(intlMessages.false) },
+                      {
+                        key: pollTypesKeys.true,
+                        val: intl.formatMessage(intlMessages.true),
+                      },
+                      {
+                        key: pollTypesKeys.false,
+                        val: intl.formatMessage(intlMessages.false),
+                      },
                     ]);
                   }
                 }

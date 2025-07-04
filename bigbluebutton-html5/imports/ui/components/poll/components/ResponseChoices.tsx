@@ -23,7 +23,7 @@ interface ResponseChoicesProps {
   type: string | null;
   toggleMultipleResponse: () => void;
   multipleResponse: boolean;
-  optList: Array<{ val: string }>;
+  optList: Array<{ key: string; val: string }>;
   handleAddOption: () => void;
   secretPoll: boolean;
   question: string | string[];
