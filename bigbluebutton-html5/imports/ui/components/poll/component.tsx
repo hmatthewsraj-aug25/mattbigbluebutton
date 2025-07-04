@@ -661,6 +661,8 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
             setOptList([]);
             setQuestion('');
             setQuestionAndOptions('');
+            setCorrectAnswer({ text: '', index: -1 });
+            setIsQuiz(false);
           }}
           handleToggle={handleToggle}
           error={error}
