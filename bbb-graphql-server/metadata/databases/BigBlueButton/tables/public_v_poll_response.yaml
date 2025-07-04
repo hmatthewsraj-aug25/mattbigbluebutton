@@ -10,11 +10,13 @@ select_permissions:
   - role: bbb_client
     permission:
       columns:
+        - correctOption
         - optionDesc
         - optionId
         - optionResponsesCount
         - pollId
         - pollResponsesCount
+        - published
         - questionText
         - type
       filter:
