@@ -111,7 +111,7 @@ const UserList: React.FC<UserListComponentProps> = () => {
     : intl.formatMessage(intlMessages.usersTitle, { userCount: count });
 
   return (
-    <Styled.PanelContent>
+    <Styled.PanelContent data-test="userListPanel">
       <Styled.HeaderContainer
         title={title}
         rightButtonProps={{

@@ -138,7 +138,8 @@ class MultiUsers {
     await this.userPage.waitForSelector(e.whiteboard);
     await this.userPage.waitAndClick(e.raiseHandBtn);
     await this.userPage.hasElement(e.lowerHandBtn, 'should display the lower hand button after raising the hand');
-    await this.modPage.comparingSelectorsBackgroundColor(e.avatarsWrapperAvatar, `${e.userListItem} div:first-child`);
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
+    await this.modPage.comparingSelectorsBackgroundColor(e.avatarsWrapperAvatar, `${e.raiseHandWrapper} >> ${e.avatarsWrapperAvatar}`);
     await sleep(1000);
     await this.userPage.waitAndClick(e.lowerHandBtn);
     await this.userPage.hasElement(e.raiseHandBtn, 'should display the raise hand button after lowering the hand');
@@ -150,20 +151,21 @@ class MultiUsers {
     await this.userPage.waitAndClick(e.raiseHandBtn);
     await this.userPage.hasElement(e.lowerHandBtn, 'should display the lower hand button for the attendee');
     await this.userPage.press('Escape');
-    await this.modPage.comparingSelectorsBackgroundColor(e.avatarsWrapperAvatar, `${e.userListItem} div:first-child`);
+    await this.modPage.waitAndClick(e.usersListSidebarButton)
+    await this.modPage.comparingSelectorsBackgroundColor(e.avatarsWrapperAvatar, `${e.raiseHandWrapper} >> ${e.avatarsWrapperAvatar}`);
     await this.modPage.waitAndClick(e.raiseHandRejection);
     await this.userPage.hasElement(e.raiseHandBtn, 'should display the raise hand button after rejection');
   }
 
   async toggleUserList() {
-    await this.modPage.hasElement(e.chatBox, 'should display the public chat box for the moderator');
-    await this.modPage.hasElement(e.chatButton, 'should display the public chat button for the moderator');
-    await this.modPage.waitAndClick(e.userListToggleBtn);
-    await this.modPage.wasRemoved(e.chatBox, 'should not display the public chat box for the moderator');
-    await this.modPage.wasRemoved(e.chatButton, 'should not display the public chat button for the moderator');
-    await this.modPage.waitAndClick(e.userListToggleBtn);
-    await this.modPage.wasRemoved(e.chatBox, 'should not display the public chat box for the moderator');
-    await this.modPage.hasElement(e.chatButton, 'should display the public chat button for the moderator');
+    await this.modPage.waitForSelector(e.whiteboard);
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
+    await this.modPage.hasElement(e.closeUserList, 'should display the button to close the user list');
+    await this.modPage.hasElement(e.userListPanel, 'should display the user list panel for the moderator');
+    await this.modPage.hasElement(e.chatButton, 'should display the public chat button for the moderator on the sidebar');
+    await this.modPage.waitAndClick(e.closeUserList);
+    await this.modPage.wasRemoved(e.closeUserList, 'should not display the button to close the user list for the moderator');
+    await this.modPage.wasRemoved(e.userListPanel, 'should not display the user list panel for the moderator');
   }
 
   async saveUserNames(testInfo) {
@@ -318,10 +320,12 @@ class MultiUsers {
     // use the smiling reaction
     await this.modPage.waitAndClick(e.reactionsButton);
     await this.modPage.waitAndClick(`${e.singleReactionButton}:nth-child(1)`);
+    await this.modPage.waitAndClick(e.usersListSidebarButton); 
     await this.modPage.hasText(e.moderatorAvatar, '😃', 'should display the smiling emoji in the moderator avatar for the moderator');
     await this.modPage.hasText(e.reactionsButton, '😃', 'should display the smiling emoji on the reactions button when used');
+    await this.userPage.waitAndClick(e.usersListSidebarButton);
     await this.userPage.hasText(e.moderatorAvatar, '😃', 'should display the smiling emoji in the moderator avatar for the viewer');
-
+    
     // change the reaction to the thumbs up
     await this.modPage.waitAndClick(e.reactionsButton);
     await this.modPage.waitAndClick(`${e.singleReactionButton}:nth-child(5)`);

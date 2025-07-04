@@ -20,6 +20,7 @@ exports.emojiRain = 'div[data-test="emojiRain"] svg';
 exports.raiseHandBtn = 'button[data-test="raiseHandBtn"]';
 exports.lowerHandBtn = 'button[data-test="lowerHandBtn"]';
 exports.raiseHandRejection = 'button[data-test="raiseHandRejection"]';
+exports.raiseHandWrapper = 'div[data-test="raiseHandWrapper"]';
 exports.meetingEndedModal = 'div[data-test="meetingEndedModal"]';
 exports.redirectButton = 'button[data-test="redirectButton"]';
 exports.leaveMeetingDropdown = 'button[data-test="leaveMeetingDropdown"]';
@@ -117,7 +118,7 @@ exports.currentSlideBreakoutOption = 'option[data-test="currentSlideBreakoutOpti
 exports.chatBox = 'textarea[id="message-input"]';
 exports.chatMessageItem = 'div[data-test="chatMessageItem"]';
 exports.partnerDisconnectedMessage = 'span[data-test="partnerDisconnected"]';
-exports.chatButton = 'button[data-test="chatButton"]';
+exports.chatButton = 'div[data-test="chatButton"]';
 exports.messagesSidebarButton = 'div[data-test="chatButton"]';
 exports.sendButton = 'button[data-test="sendMessageButton"]';
 exports.chatPollMessageText = 'div[data-test="chatPollMessageText"]';
@@ -203,7 +204,7 @@ exports.virtualBackgrounds = 'div[data-test="virtualBackground"]';
 // Timer
 exports.timerContainer = 'div[data-test="timerContainer"]';
 exports.stopwatchContainer = 'div[data-test="stopwatchContainer"]';
-exports.timerStopwatchFeature = 'li[data-test="timerStopWatchFeature"]';
+exports.timerStopwatchFeature = 'div[data-test="timerSidebarButton"]';
 exports.timerCurrent = 'span[data-test="timerCurrent"]';
 exports.startStopTimer = 'button[data-test="startStopTimer"]';
 exports.resetTimerStopwatch = 'button[data-test="resetTimerStopWatch"]';
@@ -426,6 +427,8 @@ exports.userBannedMessage2 = 'div[id="app"] >> div >> div:nth-child(2)';
 exports.meetingEndedModalTitle = 'div[data-test="meetingEndedModal"]';
 exports.unmuteUser = 'li[data-test="unmuteUser"]';
 exports.ejectCamera = 'li[data-test="ejectCamera"]';
+exports.closeUserList = 'button[data-test="closeUserList"]';
+exports.userListPanel = 'div[data-test="userListPanel"]';
 
 // Lock Viewers
 exports.lockViewersButton = 'button[data-test="lockViewersButton"]';
