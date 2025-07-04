@@ -249,6 +249,7 @@ export const getSplittedQuestionAndOptions = (questionAndOptions: string[] | str
 
   const optionsList = optList.map((val) => {
     const option = validateInput(val);
+    // @ts-ignore
     return { key: pollTypesKeys[option] ?? option, val: option };
   });
 

@@ -308,6 +308,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
         index: answers.indexOf(correctAnswer) ?? -1,
       });
       if (answers.length) {
+        // @ts-ignore
         setOptList(answers.map((answer) => ({ key: pollTypesKeys[answer] ?? answer, val: answer })));
         return;
       }
@@ -318,6 +319,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E',
         };
         const optList = Array.from({ length }).map((_, idx) => ({
+          // @ts-ignore
           key: pollTypesKeys[optionChars[idx + 1]] ?? optionChars[idx + 1],
           val: optionChars[idx + 1],
         }));
@@ -453,8 +455,9 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     let questionAndOptionsList: string[] = [];
     const oldValue = list[index]?.val;
     list[index] = {
+      // @ts-ignore
       key: type !== pollTypes.Custom ? pollTypesKeys[validatedVal] ?? validatedVal : '',
-      val: validatedVal
+      val: validatedVal,
     };
 
     if (questionAndOptions.length > 0) {
