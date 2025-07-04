@@ -123,7 +123,7 @@ const ResponseTypes: React.FC<ResponseTypesProps> = ({
                   { val: intl.formatMessage(intlMessages.c) },
                   { val: intl.formatMessage(intlMessages.d) },
                 ]);
-                setCorrectAnswer({ text: '', index: -1 }); 
+                setCorrectAnswer({ text: '', index: -1 });
               }
             }}
           />
