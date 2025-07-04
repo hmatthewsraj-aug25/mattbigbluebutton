@@ -20,6 +20,7 @@ import { ACTIONS, PANELS } from '../../layout/enums';
 import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedSubscription';
 import CustomizedAxisTick from './CustomizedAxisTick';
 import connectionStatus from '/imports/ui/core/graphql/singletons/connectionStatus';
+import Tooltip from '../../common/tooltip/component';
 
 const intlMessages = defineMessages({
   usersTitle: {
@@ -85,6 +86,14 @@ const intlMessages = defineMessages({
   correctAnswerTitle: {
     id: 'app.poll.quiz.liveResult.title.correct',
     description: 'Title for correct answer in quiz poll live result',
+  },
+  correctOption: {
+    id: 'app.poll.quiz.options.correct',
+    description: 'Label for correct answer option in quiz poll',
+  },
+  incorrectOption: {
+    id: 'app.poll.quiz.options.incorrect',
+    description: 'Label for incorrect answer option in quiz poll',
   },
 });
 
@@ -268,8 +277,16 @@ const LiveResult: React.FC<LiveResultProps> = ({
                               const response = responses.find((r) => r.optionDesc === opt);
                               return response && response.correctOption;
                             }).length > 0
-                              ? '✅'
-                              : '❌'}
+                              ? (
+                                <Tooltip title={intl.formatMessage(intlMessages.correctOption)}>
+                                  <span aria-label={intl.formatMessage(intlMessages.correctOption)}>✅</span>
+                                </Tooltip>
+                              )
+                              : (
+                                <Tooltip title={intl.formatMessage(intlMessages.incorrectOption)}>
+                                  <span aria-label={intl.formatMessage(intlMessages.incorrectOption)}>❌</span>
+                                </Tooltip>
+                              )}
                           </Styled.ResultRight>
                         ) : null
                       }
