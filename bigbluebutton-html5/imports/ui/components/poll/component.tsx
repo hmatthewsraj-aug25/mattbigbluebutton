@@ -645,6 +645,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           setOptList={setOptList}
           setType={setType}
           isQuiz={isQuiz}
+          setCorrectAnswer={setCorrectAnswer}
         />
         <ResponseChoices
           type={type}
