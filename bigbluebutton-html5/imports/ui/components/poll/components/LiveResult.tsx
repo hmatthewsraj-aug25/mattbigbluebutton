@@ -117,7 +117,7 @@ const LiveResult: React.FC<LiveResultProps> = ({
   const intl = useIntl();
   const [pollPublishResult] = useMutation(POLL_PUBLISH_RESULT);
   const [stopPoll] = useMutation(POLL_CANCEL);
-  const [shouldShowCorrectAnswer, setShouldShowCorrectAnswers] = React.useState(false);
+  const [shouldShowCorrectAnswer, setShouldShowCorrectAnswers] = React.useState(true);
 
   const layoutContextDispatch = layoutDispatch();
   const publishPoll = useCallback((pId: string, showAnswer: boolean) => {
