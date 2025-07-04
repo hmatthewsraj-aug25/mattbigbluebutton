@@ -187,7 +187,9 @@ const PresentationToolbarContainer = (props) => {
           secretPoll: false,
           question,
           multipleResponse,
+          quiz: false,
           answers,
+          correctAnswer: '',
         },
       });
     }
