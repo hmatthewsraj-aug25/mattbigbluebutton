@@ -26,6 +26,7 @@ interface Answers {
   key: string;
   numVotes: number;
   id: number;
+  isCorrectAnswer: boolean;
 }
 
 const intlMessages = defineMessages({
@@ -97,7 +98,7 @@ const ChatPollContent: React.FC<ChatPollContentProps> = ({
   const translatedAnswers = answers.map((answer: Answers) => {
     const translationKey = intlMessages[answer.key.toLowerCase() as keyof typeof intlMessages];
     const pollAnswer = translationKey ? intl.formatMessage(translationKey) : answer.key;
-    const pollAnswerWithNumVotes = `${pollAnswer} (${answer.numVotes})`;
+    const pollAnswerWithNumVotes = `${answer.isCorrectAnswer ? '✅ ' : ''}${pollAnswer} (${answer.numVotes})`;
     return {
       ...answer,
       pollAnswer,

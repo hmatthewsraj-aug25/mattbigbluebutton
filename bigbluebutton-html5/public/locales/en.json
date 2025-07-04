@@ -24,6 +24,7 @@
     "app.chat.label": "Chat",
     "app.chat.offline": "Offline",
     "app.chat.pollResult": "Poll Results",
+    "app.chat.quizResult": "Quiz Results",
     "app.chat.breakoutDurationUpdated": "Breakout time is now {timeInMinutes} minutes",
     "app.chat.breakoutDurationUpdatedModerator": "Breakout rooms time is now {timeInMinutes} minutes, and a notification has been sent.",
     "app.chat.emptyLogLabel": "Chat log empty",
