@@ -287,7 +287,7 @@ const QuickPollDropdown = (props) => {
 
       if (type === 'R-') {
         return (
-          <Dropdown.DropdownLgetAvailableQuickPollsistItem
+          <Dropdown.DropdownListItem
             label={intl.formatMessage(intlMessages.typedRespLabel)}
             key={uniqueId('quick-poll-item')}
             onClick={() => {
