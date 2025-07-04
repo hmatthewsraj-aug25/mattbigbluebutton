@@ -2,6 +2,7 @@ import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { pollTypes } from '../service';
 import Styled from '../styles';
+import Tooltip from '/imports/ui/components/common/tooltip/container';
 
 const intlMessages = defineMessages({
   customPlaceholder: {
@@ -19,6 +20,10 @@ const intlMessages = defineMessages({
   emptyPollOpt: {
     id: 'app.poll.emptyPollOpt',
     description: 'screen reader for blank poll option',
+  },
+  correctAnswerSelectionTooltip: {
+    id: 'app.poll.quiz.options.tooltip',
+    description: 'Tooltip for the correct answer option selection in a quiz',
   },
 });
 
@@ -70,20 +75,22 @@ const PollInputs: React.FC<PollInputsProps> = ({
             onCopy={(e) => { e.stopPropagation(); }}
           />
           {isQuiz && (
-            <Styled.CorrectAnswerCheckbox
-              type="checkbox"
-              id={`correct-answer-${i}`}
-              checked={correctAnswer.index === i && correctAnswer.text === o.val}
-              disabled={o.val.length === 0}
-              onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
-                if (ev.target.checked) {
-                  setCorrectAnswer({
-                    text: o.val,
-                    index: i,
-                  });
-                }
-              }}
-            />
+            <Tooltip title={intl.formatMessage(intlMessages.correctAnswerSelectionTooltip)}>
+              <Styled.CorrectAnswerCheckbox
+                type="radio"
+                id={`correct-answer-${i}`}
+                checked={correctAnswer.index === i && correctAnswer.text === o.val}
+                disabled={o.val.length === 0}
+                onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
+                  if (ev.target.checked) {
+                    setCorrectAnswer({
+                      text: o.val,
+                      index: i,
+                    });
+                  }
+                }}
+              />
+            </Tooltip>
           )}
           {optList.length > MIN_OPTIONS_LENGTH && (
             <Styled.DeletePollOptionButton
