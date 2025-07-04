@@ -18,6 +18,10 @@ const intlMessages = defineMessages({
     id: 'app.poll.questionErr',
     description: 'question text area error label',
   },
+  quizErr: {
+    id: 'app.poll.quiz.error',
+    description: 'quiz error label',
+  },
   optionErr: {
     id: 'app.poll.optionErr',
     description: 'poll input error label',
@@ -103,16 +107,16 @@ const StartPollButton: React.FC<StartPollButtonProps> = ({
     });
   };
 
-  const hasNotMinOptions = type !== pollTypes.Response
-    && optList.filter((o) => o.val.trim().length > 0).length < 1;
-
+  const hasNotMinOptions = (type !== pollTypes.Response
+    && optList.filter((o) => o.val.trim().length > 0).length < 1);
+  const quizHasNoCorrectAnswer = (isQuiz && correctAnswerText.trim().length === 0);
   return (
     <Styled.StartPollBtn
       data-test="startPoll"
       label={isQuiz ? intl.formatMessage(intlMessages.startQuizLabel) : intl.formatMessage(intlMessages.startPollLabel)}
       color="primary"
-      disabled={hasNotMinOptions}
-      title={hasNotMinOptions ? intl.formatMessage(intlMessages.minOptionsErr) : ''}
+      disabled={hasNotMinOptions || quizHasNoCorrectAnswer}
+      title={`${hasNotMinOptions ? intl.formatMessage(intlMessages.minOptionsErr) : ''}\n${quizHasNoCorrectAnswer ? intl.formatMessage(intlMessages.quizErr) : ''}`}
       onClick={() => {
         const optionsList = optList.slice(0, MAX_CUSTOM_FIELDS);
         let hasVal = false;
