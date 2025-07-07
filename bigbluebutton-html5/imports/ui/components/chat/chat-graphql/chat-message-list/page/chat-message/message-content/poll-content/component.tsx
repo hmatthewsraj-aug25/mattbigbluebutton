@@ -58,6 +58,10 @@ const intlMessages = defineMessages({
     id: 'app.chat.content.pollVotes',
     description: 'Votes label',
   },
+  correctAnswer: {
+    id: 'app.poll.quiz.options.correct',
+    description: 'Correct answer label for quiz options',
+  },
 });
 
 function assertAsMetadata(metadata: unknown): asserts metadata is Metadata {
@@ -130,14 +134,14 @@ const ChatPollContent: React.FC<ChatPollContentProps> = ({
       <p className="sr-only">
         {pollData.questionText ? `${pollData.questionText}: ` : ''}
         {`${translatedAnswers
-          .map((a: Answers & { pollAnswer: string }) => `${a.pollAnswer}: ${a.numVotes} ${
+          .map((a: Answers & { pollAnswer: string }) => `${a.isCorrectAnswer ? `${intl.formatMessage(intlMessages.correctAnswer)}: ` : ''}${a.pollAnswer}: ${a.numVotes} ${
             a.numVotes === 1 ? intl.formatMessage(intlMessages.vote) : intl.formatMessage(intlMessages.votes)
           }`)
           .join(', ')}.`}
       </p>
       <ul className="sr-only">
         {translatedAnswers.map((a: Answers & { pollAnswer: string }) => (
-          <li key={a.pollAnswer}>{`${a.pollAnswer} — ${a.numVotes}`}</li>
+          <li key={a.pollAnswer}>{`${a.isCorrectAnswer ? `${intl.formatMessage(intlMessages.correctAnswer)}: ` : ''}${a.pollAnswer} — ${a.numVotes}`}</li>
         ))}
       </ul>
     </>
