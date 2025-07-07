@@ -157,7 +157,7 @@ const QuizzesTable = (props) => {
         ), 0,
       ) || 0,
     renderCell: (params) => (
-      <span className="text-green-500 font-bold">
+      <span className="font-bold">
         {params?.value}
       </span>
     ),
@@ -175,13 +175,12 @@ const QuizzesTable = (props) => {
     const wrapper = React.useRef(null);
     const cellDiv = React.useRef(null);
     const cellValue = React.useRef(null);
-    const cellLabel = React.useRef(null);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [showFullCell, setShowFullCell] = React.useState(false);
     const [showPopper, setShowPopper] = React.useState(false);
 
     const handleMouseEnter = () => {
-      const isCurrentlyOverflown = isOverflown(cellValue.current) || isOverflown(cellLabel.current);
+      const isCurrentlyOverflown = isOverflown(cellValue.current);
       setShowPopper(isCurrentlyOverflown);
       setAnchorEl(cellDiv.current);
       setShowFullCell(true);
@@ -234,14 +233,7 @@ const QuizzesTable = (props) => {
       );
     }
 
-    let val = value;
-    if (typeof value === 'object') {
-      val = Object.values(value)?.join(', ');
-    }
-
     const variants = {
-      success: 'bg-green-500/10 text-green-700 border border-green-300 rounded-full px-2 font-bold',
-      error: 'bg-red-500/10 text-red-700 border border-red-300 rounded-full px-2 font-bold',
       default: 'bg-gray-500/10 text-gray-700 border border-gray-300 rounded-full px-2 font-bold',
     };
 
@@ -276,18 +268,15 @@ const QuizzesTable = (props) => {
           sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
           className={variants[type]}
         >
-          {val}
+          {type === 'success' && <>&#9989;</>}
+          {type === 'error' && <>&#10060;</>}
+          {responses ? (
+            <>
+              &nbsp;
+              {responses}
+            </>
+          ) : value}
         </Box>
-        {responses && (
-          <Box ref={cellLabel} className="text-xs text-gray-600 font-thin max-w-full overflow-hidden text-ellipsis">
-            {intl.formatMessage({
-              id: 'app.learningDashboard.quizzes.response',
-              defaultMessage: 'Response',
-            })}
-            {': '}
-            {responses}
-          </Box>
-        )}
         {showPopper && (
           <Popper
             open={showFullCell && anchorEl !== null}

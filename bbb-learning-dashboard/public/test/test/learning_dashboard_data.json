@@ -369,7 +369,7 @@
       "anonymous": false,
       "multiple": false,
       "quiz": true,
-      "correctOption": "Kotlin",
+      "correctOption": "",
       "question": "What programming language is primarily used with Android development?",
       "options": [
         "Swift",

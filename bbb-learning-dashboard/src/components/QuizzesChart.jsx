@@ -29,9 +29,10 @@ const QuizzesChart = (props) => {
         return [pollId, isCorrect];
       });
 
-    const activityScore = (getActivityScore(u, allUsers, totalOfPolls) / 10) * 100;
+    const activityScore = ((getActivityScore(u, allUsers, totalOfPolls) / 10) * 100).toFixed(2);
     const numberOfCorrectAnswers = result.filter(([, isCorrect]) => isCorrect).length;
-    const quizPerformance = (numberOfCorrectAnswers / Object.values(quizzes).length) * 100;
+    const numberOfQuizzes = Object.values(quizzes).length;
+    const quizPerformance = ((numberOfCorrectAnswers / numberOfQuizzes) * 100).toFixed(2);
 
     const existingDot = chartData.find((v) => (v.x === activityScore && v.y === quizPerformance));
 
@@ -44,8 +45,8 @@ const QuizzesChart = (props) => {
     chartData.push({
       ids: [u.userKey],
       names: [u.name],
-      x: (getActivityScore(u, allUsers, totalOfPolls) / 10) * 100,
-      y: (result.filter(([, isCorrect]) => isCorrect).length / Object.values(quizzes).length) * 100,
+      x: activityScore,
+      y: quizPerformance,
     });
   });
 
@@ -109,7 +110,7 @@ const QuizzesChart = (props) => {
                     <>
                       <p className="font-bold">
                         {[payload[0].payload.names.map((name) => (
-                          <div>
+                          <div key={name}>
                             {name}
                           </div>
                         ))]}
