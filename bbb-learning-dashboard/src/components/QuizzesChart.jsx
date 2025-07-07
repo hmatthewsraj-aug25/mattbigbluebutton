@@ -40,7 +40,13 @@ const QuizzesChart = (props) => {
   });
 
   return (
-    <Paper>
+    <Paper className="p-4">
+      <h2 className="font-lg font-bold">
+        {intl.formatMessage({
+          id: 'app.learningDashboard.quizzes.chartTitle',
+          defaultMessage: 'Quiz Performance vs Activity Level',
+        })}
+      </h2>
       <ResponsiveContainer width="100%" height={400}>
         <ScatterChart
           margin={{
