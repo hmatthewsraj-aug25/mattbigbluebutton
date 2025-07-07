@@ -514,7 +514,7 @@ exports.wbDrawnLine = 'div[data-shape-type="line"]';
 exports.multiUsersWhiteboardOn = 'button[data-test="turnMultiUsersWhiteboardOn"]';
 exports.multiUsersWhiteboardOff = 'button[data-test="turnMultiUsersWhiteboardOff"]';
 exports.whiteboardViewBox = 'svg g[clip-path="url(#viewBox)"]';
-exports.changeWhiteboardAccess = 'li[data-test="changeWhiteboardAccess"]';
+exports.changeWhiteboardAccess = 'div[data-test="changeWhiteboardAccessUser"]';
 exports.pencil = 'button[data-test="pencilTool"]';
 exports.resetZoomButton = 'button[data-test="resetZoomButton"]';
 exports.zoomInButton = 'button[data-test="zoomInBtn"]';

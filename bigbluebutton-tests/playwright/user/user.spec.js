@@ -56,7 +56,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
     });
   });
 
-  test.describe.parallel('List', () => {
+  test.describe.parallel('List', { tag: '@ci' }, () => {
     test('User presence check (multiple users)', async ({ browser, context, page }) => {
       const multiusers = new MultiUsers(browser, context);
       await multiusers.initPages(page);
