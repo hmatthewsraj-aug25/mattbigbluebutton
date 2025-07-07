@@ -251,7 +251,7 @@ const QuizzesTable = (props) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         sx={{
-          alignItems: 'center',
+          alignItems: 'flex-start',
           lineHeight: '24px',
           width: 1,
           height: 1,
