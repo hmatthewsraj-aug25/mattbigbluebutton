@@ -278,14 +278,16 @@ const QuizzesTable = (props) => {
         >
           {val}
         </Box>
-        <Box ref={cellLabel} className="text-xs text-gray-600 font-thin max-w-full overflow-hidden text-ellipsis">
-          {intl.formatMessage({
-            id: 'app.learningDashboard.quizzes.response',
-            defaultMessage: 'Response',
-          })}
-          {': '}
-          {responses}
-        </Box>
+        {responses && (
+          <Box ref={cellLabel} className="text-xs text-gray-600 font-thin max-w-full overflow-hidden text-ellipsis">
+            {intl.formatMessage({
+              id: 'app.learningDashboard.quizzes.response',
+              defaultMessage: 'Response',
+            })}
+            {': '}
+            {responses}
+          </Box>
+        )}
         {showPopper && (
           <Popper
             open={showFullCell && anchorEl !== null}
