@@ -585,7 +585,7 @@ public:
     chatMessage: true
     quickPollConfirmationStep: true
     quiz: false
-    correctAnswerMarker: "__"
+    quickPollCorrectAnswerSuffix: "__"
   captions:
     enabled: true
     id: captions

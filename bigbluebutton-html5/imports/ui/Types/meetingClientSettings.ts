@@ -471,7 +471,7 @@ export interface Poll {
   chatMessage: boolean
   quickPollConfirmationStep: boolean
   quiz: boolean
-  correctAnswerMarker: string
+  quickPollCorrectAnswerSuffix: string
 }
 
 export interface Captions {

@@ -58,7 +58,7 @@ const QuickPollDropdown = (props) => {
   const intl = useIntl();
 
   const POLL_SETTINGS = window.meetingClientSettings.public.poll;
-  const QUIZ_CORRECT_ANSWER_MARKER = POLL_SETTINGS.correctAnswerMarker;
+  const QUIZ_CORRECT_ANSWER_MARKER = POLL_SETTINGS.quickPollCorrectAnswerSuffix;
   const MAX_CUSTOM_FIELDS = POLL_SETTINGS.maxCustom;
   const MAX_CHAR_LIMIT = POLL_SETTINGS.maxTypedAnswerLength;
   const CANCELED_POLL_DELAY = 250;
