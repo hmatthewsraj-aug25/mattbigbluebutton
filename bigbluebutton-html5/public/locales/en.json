@@ -446,7 +446,7 @@
     "app.poll.quiz.start.label": "Start Quiz",
     "app.poll.quiz.showCorrectAnswer": "Show correct answer to all users",
     "app.poll.quiz.options.title": "Quiz options",
-    "app.poll.quiz.options.tooltip": "Select this answer as the correct one",
+    "app.poll.quiz.options.tooltip": "Set as correct answer",
     "app.poll.quiz.options.correct": "Correct Answer",
     "app.poll.quiz.options.incorrect": "Incorrect Answer",
     "app.poll.quiz.liveResult.title.correct": "Correct",
