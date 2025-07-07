@@ -234,6 +234,8 @@ const QuizzesTable = (props) => {
     }
 
     const variants = {
+      success: '',
+      error: '',
       default: 'bg-gray-500/10 text-gray-700 border border-gray-300 rounded-full px-2 font-bold',
     };
 

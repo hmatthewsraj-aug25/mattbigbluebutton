@@ -265,35 +265,28 @@ const UserDatailsComponent = (props) => {
     );
   }
 
-  function renderQuizItem(quiz, isAnswerCorrect) {
+  function renderQuizItem(quiz, data) {
+    const { isCorrect, response } = data;
     const { anonymous: isAnonymous, question } = quiz;
     let variant;
-    let label;
+    let label = response;
 
-    if (isAnswerCorrect == null) {
+    if (isCorrect == null) {
       variant = 'default';
       label = intl.formatMessage({
         id: 'app.learningDashboard.quizzes.noResponse',
         defaultMessage: 'No response',
       });
-    } else if (isAnswerCorrect) {
+    } else if (isCorrect) {
       variant = 'success';
-      label = intl.formatMessage({
-        id: 'app.learningDashboard.quizzes.correct',
-        defaultMessage: 'Correct',
-      });
     } else {
       variant = 'error';
-      label = intl.formatMessage({
-        id: 'app.learningDashboard.quizzes.incorrect',
-        defaultMessage: 'Incorrect',
-      });
     }
 
     const variants = {
-      success: 'bg-green-500/10 text-green-700 border border-green-300 rounded-full px-2 font-bold',
-      error: 'bg-red-500/10 text-red-700 border border-red-300 rounded-full px-2 font-bold',
-      default: '',
+      success: '',
+      error: '',
+      default: 'bg-gray-500/10 text-gray-700 border border-gray-300 rounded-full px-2 font-bold',
     };
 
     return (
@@ -328,6 +321,8 @@ const UserDatailsComponent = (props) => {
         ) : (
           <td className="min-w-[20%] grow text-center mx-3 p-6 py-2">
             <span className={`overflow-hidden text-ellipsis w-full ${variants[variant]}`}>
+              {variant === 'success' && <>&#9989;&nbsp;</>}
+              {variant === 'error' && <>&#10060;&nbsp;</>}
               {label}
             </span>
           </td>
@@ -388,7 +383,10 @@ const UserDatailsComponent = (props) => {
 
   function getUserQuizAnswer(quiz) {
     if (typeof user.answers[quiz.pollId] !== 'undefined') {
-      return user.answers[quiz.pollId][0] === quiz.correctOption;
+      return {
+        isCorrect: (user.answers[quiz.pollId] ?? [])[0] === quiz.correctOption,
+        response: (user.answers[quiz.pollId] ?? []).join(', '),
+      };
     }
     return null;
   }
