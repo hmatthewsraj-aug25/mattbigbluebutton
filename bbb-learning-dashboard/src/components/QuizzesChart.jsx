@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Paper } from '@mui/material';
 import { injectIntl } from 'react-intl';
 import {
@@ -13,8 +13,6 @@ const QuizzesChart = (props) => {
     quizzes,
     intl,
   } = props;
-
-  const [currentHoveredPoint, setCurrentHoveredPoint] = useState();
 
   if (!Object.keys(quizzes).length) return null;
 
@@ -31,9 +29,21 @@ const QuizzesChart = (props) => {
         return [pollId, isCorrect];
       });
 
+    const activityScore = (getActivityScore(u, allUsers, totalOfPolls) / 10) * 100;
+    const numberOfCorrectAnswers = result.filter(([, isCorrect]) => isCorrect).length;
+    const quizPerformance = (numberOfCorrectAnswers / Object.values(quizzes).length) * 100;
+
+    const existingDot = chartData.find((v) => (v.x === activityScore && v.y === quizPerformance));
+
+    if (existingDot) {
+      existingDot.ids.push(u.userKey);
+      existingDot.names.push(u.name);
+      return;
+    }
+
     chartData.push({
-      id: u.userKey,
-      name: u.name,
+      ids: [u.userKey],
+      names: [u.name],
       x: (getActivityScore(u, allUsers, totalOfPolls) / 10) * 100,
       y: (result.filter(([, isCorrect]) => isCorrect).length / Object.values(quizzes).length) * 100,
     });
@@ -54,9 +64,6 @@ const QuizzesChart = (props) => {
             right: 20,
             bottom: 20,
             left: 20,
-          }}
-          onMouseLeave={() => {
-            setCurrentHoveredPoint(null);
           }}
         >
           <CartesianGrid />
@@ -94,24 +101,30 @@ const QuizzesChart = (props) => {
           <Tooltip
             cursor={{ strokeDasharray: '3 3' }}
             content={(tooltipProps) => {
-              const { active } = tooltipProps;
-              const isVisible = active && currentHoveredPoint;
+              const { active, payload } = tooltipProps;
+              const isVisible = active && payload?.length;
               return (
                 <Paper style={{ visibility: isVisible ? 'visible' : 'hidden' }} className="p-2">
                   {isVisible && (
                     <>
-                      <p className="font-bold">{currentHoveredPoint?.name}</p>
+                      <p className="font-bold">
+                        {[payload[0].payload.names.map((name) => (
+                          <div>
+                            {name}
+                          </div>
+                        ))]}
+                      </p>
                       <p className="text-gray-600">
                         {`${intl.formatMessage({
                           id: 'app.learningDashboard.quizzes.activityLevel',
                           defaultMessage: 'Activity Level',
-                        })}: ${currentHoveredPoint.node.x}%`}
+                        })}: ${payload[0].value}%`}
                       </p>
                       <p className="text-gray-600">
                         {`${intl.formatMessage({
                           id: 'app.learningDashboard.quizzes.quizScore',
                           defaultMessage: 'Quiz Score',
-                        })}: ${currentHoveredPoint.node.y}%`}
+                        })}: ${payload[1].value}%`}
                       </p>
                     </>
                   )}
@@ -126,9 +139,6 @@ const QuizzesChart = (props) => {
             })}
             data={chartData}
             fill="#f97316"
-            onMouseOver={(data) => {
-              setCurrentHoveredPoint(data);
-            }}
           />
         </ScatterChart>
       </ResponsiveContainer>
