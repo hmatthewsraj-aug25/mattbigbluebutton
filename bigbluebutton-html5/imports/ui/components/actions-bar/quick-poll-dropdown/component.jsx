@@ -349,7 +349,7 @@ const QuickPollDropdown = (props) => {
                 letterAnswers,
                 pollQuestion,
                 pollData?.multiResp,
-                correctAnswer.length > 0,
+                correctAnswer?.length > 0,
                 correctAnswer,
               );
             }, CANCELED_POLL_DELAY);
