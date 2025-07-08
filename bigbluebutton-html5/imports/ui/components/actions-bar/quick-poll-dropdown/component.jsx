@@ -58,7 +58,7 @@ const QuickPollDropdown = (props) => {
   const intl = useIntl();
 
   const POLL_SETTINGS = window.meetingClientSettings.public.poll;
-  const QUIZ_CORRECT_ANSWER_MARKER = POLL_SETTINGS.quickPollCorrectAnswerSuffix;
+  const QUICK_POLL_CORRECT_ANSWER_SUFFIX = POLL_SETTINGS.quickPollCorrectAnswerSuffix;
   const MAX_CUSTOM_FIELDS = POLL_SETTINGS.maxCustom;
   const MAX_CHAR_LIMIT = POLL_SETTINGS.maxTypedAnswerLength;
   const CANCELED_POLL_DELAY = 250;
@@ -114,8 +114,8 @@ const QuickPollDropdown = (props) => {
   // Join lines into a single question string
   const question = [questionLines.join(' ').trim()];
 
-  const correctAnswer = lines.find((line) => line.endsWith(QUIZ_CORRECT_ANSWER_MARKER)
-  && !question.includes(line))?.slice(0, -QUIZ_CORRECT_ANSWER_MARKER.length);
+  const correctAnswer = lines.find((line) => line.endsWith(QUICK_POLL_CORRECT_ANSWER_SUFFIX)
+  && !question.includes(line))?.slice(0, -QUICK_POLL_CORRECT_ANSWER_SUFFIX.length);
 
   // Check explicitly if options exist or if the question ends with '?'
   const hasExplicitQuestionMark = /\?$/.test(question);
@@ -157,8 +157,8 @@ const QuickPollDropdown = (props) => {
 
   if (optionsPoll) {
     optionsPoll = optionsPoll.map((opt) => {
-      const cleanedOpt = opt.endsWith(QUIZ_CORRECT_ANSWER_MARKER)
-        ? opt.slice(0, -QUIZ_CORRECT_ANSWER_MARKER.length)
+      const cleanedOpt = opt.endsWith(QUICK_POLL_CORRECT_ANSWER_SUFFIX)
+        ? opt.slice(0, -QUICK_POLL_CORRECT_ANSWER_SUFFIX.length)
         : opt;
 
       const formattedOpt = cleanedOpt.substring(0, MAX_CHAR_LIMIT);
