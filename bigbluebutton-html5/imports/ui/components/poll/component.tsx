@@ -240,7 +240,7 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   hasPoll,
 }) => {
   const POLL_SETTINGS = window.meetingClientSettings.public.poll;
-  const QUIZ_ENABLED = POLL_SETTINGS.quiz;
+  const QUIZ_ENABLED = POLL_SETTINGS.quiz.enabled;
   const ALLOW_CUSTOM_INPUT = POLL_SETTINGS.allowCustomResponseInput;
   const MAX_CUSTOM_FIELDS = POLL_SETTINGS.maxCustom;
   const [stopPoll] = useMutation(POLL_CANCEL);

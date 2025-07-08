@@ -87,7 +87,7 @@ const PresentationToolbarContainer = (props) => {
 
   const WHITEBOARD_CONFIG = window.meetingClientSettings.public.whiteboard;
   const POLL_SETTINGS = window.meetingClientSettings.public.poll;
-  const QUIZ_ENABLED = POLL_SETTINGS.quiz;
+  const QUIZ_ENABLED = POLL_SETTINGS.quiz.enabled;
 
   const {
     userIsPresenter,
