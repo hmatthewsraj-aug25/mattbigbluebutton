@@ -73,7 +73,7 @@ const MediaArea = (props: MediaAreaProps) => {
     setMenuOpen(!menuOpen);
   }, [menuOpen]);
 
-  if (!isMeteorConnected) {
+  if ((!amIPresenter && !amIModerator) || !isMeteorConnected) {
     return null;
   }
 

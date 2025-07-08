@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { colorPrimary } from '/imports/ui/stylesheets/styled-components/palette';
@@ -143,6 +143,16 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
   const { screenIsShared: isScreenGloballyBroadcasting } = useIsScreenGloballyBroadcasting();
   const [currentView, setCurrentView] = useState<'main' | 'presentation' | 'externalVideo' | 'cameraAsContent'>('main');
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open]);
+
   if (!open) return null;
 
   const handleBackClick = () => {
@@ -178,7 +188,7 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
           />
           {amIPresenter && isPresentationEnabled && !isPresentationManagementDisabled && (
             <MediaButton
-              data-test="managePresentations"
+              dataTest="managePresentations"
               color={hasPresentation ? 'active' : 'default'}
               showSettingsIcon
               text={intl.formatMessage(intlMessages.mediaSharingSlides)}
@@ -189,7 +199,7 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
           )}
           {amIPresenter && allowExternalVideo && (
             <MediaButton
-              data-test="shareExternalVideo"
+              dataTest="shareExternalVideo"
               color={isSharingVideo ? 'primary' : 'default'}
               showSettingsIcon
               text={intl.formatMessage(intlMessages.mediaSharingVideoLink)}
@@ -199,7 +209,7 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
           )}
           {isCameraAsContentEnabled && amIPresenter && (
             <MediaButton
-              data-test="cameraAsContent"
+              dataTest="cameraAsContent"
               color={hasCameraAsContent ? 'primary' : 'default'}
               showSettingsIcon
               text={intl.formatMessage(intlMessages.shareCameraAsContent)}
@@ -212,7 +222,7 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
             .map((item) => (
               <MediaButton
                 key={item.id}
-                data-test={`media-sharing-plugin-${item.id}`}
+                dataTest={`media-sharing-plugin-${item.id}`}
                 color="default"
                 text={item.label || ''}
                 icon={item.icon ? <Icon iconName={item.icon} /> : undefined}

@@ -8,6 +8,7 @@ export interface MediaButtonProps {
   color: string;
   showSettingsIcon?: boolean;
   text: string;
+  dataTest: string;
   onClick?: () => void;
   /** The main icon to be rendered in the button */
   icon?: React.ReactElement;
@@ -17,6 +18,7 @@ export const MediaButton: FunctionComponent<MediaButtonProps> = ({
   color,
   showSettingsIcon,
   text,
+  dataTest,
   onClick,
   icon,
 }) => {
@@ -29,7 +31,7 @@ export const MediaButton: FunctionComponent<MediaButtonProps> = ({
 
   return (
     <Styled.MediaButtonContainer>
-      <Styled.ButtonFrame color={color} onClick={onClick}>
+      <Styled.ButtonFrame color={color} onClick={onClick} data-test={dataTest}>
         {showSettingsIcon && (
           <Styled.SettingsContainer>
             <IconButton

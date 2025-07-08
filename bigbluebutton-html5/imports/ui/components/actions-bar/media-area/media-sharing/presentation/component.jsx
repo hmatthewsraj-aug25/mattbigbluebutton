@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
 import deviceInfo from '/imports/utils/deviceInfo';
-import Button from '/imports/ui/components/common/button/component';
 import update from 'immutability-helper';
 import logger from '/imports/startup/client/logger';
 import { toast } from 'react-toastify';
@@ -103,14 +102,6 @@ const intlMessages = defineMessages({
   removePresentation: {
     id: 'app.presentationUploder.removePresentationLabel',
     description: 'select to delete this presentation',
-  },
-  clearErrors: {
-    id: 'app.presentationUploder.clearErrors',
-    description: 'button label for clearing upload errors',
-  },
-  clearErrorsDesc: {
-    id: 'app.presentationUploder.clearErrorsDesc',
-    description: 'aria description for button clearing upload error',
   },
   uploadViewTitle: {
     id: 'app.presentationUploder.uploadViewTitle',
@@ -326,7 +317,6 @@ class PresentationUploader extends Component {
     if (toast.isActive(this.exportToastId)) {
       toast.dismiss(this.exportToastId);
     }
-    Session.setItem('showUploadPresentationView', false);
   }
 
   handleRemove(item, withErr = false) {
@@ -483,7 +473,6 @@ class PresentationUploader extends Component {
         presentations: JSON.parse(JSON.stringify(propPresentations)),
         shouldDisableExportButtonForAllDocuments,
       },
-      Session.setItem('showUploadPresentationView', false),
     );
   }
 
@@ -575,6 +564,7 @@ class PresentationUploader extends Component {
       allowDownloadOriginal,
       allowDownloadConverted,
       allowDownloadWithAnnotations,
+      onActionCompleted,
     } = this.props;
 
     const isVisuallySelected = activeThumbnailId
@@ -614,8 +604,9 @@ class PresentationUploader extends Component {
     if (isProcessing || !firstPageThumbnailUrl) return null;
 
     return (
-      <Styled.PresentationItemContainer key={item.presentationId}>
+      <Styled.PresentationItemContainer data-test="presentationItem" key={item.presentationId}>
         <Styled.PresentationThumbnail
+          data-test="presentationThumbnail"
           selected={isVisuallySelected}
           onClick={() => {
             if (!disableActions) {
@@ -629,7 +620,7 @@ class PresentationUploader extends Component {
           <img src={firstPageThumbnailUrl} alt={item.name} />
         </Styled.PresentationThumbnail>
         <Styled.PresentationItemBottomContainer>
-          <Styled.PresentationItemName>
+          <Styled.PresentationItemName data-test="presentationName">
             {item.name}
           </Styled.PresentationItemName>
           {allowDownloadOriginal || allowDownloadWithAnnotations || allowDownloadConverted ? (
@@ -644,7 +635,7 @@ class PresentationUploader extends Component {
               allowDownloadWithAnnotations={allowDownloadWithAnnotations}
               handleDownloadableChange={this.handleDownloadableChange}
               item={item}
-              closeModal={() => Session.setItem('showUploadPresentationView', false)}
+              closeModal={() => onActionCompleted()}
               handleDownloadingOfPresentation={(fileStateType) => this
                 .handleDownloadingOfPresentation(item, fileStateType)}
             />
@@ -676,21 +667,9 @@ class PresentationUploader extends Component {
 
     const { disableActions } = this.state;
 
-    if (disableActions && !this.hasError) return null;
+    if (disableActions) return null;
 
-    return this.hasError ? (
-      <div>
-        <Button
-          color="danger"
-          onClick={() => this.handleRemove(null, true)}
-          label={intl.formatMessage(intlMessages.clearErrors)}
-          aria-describedby="clearErrorDesc"
-        />
-        <div id="clearErrorDesc" style={{ display: 'none' }}>
-          {intl.formatMessage(intlMessages.clearErrorsDesc)}
-        </div>
-      </div>
-    ) : (
+    return (
       // Until the Dropzone package has fixed the mime type hover validation, the rejectClassName
       // prop is being remove to prevent the error styles from being applied to valid file types.
       // Error handling is being done in the onDrop prop.
@@ -749,21 +728,9 @@ class PresentationUploader extends Component {
 
     const { disableActions } = this.state;
 
-    if (disableActions && !this.hasError) return null;
+    if (disableActions) return null;
 
-    return this.hasError ? (
-      <div>
-        <Button
-          color="danger"
-          onClick={() => this.handleRemove(null, true)}
-          label={intl.formatMessage(intlMessages.clearErrors)}
-          aria-describedby="clearErrorDesc"
-        />
-        <div id="clearErrorDesc" style={{ display: 'none' }}>
-          {intl.formatMessage(intlMessages.clearErrorsDesc)}
-        </div>
-      </div>
-    ) : (
+    return (
       <Styled.UploaderDropzone
         multiple
         activeClassName="dropzoneActive"
@@ -797,14 +764,14 @@ class PresentationUploader extends Component {
     } = this.state;
 
     return (
-      <>
+      <div id="upload-modal">
         {isMobile ? this.renderPicDropzone() : null}
         {this.renderDropzone()}
         {this.renderExternalUpload()}
         {this.renderPresentationList()}
         <ModalStyled.FooterContainer>
           <ModalStyled.ConfirmationButton
-            data-test="SharePresentationButton"
+            data-test="sharePresentationButton"
             label={intl.formatMessage(intlMessages.shareLabel)}
             color="primary"
             onClick={this.handleConfirm}
@@ -815,7 +782,7 @@ class PresentationUploader extends Component {
             }
           />
         </ModalStyled.FooterContainer>
-      </>
+      </div>
     );
   }
 }
