@@ -127,8 +127,6 @@ class PresentationUploader extends Component {
 
     this.state = {
       presentations: props.presentations,
-      disableActions: false,
-      shouldDisableExportButtonForAllDocuments: false,
       activeThumbnailId: null, // Initialize activeThumbnailId
     };
 
@@ -137,7 +135,6 @@ class PresentationUploader extends Component {
 
     // handlers
     this.handleConfirm = this.handleConfirm.bind(this);
-    this.handleDismiss = this.handleDismiss.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
     this.handleCurrentChange = this.handleCurrentChange.bind(this);
     this.handleDownloadingOfPresentation = this.handleDownloadingOfPresentation.bind(this);
@@ -279,21 +276,8 @@ class PresentationUploader extends Component {
     });
 
     if (shouldUpdateState) {
-      let shouldDisableActions = false;
-      let shouldDisableExportButtonForAllDocuments = false;
-      presStateFiltered.forEach(
-        (p) => {
-          shouldDisableActions = shouldDisableExportButtonForAllDocuments
-            || !!p.uploadErrorMsgKey || !!p.uploadErrorDetailsJson;
-          shouldDisableExportButtonForAllDocuments = (
-            !p.uploadCompleted && !p.uploadErrorDetailsJson
-          );
-        },
-      );
       this.setState({
         presentations: unique(presStateFiltered, (p) => p.presentationId),
-        shouldDisableExportButtonForAllDocuments,
-        disableActions: shouldDisableActions,
       });
     }
 
@@ -367,7 +351,6 @@ class PresentationUploader extends Component {
       }
       this.setState({
         presentations: merged,
-        disableActions: false,
       });
       return;
     }
@@ -406,8 +389,8 @@ class PresentationUploader extends Component {
   }
 
   handleCurrentChange(id) {
-    this.setState(({ presentations, disableActions }) => {
-      if (disableActions || presentations?.length === 0) return false;
+    this.setState(({ presentations }) => {
+      if (presentations?.length === 0) return false;
 
       const currentIndex = presentations.findIndex((p) => p.current);
       const newCurrentIndex = presentations.findIndex((p) => p.presentationId === id);
@@ -460,20 +443,6 @@ class PresentationUploader extends Component {
     const { dispatchChangePresentationDownloadable } = this.props;
 
     dispatchChangePresentationDownloadable(item, downloadable, fileStateType);
-  }
-
-  handleDismiss() {
-    const { presentations: propPresentations } = this.props;
-
-    const shouldDisableExportButtonForAllDocuments = propPresentations.some(
-      (p) => !p.uploadCompleted,
-    );
-    this.setState(
-      {
-        presentations: JSON.parse(JSON.stringify(propPresentations)),
-        shouldDisableExportButtonForAllDocuments,
-      },
-    );
   }
 
   handleDownloadingOfPresentation(item, fileStateType) {
@@ -555,8 +524,6 @@ class PresentationUploader extends Component {
 
   renderPresentationItem(item) {
     const {
-      disableActions,
-      shouldDisableExportButtonForAllDocuments,
       activeThumbnailId,
     } = this.state;
     const {
@@ -588,8 +555,7 @@ class PresentationUploader extends Component {
 
     const shouldDisableExportButton = (isExporting
       || !item.uploadCompleted
-      || hasError
-      || disableActions);
+      || hasError);
 
     const formattedDownloadLabel = isExporting
       ? intl.formatMessage(intlMessages.exporting)
@@ -597,8 +563,7 @@ class PresentationUploader extends Component {
 
     const formattedDownloadAriaLabel = `${formattedDownloadLabel} ${item.name}`;
 
-    const disableExportDropdown = shouldDisableExportButtonForAllDocuments
-      || shouldDisableExportButton;
+    const disableExportDropdown = shouldDisableExportButton;
 
     // only render the item if it has finished processing and has a thumbnail URL
     if (isProcessing || !firstPageThumbnailUrl) return null;
@@ -609,13 +574,9 @@ class PresentationUploader extends Component {
           data-test="presentationThumbnail"
           selected={isVisuallySelected}
           onClick={() => {
-            if (!disableActions) {
-              // this.handleCurrentChange(item.presentationId);
-              this.setState({ activeThumbnailId: item.presentationId });
-            }
+            this.setState({ activeThumbnailId: item.presentationId });
           }}
           aria-label={`${item.name}`}
-          disabled={disableActions}
         >
           <img src={firstPageThumbnailUrl} alt={item.name} />
         </Styled.PresentationThumbnail>
@@ -642,7 +603,6 @@ class PresentationUploader extends Component {
           ) : null}
           {removable ? (
             <Styled.RemoveButton
-              disabled={disableActions}
               label={intl.formatMessage(intlMessages.removePresentation)}
               data-test="removePresentation"
               aria-label={`${intl.formatMessage(intlMessages.removePresentation)} ${item.name}`}
@@ -664,10 +624,6 @@ class PresentationUploader extends Component {
       fileValidMimeTypes,
       handleFiledrop,
     } = this.props;
-
-    const { disableActions } = this.state;
-
-    if (disableActions) return null;
 
     return (
       // Until the Dropzone package has fixed the mime type hover validation, the rejectClassName
@@ -726,10 +682,6 @@ class PresentationUploader extends Component {
       handleFiledrop,
     } = this.props;
 
-    const { disableActions } = this.state;
-
-    if (disableActions) return null;
-
     return (
       <Styled.UploaderDropzone
         multiple
@@ -759,7 +711,6 @@ class PresentationUploader extends Component {
     } = this.props;
     if (!isPresenter) return null;
     const {
-      disableActions,
       activeThumbnailId,
     } = this.state;
 
@@ -775,11 +726,7 @@ class PresentationUploader extends Component {
             label={intl.formatMessage(intlMessages.shareLabel)}
             color="primary"
             onClick={this.handleConfirm}
-            disabled={
-              disableActions
-              || currentPresentation === activeThumbnailId
-              || !activeThumbnailId
-            }
+            disabled={currentPresentation === activeThumbnailId || !activeThumbnailId}
           />
         </ModalStyled.FooterContainer>
       </div>
