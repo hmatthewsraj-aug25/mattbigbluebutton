@@ -125,8 +125,7 @@ const ChatHeaderContainer: React.FC = () => {
     );
   }
   const isPublicChat = chatData.chat[0]?.public;
-  const title = isPublicChat ? intl.formatMessage(intlMessages.titlePublic)
-    : intl.formatMessage(intlMessages.titlePrivate, { participantName: chatData?.chat[0]?.participant?.name });
+  const title = intl.formatMessage(intlMessages.messagesTitle);
   return (
     <>
       <h2 className="sr-only">{title}</h2>

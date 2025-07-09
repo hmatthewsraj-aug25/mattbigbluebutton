@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import Bowser from 'bowser';
 import { isBrowserSupported } from 'livekit-client';
 import Session from '/imports/ui/services/storage/in-memory';
-import { isBrowserSupported } from 'livekit-client';
 import {
   getUserCurrent,
   GetUserCurrentResponse,

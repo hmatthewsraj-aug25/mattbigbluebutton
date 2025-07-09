@@ -341,4 +341,3 @@ BBBMenu.propTypes = {
 };
 
 export default injectIntl(BBBMenu);
->>>>>>> 0f27a90d12e5c0137d65daff08378b015e7c12eb

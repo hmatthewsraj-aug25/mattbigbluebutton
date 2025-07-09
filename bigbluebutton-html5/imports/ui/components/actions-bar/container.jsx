@@ -102,11 +102,9 @@ const ActionsBarContainer = (props) => {
   const [darkModeIsEnabled, setDarkModeIsEnabled] = useState(isDarkThemeEnabled());
   const isPollingEnabled = useIsPollingEnabled() && isPresentationEnabled;
   const isRaiseHandEnabled = useIsRaiseHandEnabled();
-  //const layoutSettings = useSettings(SETTINGS.LAYOUT);
-  //const { pushLayout } = layoutSettings;
   const isReactionsButtonEnabled = useIsUserReactionsEnabled();
-  const applicationSettings = useSettings(SETTINGS.APPLICATION);
-  const { pushLayout } = applicationSettings;
+  const layoutSettings = useSettings(SETTINGS.LAYOUT);
+  const { pushLayout } = layoutSettings;
   const setPushLayout = usePushLayoutUpdater(pushLayout);
   const setMeetingLayout = useMeetingLayoutUpdater(
     cameraDockOutput,
