@@ -1,6 +1,7 @@
 const { expect } = require('@playwright/test');
 const path = require('path');
 const e = require('../core/elements');
+const { sleep } = require('../core/helpers');
 const {
   ELEMENT_WAIT_TIME,
   UPLOAD_PDF_WAIT_TIME,
@@ -36,12 +37,14 @@ async function uploadSinglePresentation(testPage, fileName, uploadTimeout = UPLO
   await testPage.waitAndClick(e.mediaAreaButton);
   await testPage.waitAndClick(e.managePresentations);
   await testPage.hasElement(e.presentationFileUpload, 'should display the presentation space for uploading a new file, when the manage presentations is opened');
+  await sleep(500); //wait a bit for the presentations to load
+  const numPresentationsBefore = await testPage.getSelectorCount(e.presentationThumbnails);
 
   await testPage.page.setInputFiles(e.presentationFileUpload, path.join(__dirname, `../core/media/${fileName}`));
 
   await testPage.hasElement(e.presentationUploadProgressToast, 'should display the toast presentation upload progress after confirming the presentation to be uploaded');
 
-  await testPage.waitUntilHaveCountSelector(e.presentationThumbnails, 2, uploadTimeout) // wait for the upload to finish
+  await testPage.waitUntilHaveCountSelector(e.presentationThumbnails, numPresentationsBefore + 1, uploadTimeout) // wait for the upload to finish
 
   // select and share the uploaded presentation
   const newPDFThumbnail = await testPage.getLocatorByIndex(e.presentationThumbnails, 1);

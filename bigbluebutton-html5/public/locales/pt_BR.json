@@ -699,7 +699,7 @@
     "app.talkingIndicator.wasTalking": "{0} parou de falar",
     "app.mediaSharing.modal.title": "Compartilhamento de mídia",
     "app.mediaSharing.modal.slides": "Slides",
-    "app.mediaSharing.modal.videoLink": "Vídeo externo",
+    "app.mediaSharing.modal.videoLink": "Reproduzir link de vídeo",
     "app.mediaSharing.modal.mustBePresenter": "Você deve ser o apresentador para compartilhar conteúdo.",
     "app.mediaSharing.modal.share": "Compartilhar",
     "app.mediaSharing.modal.stopSharing": "Parar compartilhamento",
