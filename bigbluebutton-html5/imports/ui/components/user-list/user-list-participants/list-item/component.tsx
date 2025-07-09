@@ -204,6 +204,7 @@ const UserListItem: React.FC<UserListItemProps> = ({
         intl={intl}
         userItemsFromPlugin={userItemsFromPlugin}
       />
+      {renderUserListItemIconsFromPlugin(userItemsFromPlugin)}
       <UserItemToolbar
         subjectUser={user}
         pinnedToolbarOptions={pinnedToolbarOptions}
@@ -212,7 +213,6 @@ const UserListItem: React.FC<UserListItemProps> = ({
         open={open}
         userListDropdownItems={userListDropdownItems}
       />
-      {renderUserListItemIconsFromPlugin(userItemsFromPlugin)}
     </Styled.UserItemContents>
   );
 };
