@@ -30,6 +30,7 @@ const ItemsGroup = `
   align-items: center;
   flex-grow: 1;
   flex-shrink: 1;
+  gap: ${smPaddingX};
 `;
 
 const Left = styled.div`
@@ -54,7 +55,6 @@ const Left = styled.div`
 
 const Center = styled.div`
   ${ItemsGroup}
-  gap: ${smPaddingX};
   justify-content: center;
 `;
 
