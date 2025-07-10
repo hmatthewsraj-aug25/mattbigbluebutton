@@ -27,6 +27,6 @@ test.describe.parallel('Screenshare', { tag: '@ci' }, () => {
     );
     const screenshare = new ScreenShare(browser, page);
     await screenshare.init(true, true);
-    await screenshare.screenshareIsStopped();
+    await screenshare.stopScreenshareAndVerify();
   });
 });
