@@ -52,7 +52,7 @@ class ScreenShare extends Page {
     await this.hasElement(e.whiteboard, 'should display the whiteboard');
   }
 
-  async screenshareIsStopped() {
+  async stopScreenshareAndVerify() {
     const { screensharingEnabled } = getSettings();
 
     if (!screensharingEnabled) {
