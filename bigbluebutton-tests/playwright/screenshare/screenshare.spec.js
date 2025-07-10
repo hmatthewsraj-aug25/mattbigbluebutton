@@ -20,4 +20,13 @@ test.describe.parallel('Screenshare', { tag: '@ci' }, () => {
     await screenshare.init(true, true);
     await screenshare.screenshareStopsExternalVideo();
   });
+
+  test('Verify screenshare is stopped', async ({ browser, browserName, page }) => {
+    test.skip(browserName === 'firefox',
+      'Screenshare tests not able in Firefox browser without desktop',
+    );
+    const screenshare = new ScreenShare(browser, page);
+    await screenshare.init(true, true);
+    await screenshare.screenshareIsStopped();
+  });
 });
