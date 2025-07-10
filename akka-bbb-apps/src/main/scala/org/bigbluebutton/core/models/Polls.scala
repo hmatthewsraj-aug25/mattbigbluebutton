@@ -318,13 +318,14 @@ object Polls {
       for {
         answer <- result.answers
       } yield {
-        if (showAnswer && answer.key == result.correctAnswer.getOrElse("")) {
-          // temporarily adding a check mark to the correct answer
-          // while the whiteboard doesn't know how to handle the correct answer
-          answer.copy(key = s"✅ ${answer.key}")
-        } else {
-          answer
-        }
+        val isCorrect =
+          showAnswer && result.correctAnswer.contains(answer.key)
+        Map(
+          "id" -> answer.id,
+          "key" -> answer.key,
+          "numVotes" -> answer.numVotes,
+          "isCorrectAnswer" -> isCorrect
+        )
       }
     }
 
