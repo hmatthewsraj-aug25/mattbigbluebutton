@@ -195,10 +195,12 @@ const PushLayoutEngine = (props) => {
 
   useEffect(() => {
     if (!selectedLayout) return () => { };
-    const meetingLayoutDidChange = meetingLayout !== prevProps.meetingLayout;
+    const meetingLayoutDidChange = prevProps.meetingLayout !== undefined
+      && meetingLayout !== prevProps.meetingLayout;
     const pushLayoutMeetingDidChange = prevProps.pushLayoutMeeting !== undefined
       && pushLayoutMeeting !== prevProps.pushLayoutMeeting;
-    const enforceLayoutDidChange = enforceLayoutResult !== prevProps.enforceLayoutResult;
+    const enforceLayoutDidChange = enforceLayoutResult !== undefined
+      && enforceLayoutResult !== prevProps.enforceLayoutResult;
     const shouldSwitchLayout = isPresenter
       ? meetingLayoutDidChange || enforceLayoutDidChange
       : ((meetingLayoutDidChange || pushLayoutMeetingDidChange) && pushLayoutMeeting)
@@ -392,7 +394,7 @@ const PushLayoutEngineContainer = (props) => {
 
   const validatePluginLayout = (layout) => {
     const layoutTypes = Object.keys(LAYOUT_TYPE);
-    return layout && layoutTypes.includes(layout) ? layout : null;
+    return layout && layoutTypes.includes(layout) ? layout : undefined;
   };
   const pluginEnforcedLayout = validatePluginLayout(
     pluginLayoutChange.pluginEnforcedLayout,
@@ -437,7 +439,7 @@ const PushLayoutEngineContainer = (props) => {
   const validateEnforceLayout = (currUser) => {
     const layoutTypes = Object.keys(LAYOUT_TYPE);
     const enforceLayout = currUser?.enforceLayout;
-    return enforceLayout && layoutTypes.includes(enforceLayout) ? enforceLayout : null;
+    return enforceLayout && layoutTypes.includes(enforceLayout) ? enforceLayout : undefined;
   };
 
   const enforceLayout = validateEnforceLayout(currentUserData);
