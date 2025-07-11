@@ -27,6 +27,13 @@ var (
 		FileExtSVG:  {bbbhttp.ContentTypeSVG},
 		FileExtWEBP: {bbbhttp.ContentTypeWEBP},
 	}
+
+	msOfficeExt = []string{
+		FileExtDOC, FileExtDOCX, FileExtODG, FileExtODP, FileExtODS, FileExtODT,
+		FileExtPPT, FileExtPPTX, FileExtRTF, FileExtTXT, FileExtXLS, FileExtXLSX,
+	}
+
+	imgFileExt = []string{FileExtJPEG, FileExtJPG, FileExtPNG, FileExtSVG, FileExtWEBP}
 )
 
 func FileExtFromContentType(contentType string) (string, error) {
@@ -48,6 +55,24 @@ func FileExtMatchesContentType(fileExt string, contentType string) bool {
 
 	for _, ct := range contentTypes {
 		if ct == contentType {
+			return true
+		}
+	}
+	return false
+}
+
+func IsOfficeFile(ext string) bool {
+	for _, e := range msOfficeExt {
+		if ext == e {
+			return true
+		}
+	}
+	return false
+}
+
+func IsImageFile(ext string) bool {
+	for _, e := range imgFileExt {
+		if ext == e {
 			return true
 		}
 	}

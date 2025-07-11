@@ -94,6 +94,13 @@ type Transformer[T, U any] interface {
 	Transform(Message[T]) (Message[U], error)
 }
 
+// A Generator is a processor that generates additional data based on the incoming [Message] with a payload of
+// type T and returns a new message with a payload of type U. If generation fails, an error should be returned
+// to abort futher processing.
+type Generator[T, U any] interface {
+	Generate(Message[T]) (Message[U], error)
+}
+
 // A SenderReceiver is a processor that performs a synchronous call to a remote service using the payload of type
 // T from the incoming [Message] and returns a response in the form of a new [Message] with a payload of
 // type U. If invocation of the remote service fails, an error should be returned to abort further processing.
@@ -161,6 +168,15 @@ func (s *Step[T, U]) Transform(t Transformer[T, U]) *Step[T, U] {
 		panic("cannot call Transform on a Step that already has a processor function")
 	}
 	s.processor = t.Transform
+	return s
+}
+
+// Generate sets the processor for a [Step] to the provided [Generator].
+func (s *Step[T, U]) Generate(g Generator[T, U]) *Step[T, U] {
+	if s.processor != nil {
+		panic("cannot call Generate on a Step that already has a processor function")
+	}
+	s.processor = g.Generate
 	return s
 }
 

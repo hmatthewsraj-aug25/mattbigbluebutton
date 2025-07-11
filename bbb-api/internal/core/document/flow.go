@@ -9,7 +9,7 @@ func NewDocumentFlow(client Client, fileExtension string) pipeline.Flow[*Present
 	transformToMeetingRunning := pipeline.NewStep[*Presentation, *meeting.MeetingRunningRequest]().Transform(&PresentationToMeetingRunning{})
 	sendReceiveMeetingRunning := pipeline.NewStep[*meeting.MeetingRunningRequest, *meeting.MeetingRunningResponse]().SendReceive(&SendMeetingRunningRequest{})
 	filterTransformToPresentation := pipeline.NewStep[*meeting.MeetingRunningResponse, *Presentation]().Filter(&MeetingRunningFilter{}).Transform(&MeetingRunningToPresenation{})
-	filterPresentation := pipeline.NewStep[*Presentation, *Presentation]().Filter(nil).Transform(nil)
+	filterPresentation := pipeline.NewStep[*Presentation, *Presentation]().Filter(&PresentationFilter{}).Transform(nil)
 
 	f1 := pipeline.Add(transformToMeetingRunning.Flow(), sendReceiveMeetingRunning)
 	f2 := pipeline.Add(f1, filterTransformToPresentation)
