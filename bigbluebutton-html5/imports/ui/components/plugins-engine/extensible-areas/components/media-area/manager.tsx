@@ -7,7 +7,7 @@ import {
 } from '../../types';
 import { PluginsContext } from '../../../../components-data/plugin-context/context';
 
-const ActionButtonDropdownPluginStateContainer = ((
+const MediaAreaPluginStateContainer = ((
   props: ExtensibleAreaComponentManagerProps,
 ) => {
   const {
@@ -17,9 +17,9 @@ const ActionButtonDropdownPluginStateContainer = ((
     pluginApi,
   } = props;
   const [
-    actionButtonDropdownItems,
-    setActionButtonDropdownItems,
-  ] = useState<PluginSdk.ActionButtonDropdownInterface[]>([]);
+    mediaAreaItems,
+    setMediaAreaItems,
+  ] = useState<PluginSdk.MediaAreaInterface[]>([]);
 
   const {
     setPluginsExtensibleAreasAggregatedState,
@@ -27,27 +27,27 @@ const ActionButtonDropdownPluginStateContainer = ((
 
   useEffect(() => {
     // Change this plugin provided toolbar items
-    extensibleAreaMap[uuid].actionButtonDropdownItems = actionButtonDropdownItems;
+    extensibleAreaMap[uuid].mediaAreaItems = mediaAreaItems;
 
     // Update context with computed aggregated list of all plugin provided toolbar items
-    const aggregatedActionButtonDropdownItems = (
-      [] as PluginSdk.ActionButtonDropdownInterface[]).concat(
+    const aggregatedMediaAreaItems = (
+      [] as PluginSdk.MediaAreaInterface[]).concat(
       ...Object.values(extensibleAreaMap)
-        .map((extensibleArea: ExtensibleArea) => extensibleArea.actionButtonDropdownItems),
+        .map((extensibleArea: ExtensibleArea) => extensibleArea.mediaAreaItems),
     );
     setPluginsExtensibleAreasAggregatedState((previousState) => (
       {
         ...previousState,
-        actionButtonDropdownItems: aggregatedActionButtonDropdownItems,
+        mediaAreaItems: aggregatedMediaAreaItems,
       }));
-  }, [actionButtonDropdownItems]);
+  }, [mediaAreaItems]);
 
-  pluginApi.setActionButtonDropdownItems = (items: PluginSdk.ActionButtonDropdownInterface[]) => {
-    const itemsWithId = items.map(generateItemWithId) as PluginSdk.ActionButtonDropdownInterface[];
-    setActionButtonDropdownItems(itemsWithId);
+  pluginApi.setMediaAreaItems = (items: PluginSdk.MediaAreaInterface[]) => {
+    const itemsWithId = items.map(generateItemWithId) as PluginSdk.MediaAreaInterface[];
+    setMediaAreaItems(itemsWithId);
     return itemsWithId.map((i) => i.id);
   };
   return null;
 }) as ExtensibleAreaComponentManager;
 
-export default ActionButtonDropdownPluginStateContainer;
+export default MediaAreaPluginStateContainer;
