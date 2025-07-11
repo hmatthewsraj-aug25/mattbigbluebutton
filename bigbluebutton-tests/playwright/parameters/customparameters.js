@@ -45,7 +45,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async displayBrandingArea() {
-    await this.modPage.hasElement(e.userListContent, 'should display the user list on the meeting');
+    await this.modPage.hasElement(e.usersListSidebarButton, 'should display the user list on the meeting');
     await this.modPage.hasElement(e.brandingAreaLogo, 'should display the logo on the branding area');
   }
 
@@ -56,7 +56,7 @@ class CustomParameters extends MultiUsers {
     await this.modPage.waitAndClick(e.joinAudio);
     await this.modPage.joinMicrophone();
     // Open private chat
-    await this.modPage.waitAndClick(e.userListItem);
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
     await this.modPage.waitAndClick(e.startPrivateChat);
     await this.modPage.hasElement(e.privateChatBackButton, 'should display the private chat back button when the user has a private chat open');
     // Check the later shortcuts that can be used after joining audio and opening private chat
@@ -398,7 +398,11 @@ class CustomParameters extends MultiUsers {
   }
 
   async overrideDefaultLocaleTest() {
+<<<<<<< HEAD
     await this.modPage.hasText(e.chatButton, 'Bate-papo público', 'should display the new overridden default locale');
+=======
+    await this.modPage.hasText(e.chatTitle, 'Mensagens','should display the new overridden default locale');
+>>>>>>> dfa5cb7e8d (update few parameters tests)
   }
 
   async hideNavBarTest() {
