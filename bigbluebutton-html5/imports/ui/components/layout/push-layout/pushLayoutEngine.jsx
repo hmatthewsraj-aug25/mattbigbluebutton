@@ -116,7 +116,7 @@ const PushLayoutEngine = (props) => {
     const enforcedLayout = LAYOUT_TYPE[enforceLayoutResult] || null;
 
     Settings.layout.selectedLayout = enforcedLayout || changeLayout || defaultLayout
-      || meetingLayout || currentLayout;
+      || (pushLayoutMeeting ? (meetingLayout || currentLayout) : (currentLayout));
 
     if (isMobile()) {
       currentLayout = currentLayout === 'custom' ? 'smart' : currentLayout;
