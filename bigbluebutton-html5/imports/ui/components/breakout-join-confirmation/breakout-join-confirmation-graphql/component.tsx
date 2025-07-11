@@ -233,7 +233,6 @@ const BreakoutJoinConfirmationContainer: React.FC = () => {
   const { data: currentUser } = useCurrentUser((u) => {
     return {
       isModerator: u.isModerator,
-      breakoutRooms: u.breakoutRooms,
       bot: u.bot,
       lastBreakoutRoom: u.lastBreakoutRoom,
       presenter: u.presenter,
@@ -265,15 +264,6 @@ const BreakoutJoinConfirmationContainer: React.FC = () => {
       && !currentMeeting?.breakoutRoomsCommonProperties?.sendInvitationToModerators) return null;
 
   if (!breakoutData || breakoutData.breakoutRoom.length === 0) return null;
-
-  const firstBreakout = breakoutData.breakoutRoom[0];
-  const {
-    freeJoin,
-    sendInvitationToModerators,
-    breakoutRoomId,
-  } = firstBreakout;
-  if (currentUser?.bot) return null;
-  if (!sendInvitationToModerators && currentUser?.isModerator) return null;
 
   return (
     <BreakoutJoinConfirmation

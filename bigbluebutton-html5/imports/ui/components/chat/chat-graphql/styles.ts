@@ -2,11 +2,10 @@ import styled from 'styled-components';
 import {
   Separator as BaseSeparator,
 } from '/imports/ui/components/sidebar-content/styles';
-import { contentSidebarPadding } from '/imports/ui/stylesheets/styled-components/general';
+import { contentSidebarPadding, smPaddingX, smPaddingY } from '/imports/ui/stylesheets/styled-components/general';
 import { CircularProgress } from '@mui/material';
 import { colorWhite, colorPrimary } from '/imports/ui/stylesheets/styled-components/palette';
 import { smallOnly } from '/imports/ui/stylesheets/styled-components/breakpoints';
-import { smPaddingX, smPaddingY } from '/imports/ui/stylesheets/styled-components/general';
 
 interface ChatProps {
   isChrome: boolean;
@@ -69,11 +68,6 @@ export const Chat = styled.div<ChatProps>`
   @media ${smallOnly} {
     transform: none !important;
   }
-`;
-
-const ChatContent = styled.div`
-  height: 100%;
-  display: contents;
 `;
 
 const ChatMessages = styled.div`

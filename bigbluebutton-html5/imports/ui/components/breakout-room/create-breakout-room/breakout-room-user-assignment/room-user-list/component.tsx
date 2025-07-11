@@ -48,22 +48,7 @@ const RoomUserList: React.FC<RoomUserListProps> = ({
     }).flat();
   }, [rooms, selectedRoom, moveUser]);
 
-  return (
-    <Styled.SelectUserScreen>
-      <Styled.Header>
-        <Styled.Title>
-          {intl.formatMessage(intlMessages.breakoutRoomLabel, { roomNumber: selectedRoom })}
-        </Styled.Title>
-        <Styled.ButtonAdd
-          size="md"
-          label={intl.formatMessage(intlMessages.doneLabel)}
-          color="primary"
-          onClick={confirm}
-        />
-      </Styled.Header>
-      {users}
-    </Styled.SelectUserScreen>
-  );
+  return (users);
 };
 
 export default RoomUserList;

@@ -366,7 +366,6 @@ const RoomManagmentState: React.FC<RoomManagmentStateProps> = ({
         setSelectedId={setSelectedId}
         selectedRoom={selectedRoom}
         setSelectedRoom={setSelectedRoom}
-        randomlyAssign={randomlyAssign}
         resetRooms={resetRooms}
         users={users}
         currentSlidePrefix={currentSlidePrefix}
