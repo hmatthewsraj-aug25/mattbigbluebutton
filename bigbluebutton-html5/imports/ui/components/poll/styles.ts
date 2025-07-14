@@ -30,7 +30,11 @@ import {
   pollBlue,
   pollStatsBorderColor,
 } from '/imports/ui/stylesheets/styled-components/palette';
-import { fontSizeBase, fontSizeSmall } from '/imports/ui/stylesheets/styled-components/typography';
+import {
+  fontSizeBase,
+  fontSizeSmall,
+  lineHeightBase,
+} from '/imports/ui/stylesheets/styled-components/typography';
 
 const ToggleLabel = styled.span`
   margin-right: ${smPaddingX};
@@ -40,7 +44,11 @@ const ToggleLabel = styled.span`
   }
 `;
 
-const PollOptionInput = styled.input`
+type PollOptionInputProps = {
+  isCorrect?: boolean;
+};
+
+const PollOptionInput = styled.input<PollOptionInputProps>`
   margin-right: 1rem;
 
   [dir="rtl"] & {
@@ -62,6 +70,11 @@ const PollOptionInput = styled.input`
   font-size: ${fontSizeBase};
   border: 1px solid ${colorGrayLighter};
   box-shadow: 0 0 0 1px ${colorGrayLighter};
+
+  ${({ isCorrect }) => isCorrect && ` 
+    background-color: rgb(240, 253, 244);
+    border-color: rgb(134 239 172 / 1);
+  `}
 `;
 // @ts-ignore - Button is a JS Component
 const DeletePollOptionButton = styled(Button)`
@@ -598,13 +611,55 @@ const CorrectAnswerCheckbox = styled.input`
   height: 1.5rem;
 `;
 
-const TabSelectorWrapper = styled.div`
+const SegmentedButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
+`;
+
+const SegmentedButtonContainer = styled.div`
+  display: flex;
+  padding: 0.15rem;
+  background-color: rgb(243 244 246 / 1);
+  border-radius: .5rem;
+`;
+
+interface TabSelectorButtonProps {
+  active?: boolean;
+}
+
+const SegmentedButton = styled.button<TabSelectorButtonProps>`
+  --ring-offset-shadow: 0 0 #0000;
+  --ring-shadow: 0 0 #0000;
+  --shadow: 0 1px 2px 0 rgb(0 0 0 / .05);
+  border: 0;
+  background-color: transparent;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgb(75 85 99 / 1);
+  font-weight: 500;
+  font-size: ${fontSizeBase};
+  line-height: ${lineHeightBase};
+  padding: ${smPaddingX} ${mdPaddingX};
+  border-radius: .5rem;
+  cursor: pointer;
+
+  &:hover {
+    color: rgb(17 24 39 / 1);
+  }
+
+  ${({ active }) => active && `
+    --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    box-shadow: var(--ring-offset-shadow, 0 0 #0000),
+                var(--ring-shadow, 0 0 #0000),
+                var(--shadow);
+    color: rgb(17 24 39 / 1);
+    background-color: rgb(255 255 255 / 1);
+  `}
+
+
 `;
 
 const ShowCorrectAnswerLabel = styled.label`
@@ -626,6 +681,109 @@ const ShowCorrectAnswerLabel = styled.label`
 
 const LiveResultTable = styled.table`
   width: 100%;
+`;
+
+const QuizCorrectAnswerCheckbox = styled.input`  
+  --accent: rgb(22 163 74 / 1);
+  --inputMask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="3" stroke="%23000" fill="none" stroke-linecap="round" stroke-linejoin="round"> <path d="M5 12l5 5l10 -10"/></svg>');
+  
+  appearance: none;
+  aspect-ratio: 1;
+  background: var(--backgroundColor, Field);
+  border: 1px solid var(--borderColor, ${colorGrayLight});
+  border-radius: 50%;
+  box-sizing: border-box;
+  font-size: 1em;
+  height: 1.25rem;
+  margin: .1875em .1875em .1875em .25em;
+  position: relative;
+  width: 1.25rem;
+  margin-right: 1rem;
+
+  &::after {
+    background: var(--backgroundColorAfter, transparent);
+    content: "";
+    inset: 0;
+    position: absolute;
+    mask: var(--inputMask) no-repeat center / contain;
+    -webkit-mask: var(--inputMask) no-repeat center / contain;
+  }
+
+  &:checked {
+    --backgroundColor: var(--accent);
+    --backgroundColorAfter: Field;
+  }
+
+  @media (hover: hover) {
+    &:checked:hover {
+      --backgroundColor: color-mix(in srgb, var(--accent) 60%, CanvasText 40%);
+    }
+    &:not(:checked):hover {
+      --borderColor: color-mix(in srgb, GrayText 60%, CanvasText 40%);
+    }
+  }
+`;
+
+type InfoBoxContainerProps = {
+  isQuiz: boolean;
+};
+
+const InfoBoxContainer = styled.div<InfoBoxContainerProps>`
+  padding: 1rem;
+  border-radius: .5rem;
+  margin-bottom: 1rem;
+
+  color: rgb(29, 78, 216);
+  background-color: rgb(239, 246, 255);
+  border: rgb(191, 219, 254) solid 1px;
+
+  ${({ isQuiz }) => isQuiz && `
+    background-color: rgb(240, 253, 244);
+    border: rgb(187, 247, 208) solid 1px;
+    color: rgb(21, 128, 61);
+  `}
+`;
+
+const ResponseHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+`;
+
+type SelectedCorrectAnswerIndicatorProps = {
+  hasCorrectAnswer: boolean;
+};
+
+const SelectedCorrectAnswerIndicator = styled.span<SelectedCorrectAnswerIndicatorProps>`
+  color:rgb(161, 98, 7);
+  line-height: 1.25rem;
+  padding: 0.25rem 0.50rem;
+  background-color: rgb(254, 249, 195);
+  border-radius: 9999px; 
+
+  ${({ hasCorrectAnswer }) => hasCorrectAnswer && `
+    color: rgb(21, 128, 61);
+    background-color: rgb(220, 252, 231);
+  `}
+`;
+
+const CorrectLabel = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 2rem;
+  transform:  translate(0, -50%);
+  border-radius: 9999px; 
+  color: rgb(22, 163, 74);
+  background-color: rgb(220, 252, 231);
+  padding: 0.25rem 0.50rem;
+  font-size: .75rem;
+  line-height: 1rem;
+`;
+
+const PollInputContainer = styled.div`
+  display: flex;
+  flex: 1 1 0%;
+  position: relative;
 `;
 
 export default {
@@ -681,7 +839,15 @@ export default {
   THeading,
   DndTextArea,
   CorrectAnswerCheckbox,
-  TabSelectorWrapper,
+  SegmentedButtonContainer,
   ShowCorrectAnswerLabel,
   LiveResultTable,
+  SegmentedButtonWrapper,
+  SegmentedButton,
+  QuizCorrectAnswerCheckbox,
+  InfoBoxContainer,
+  ResponseHeader,
+  SelectedCorrectAnswerIndicator,
+  CorrectLabel,
+  PollInputContainer,
 };

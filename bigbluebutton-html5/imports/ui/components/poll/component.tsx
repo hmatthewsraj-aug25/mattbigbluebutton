@@ -27,6 +27,7 @@ import Session from '/imports/ui/services/storage/in-memory';
 import SessionStorage from '/imports/ui/services/storage/session';
 import { useStorageKey } from '../../services/storage/hooks';
 import QuizAndPollTabSelector from './components/QuizAndPollTabSelector';
+import InfoBox from './components/InfoBox';
 import { useIsQuizEnabled } from '../../services/features';
 
 const intlMessages = defineMessages({
@@ -625,6 +626,13 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
                   }
                 }
               }}
+            />
+          )
+        }
+        {
+          isQuizEnabled && (
+            <InfoBox
+              isQuiz={isQuiz}
             />
           )
         }
