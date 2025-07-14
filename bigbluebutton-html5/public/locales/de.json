@@ -2,7 +2,7 @@
     "app.home.greeting": "Die Präsentation beginnt in Kürze...",
     "app.chat.submitLabel": "Nachricht senden",
     "app.chat.errorMaxMessageLength": "Die Nachricht überschreitet das Limit von {maxMessageLength} Zeichen",
-    "app.chat.errorMinMessageLength": "Die Nachricht muss mindestens {minMessageLength} lang sein",
+    "app.chat.errorMinMessageLength": "Die Nachricht muss mindestens {minMessageLength} Zeichen lang sein",
     "app.chat.errorOnSendMessage": "Fehler beim Senden der Chatnachricht",
     "app.chat.errorOnUpdateMessage": "Fehler beim Update der Chatnachricht",
     "app.chat.disconnected": "Nicht verbunden, es können keine Nachrichten gesendet werden",
