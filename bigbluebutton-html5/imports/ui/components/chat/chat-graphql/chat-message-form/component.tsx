@@ -731,7 +731,7 @@ const ChatMessageFormContainer: React.FC = () => {
   }));
 
   const title = chat?.participant?.name
-    ? intl.formatMessage(messages.titlePrivate, { participantName: chat?.participant?.name })
+    ? intl.formatMessage(messages.titlePrivate)
     : intl.formatMessage(messages.titlePublic);
 
   const { data: meeting } = useMeeting((m) => ({

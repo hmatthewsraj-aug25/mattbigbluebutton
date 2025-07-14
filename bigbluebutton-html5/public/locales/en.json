@@ -13,7 +13,7 @@
     "app.chat.loadMoreButtonLabel": "Load More",
     "app.chat.inputPlaceholder": "Message {chatName}",
     "app.chat.titlePublic": "Public Chat",
-    "app.chat.titlePrivate": "Private Chat with {participantName}",
+    "app.chat.titlePrivate": "Private Chat",
     "app.chat.partnerDisconnected": "{participantName} has left the session",
     "app.chat.closeChatLabel": "Close {chatName}",
     "app.chat.hideChatLabel": "Hide {chatName}",
