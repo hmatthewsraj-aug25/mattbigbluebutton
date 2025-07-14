@@ -20,7 +20,6 @@ package org.bigbluebutton.api;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.MalformedParametersException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -37,6 +36,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.bigbluebutton.api.domain.*;
+import org.bigbluebutton.api.exception.PluginMalformedParametersException;
+import org.bigbluebutton.api.exception.PluginMetadataException;
 import org.bigbluebutton.api.messaging.MessageListener;
 import org.bigbluebutton.api.messaging.converters.messages.DestroyMeetingMessage;
 import org.bigbluebutton.api.messaging.converters.messages.EndMeetingMessage;
@@ -368,7 +369,7 @@ public class MeetingService implements MessageListener {
   }
 
   public Map<String, Object> requestPluginManifests(Meeting m) {
-    Map<String, Object> urlContents = new ConcurrentHashMap<>();
+    Map<String, Object> pluginsResult = new ConcurrentHashMap<>();
     Map<String, String> metadata = m.getMetadata();
     Map<String, String> pluginMetadataParameter = m.getPluginMetadataParametersMap();
     List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -393,7 +394,12 @@ public class MeetingService implements MessageListener {
           if (!StringUtils.isEmpty(paramChecksum)) {
             String hash = DigestUtils.sha256Hex(content);
             if (!paramChecksum.equals(hash)) {
-              log.info("Plugin's manifest.json checksum mismatch with that of the URL parameter for {}.", pluginManifestUrlString);
+              String errorMessage = String.format(
+                      "Plugin's manifest.json checksum mismatch with that of the URL parameter for %s.",
+                      pluginManifestUrlString
+              );
+              pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
+              log.info(errorMessage);
               log.info("Plugin {} is not going to be loaded", pluginManifestUrlString);
               return;
             }
@@ -418,24 +424,44 @@ public class MeetingService implements MessageListener {
 
           Map<String, Object> manifestWrapper = new HashMap<>();
           manifestWrapper.put("manifest", manifestObject);
-          urlContents.put(pluginKey, manifestWrapper);
+          pluginsResult.put(pluginKey, manifestWrapper);
         } catch (MalformedURLException e) {
-          log.error("Invalid URL: {}", pluginManifestUrlString, e);
+          String errorMessage = String.format("Invalid URL for plugin %s", pluginManifestUrlString);
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
+          log.error(errorMessage, e);
         } catch (JsonProcessingException e) {
-          log.error("Failed to parse JSON from URL: {}", pluginManifestUrlString, e);
+          String errorMessage = String.format("Failed to parse JSON from URL: %s", pluginManifestUrlString);
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
+          log.error(errorMessage, e);
         } catch (IOException e) {
-          log.error("I/O error when fetching URL: {}", pluginManifestUrlString, e);
-        } catch (NoSuchFieldException e) {
-          log.error("Missing required metadata (meta_ or plugin_ parameter) in plugin manifest URL [{}]. Plugin not loaded.", pluginManifestUrlString, e);
-        } catch (MalformedParametersException e) {
-          log.error("Malformed metadata parameter for plugin manifest URL [{}]. Plugin not loaded.", pluginManifestUrlString, e);
+          String errorMessage = String.format("I/O error when fetching URL: %s", pluginManifestUrlString);
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
+          log.error(errorMessage, e);
+        } catch (PluginMetadataException e) {
+          String errorMessage = String.format(
+                  "Missing required metadata (meta_ or plugin_ parameter) in plugin manifest URL [%s]. Plugin not loaded.",
+                  pluginManifestUrlString
+          );
+          pluginsResult.put(e.getPluginName(), PluginUtils.createEmptyPluginObjectWithError(errorMessage));
+          log.error(errorMessage, e);
+        } catch (PluginMalformedParametersException e) {
+          String errorMessage = String.format(
+                  "Malformed metadata parameter for plugin manifest URL [%s]. Plugin not loaded.",
+                  pluginManifestUrlString
+          );
+          pluginsResult.put(e.getPluginName(), PluginUtils.createEmptyPluginObjectWithError(errorMessage));
+          log.error(errorMessage, e);
         } catch (Exception e) {
-          log.error("Unexpected error processing plugin manifest from URL: {}", pluginManifestUrlString, e);
+          String errorMessage = String.format("Unexpected error processing plugin manifest from URL: %s", pluginManifestUrlString);
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
+          log.error(errorMessage, e);
         }
       }, executorService).orTimeout(pluginManifestFetchTimeout, TimeUnit.SECONDS)
       .exceptionally(ex -> {
         if (ex instanceof TimeoutException) {
-          log.warn("Timeout occurred when fetching URL: {}", pluginManifestUrlString);
+          String errorMessage = String.format("Timeout occurred when fetching URL: %s", pluginManifestUrlString);
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
+          log.warn(errorMessage);
         } else {
           log.error("Unexpected error for plugin {}: {}", pluginManifestUrlString, ex);
         }
@@ -446,7 +472,7 @@ public class MeetingService implements MessageListener {
     // Wait for all tasks to complete
     CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     executorService.shutdown();
-    return urlContents;
+    return pluginsResult;
   }
 
   public synchronized boolean createMeeting(Meeting m) {
