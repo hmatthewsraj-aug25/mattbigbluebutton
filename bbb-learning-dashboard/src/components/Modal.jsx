@@ -1,25 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { FormattedMessage } from 'react-intl';
 
 export const Modal = ({ isOpen, children }) => {
+  const container = useRef(null);
+  const activeElementAfterOpening = useRef(null);
+
   useEffect(() => {
     if (isOpen) {
+      activeElementAfterOpening.current = document.activeElement;
       document.body.style.overflow = 'hidden';
+      container.current.getElementsByTagName('button')[0]?.focus();
     } else {
+      activeElementAfterOpening.current = null;
       document.body.style.overflow = 'auto';
     }
+    const handleFocus = (event) => {
+      if (container.current && !container.current.contains(event.target)) {
+        container.current.getElementsByTagName('button')[0]?.focus();
+      }
+    };
+    document.body.addEventListener('focus', handleFocus, true);
     return () => {
       document.body.style.overflow = 'auto';
+      document.body.removeEventListener('focus', handleFocus, true);
+      activeElementAfterOpening.current?.focus();
     };
   }, [isOpen]);
+
   if (!isOpen) return null;
+
   return (
-    <div
-      role="dialog"
-      className="bg-black/50 grow fixed inset-0 z-50 flex items-center justify-center"
-    >
-      {children}
-    </div>
+    ReactDOM.createPortal(
+      <div
+        role="dialog"
+        className="bg-black/50 grow fixed inset-0 z-50 flex items-center justify-center"
+        ref={container}
+      >
+        {children}
+      </div>,
+      document.getElementById('modal-container') || document.body,
+    )
   );
 };
 
@@ -34,7 +55,7 @@ export const ModalContent = ({ children }) => (
 export const ModalDismissButton = ({ onClick }) => (
   <button
     type="button"
-    className="absolute top-0 right-0 p-4 text-gray-500 hover:text-gray-700"
+    className="absolute top-0 right-0 -translate-x-2 translate-y-2 text-gray-800 hover:text-gray-500 focus:outline-none focus:ring focus:ring-gray-500 focus:ring-opacity-50 hover:text-black/50 active:text-black/75 rounded-md"
     onClick={onClick}
   >
     <span className="sr-only">

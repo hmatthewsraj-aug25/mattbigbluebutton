@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage, useIntl, injectIntl } from 'react-intl';
 
-const vityScoreHelp = () => {
+const ActivityScoreHelp = () => {
   const intl = useIntl();
 
   return (
@@ -219,4 +219,4 @@ const vityScoreHelp = () => {
   );
 };
 
-export default injectIntl(vityScoreHelp);
+export default injectIntl(ActivityScoreHelp);
