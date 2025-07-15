@@ -138,6 +138,10 @@ const intlMessages = defineMessages({
     id: 'app.chat.toolbar.delete.confirmationDescription',
     description: '',
   },
+  quizResult: {
+    id: 'app.chat.quizResult',
+    description: 'Quiz result label in chat',
+  },
 });
 
 function isInViewport(el: HTMLDivElement) {
@@ -387,9 +391,11 @@ const ChatMessage = React.forwardRef<ChatMessageRef, ChatMessageProps>(({
     showToolbar: boolean;
   } = useMemo(() => {
     switch (message.messageType) {
-      case ChatMessageType.POLL:
+      case ChatMessageType.POLL: {
+        const pollData = JSON.parse(message.messageMetadata) as { quiz: boolean;};
         return {
-          name: intl.formatMessage(intlMessages.pollResult),
+          name: pollData.quiz
+            ? intl.formatMessage(intlMessages.quizResult) : intl.formatMessage(intlMessages.pollResult),
           color: '#3B48A9',
           isModerator: true,
           component: (
@@ -401,6 +407,7 @@ const ChatMessage = React.forwardRef<ChatMessageRef, ChatMessageProps>(({
           showToolbar: false,
           isSystemSender: true,
         };
+      }
       case ChatMessageType.PRESENTATION:
         return {
           name: '',
@@ -795,6 +802,7 @@ const ChatMessage = React.forwardRef<ChatMessageRef, ChatMessageProps>(({
       ref={containerRef}
       $sequence={message.messageSequence}
       data-sequence={message.messageSequence}
+      data-message-type={message.messageType}
       data-focusable={focusable}
       onKeyDown={(e) => {
         const isTargetElement = e.target === e.currentTarget;

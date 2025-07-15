@@ -414,7 +414,9 @@ Permission: Restricted to User Viewing Self-Related Data
 - `pollId`
 - `published`
 - `publishedAt`
+- `publishedShowingAnswer`
 - `questionText`
+- `quiz`
 - `secret`
 - `type`
 ### Relationships:
@@ -433,8 +435,9 @@ Permission: Restricted to User Viewing Self-Related Data
 ## Type: poll_response
 Permission: Restricted to Poll Owner or User Viewing Self-Related Data
 ### Fields:
-- `optionDesc`
 - `optionId`
+- `optionDesc`
+- `correctOption`
 - `optionResponsesCount`
 - `pollId`
 - `pollResponsesCount`

@@ -234,7 +234,7 @@ class MediaAreaDropdown extends PureComponent {
             key: mediaAreaItem.id,
             allowed: mediaAreaItem.allowed,
             isSeparator: true,
-            dataTest: 'pluginsSeparator',
+            dataTest: mediaAreaItem.dataTest,
           });
           break;
         default:

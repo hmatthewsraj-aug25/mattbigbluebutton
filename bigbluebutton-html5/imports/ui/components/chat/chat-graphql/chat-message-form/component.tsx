@@ -45,7 +45,6 @@ import { throttle } from '/imports/utils/throttle';
 import logger from '/imports/startup/client/logger';
 import { CHAT_EDIT_MESSAGE_MUTATION } from '../chat-message-list/page/chat-message/mutations';
 import ChatTypingIndicatorContainer from '../chat-typing-indicator/component';
-import ChatReplyIntention from '../chat-reply-intention/component';
 import ChatEditingWarning from '../chat-editing-warning/component';
 import { btnPrimaryBg } from '/imports/ui/stylesheets/styled-components/palette';
 
@@ -611,8 +610,6 @@ const ChatMessageForm: React.FC<ChatMessageFormProps> = ({
         onSubmit={handleSubmit}
         isRTL={isRTL}
       >
-        <ChatReplyIntention key="chatReplyIntention" />
-        <ChatEditingWarning key="chatEditingWarning" />
         {showEmojiPicker ? (
           <Styled.EmojiPickerWrapper ref={emojiPickerRef}>
             <Styled.EmojiPicker

@@ -17,12 +17,14 @@ export interface UserInfo {
 }
 
 export interface ResponseInfo {
+  correctOption: boolean;
   optionResponsesCount: number;
   optionDesc: string;
   pollResponsesCount: number;
 }
 
 export interface PollInfo {
+  quiz: boolean;
   published: boolean;
   pollId: string;
   secret: boolean;
@@ -69,6 +71,7 @@ subscription getCurrentPollData {
       questionText
       ended
       multipleResponses
+      quiz
       users {
         user {
           name
@@ -77,6 +80,7 @@ subscription getCurrentPollData {
         optionDescIds
       }
       responses {
+        correctOption
         optionResponsesCount
         optionDesc
         pollResponsesCount

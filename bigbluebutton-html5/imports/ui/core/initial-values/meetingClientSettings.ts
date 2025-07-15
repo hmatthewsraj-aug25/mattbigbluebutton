@@ -486,6 +486,10 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
       maxTypedAnswerLength: 45,
       chatMessage: true,
       quickPollConfirmationStep: false,
+      quiz: {
+        enabled: false,
+        quickPollCorrectAnswerSuffix: '__',
+      },
     },
     captions: {
       enabled: true,
@@ -865,6 +869,7 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
       },
       toolbar: {
         multiUserPenOnly: false,
+        initialSelectedTool: 'draw',
         presenterTools: [
           'select',
           'hand',
