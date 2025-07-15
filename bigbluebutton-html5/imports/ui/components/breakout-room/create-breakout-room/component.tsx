@@ -35,7 +35,6 @@ import { notify } from '/imports/ui/services/notification';
 import useTimeSync from '/imports/ui/core/local-states/useTimeSync';
 import { getRemainingMeetingTime, isNewTimeValid } from '/imports/ui/core/utils/calculateRemaingTime';
 
-const MIN_BREAKOUT_ROOMS = 2;
 const MIN_BREAKOUT_TIME = 5;
 const DEFAULT_BREAKOUT_TIME = 15;
 const CURRENT_SLIDE_PREFIX = 'current-';
@@ -255,20 +254,29 @@ const CreateBreakoutRoom: React.FC<CreateBreakoutRoomProps> = ({
   const intl = useIntl();
   const layoutContextDispatch = layoutDispatch();
 
-  const initialNumberOfRooms = runningRooms.length > 0 ? runningRooms.length : MIN_BREAKOUT_ROOMS;
-
   const isImportPresentationWithAnnotationsEnabled = useIsImportPresentationWithAnnotationsFromBreakoutRoomsEnabled();
   const isImportSharedNotesEnabled = useIsImportSharedNotesFromBreakoutRoomsEnabled();
 
   // @ts-ignore
   const BREAKOUT_SETTINGS = window.meetingClientSettings.public.app.breakouts;
 
-  const { allowUserChooseRoomByDefault, recordRoomByDefault, offerRecordingForBreakouts } = BREAKOUT_SETTINGS;
+  const {
+    allowUserChooseRoomByDefault,
+    recordRoomByDefault,
+    offerRecordingForBreakouts,
+    breakoutRoomLimit: BREAKOUT_LIM,
+    breakoutRoomMinimum: MIN_BREAKOUT_ROOMS,
+    sendInvitationToAssignedModeratorsByDefault: inviteModsByDefault,
+  } = BREAKOUT_SETTINGS;
+
+  const MAX_BREAKOUT_ROOMS = BREAKOUT_LIM > MIN_BREAKOUT_ROOMS ? BREAKOUT_LIM : MIN_BREAKOUT_ROOMS;
+
+  const initialNumberOfRooms = runningRooms.length > 0 ? runningRooms.length : MIN_BREAKOUT_ROOMS;
+
   const captureWhiteboardByDefault = BREAKOUT_SETTINGS.captureWhiteboardByDefault
     && isImportPresentationWithAnnotationsEnabled;
   const captureSharedNotesByDefault = BREAKOUT_SETTINGS.captureSharedNotesByDefault
     && isImportPresentationWithAnnotationsEnabled;
-  const inviteModsByDefault = BREAKOUT_SETTINGS.sendInvitationToAssignedModeratorsByDefault;
 
   const [numberOfRoomsIsValid, setNumberOfRoomsIsValid] = React.useState(true);
   const [durationIsValid, setDurationIsValid] = React.useState(true);
@@ -478,9 +486,6 @@ const CreateBreakoutRoom: React.FC<CreateBreakoutRoomProps> = ({
   const form = useMemo(() => {
     if (isUpdate) return null;
 
-    // @ts-ignore
-    const BREAKOUT_LIM = window.meetingClientSettings.public.app.breakouts.breakoutRoomLimit;
-    const MAX_BREAKOUT_ROOMS = BREAKOUT_LIM > MIN_BREAKOUT_ROOMS ? BREAKOUT_LIM : MIN_BREAKOUT_ROOMS;
     const leastOneUserIsValid = roomsRef.current[0]?.users?.length < users.length;
 
     return (
