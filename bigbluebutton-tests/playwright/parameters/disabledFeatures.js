@@ -9,8 +9,7 @@ class DisabledFeatures extends MultiUsers {
   }
 
   async breakoutRooms() {
-    await this.modPage.waitAndClick(e.manageUsers);
-    await this.modPage.wasRemoved(e.createBreakoutRoomsButton, 'should not display the option to create breakout rooms on the manage users');
+    await this.modPage.wasRemoved(e.breakoutRoomSidebarButton, 'should not display the option to create breakout rooms on the manage users');
   }
 
   async speechRecognition() {
@@ -35,7 +34,7 @@ class DisabledFeatures extends MultiUsers {
   }
 
   async externalVideos() {
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.wasRemoved(e.shareExternalVideoBtn, 'should not display the share external video option when opening the actions button');
   }
 
@@ -67,19 +66,19 @@ class DisabledFeatures extends MultiUsers {
   }
 
   async downloadPresentationWithAnnotations() {
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.managePresentations);
     await this.modPage.waitAndClick(e.presentationOptionsDownloadBtn);
     await this.modPage.wasRemoved(e.sendPresentationInCurrentStateBtn, 'should not display the option send presentation with annotations on the manage presentations');
   }
 
   async importPresentationWithAnnotationsFromBreakoutRooms() {
-    await this.modPage.waitAndClick(e.createBreakoutRoomsButton);
+    await this.modPage.waitAndClick(e.breakoutRoomSidebarButton);
     await this.modPage.wasRemoved(e.captureBreakoutWhiteboard, 'should not display the option to capture the breakout room whiteboard when the create breakout rooms modal is opened');
   }
 
   async importSharedNotesFromBreakoutRooms() {
-    await this.modPage.waitAndClick(e.createBreakoutRoomsButton);
+    await this.modPage.waitAndClick(e.breakoutRoomSidebarButton);
     await this.modPage.wasRemoved(e.captureBreakoutSharedNotes, 'should not display the option to capture the breakout room shared notes when the create breakout room modal is opened');
   }
 
@@ -105,14 +104,15 @@ class DisabledFeatures extends MultiUsers {
 
   async cameraAsContent() {
     await this.modPage.hasElement(e.whiteboard, 'should display the whiteboard');
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.hasElement(e.managePresentations, 'should display the manage presentations option');
     await this.modPage.wasRemoved(e.shareCameraAsContent, 'should not display the share camera as content option on the actions');
   }
 
   // Disabled Features Exclude
   async breakoutRoomsExclude() {
-    await this.modPage.hasElement(e.createBreakoutRoomsButton, 'should display the create breakout rooms option on the manage users');
+    await this.modPage.hasElement(e.navigationSidebarContainer);
+    await this.modPage.hasElement(e.breakoutRoomSidebarButton, 'should display the create breakout rooms option on the manage users');
   }
 
   async speechRecognitionExclude() {
@@ -133,11 +133,11 @@ class DisabledFeatures extends MultiUsers {
   }
 
   async chatExclude() {
-    await this.modPage.hasElement(e.hidePublicChat, 'should display the hide public chat option when the public chat is open');
+    await this.modPage.hasElement(e.hideMessagesButton, 'should display the hide public chat option when the public chat is open');
   }
 
   async externalVideosExclude() {
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.hasElement(e.shareExternalVideoBtn, 'should display the share external video button');
   }
 
@@ -171,19 +171,19 @@ class DisabledFeatures extends MultiUsers {
 
   async downloadPresentationWithAnnotationsExclude() {
     await this.modPage.hasElement(e.whiteboard, 'should display the whiteboard');
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.managePresentations);
     await this.modPage.waitAndClick(e.presentationOptionsDownloadBtn);
     await this.modPage.hasElement(e.sendPresentationInCurrentStateBtn, 'should display the option to send the presentation in current state so de user can download the presentation with the annotations');
   }
 
   async importPresentationWithAnnotationsFromBreakoutRoomsExclude() {
-    await this.modPage.waitAndClick(e.createBreakoutRoomsButton);
+    await this.modPage.waitAndClick(e.breakoutRoomSidebarButton);
     await this.modPage.hasElement(e.captureBreakoutWhiteboard, 'should display the option to capture the breakout whiteboard on the create breakout rooms modal');
   }
 
   async importSharedNotesFromBreakoutRoomsExclude() {
-    await this.modPage.waitAndClick(e.createBreakoutRoomsButton);
+    await this.modPage.waitAndClick(e.breakoutRoomSidebarButton);
     await this.modPage.hasElement(e.captureBreakoutSharedNotes, 'should display the option to capture the shared notes whiteboard on the create breakout rooms modal');
   }
 
@@ -208,7 +208,7 @@ class DisabledFeatures extends MultiUsers {
 
   async cameraAsContentExclude() {
     await this.modPage.waitForSelector(e.whiteboard);
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.hasElement(e.shareCameraAsContent, 'should display the share camera as content on the action options.');
   }
 }
