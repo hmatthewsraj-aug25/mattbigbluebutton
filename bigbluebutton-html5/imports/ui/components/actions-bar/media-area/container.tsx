@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useMutation } from '@apollo/client';
-import { MediaAreaContainerProps, ActionButtonPluginItem } from './types';
+import { MediaAreaContainerProps, MediaButtonPluginItem } from './types';
 import MediaArea from './component';
 import { layoutSelectInput, layoutSelect } from '../../layout/context';
 import { Input, Layout } from '/imports/ui/components/layout/layoutTypes';
@@ -35,10 +35,10 @@ const MediaAreaContainer = (props: MediaAreaContainerProps) => {
   const meetingIsBreakout = useMeetingIsBreakout();
   const hasCameraAsContent = useIsCameraAsContentBroadcasting();
 
-  let actionButtonDropdownItems: ActionButtonPluginItem[] = [];
-  if (pluginsExtensibleAreasAggregatedState.actionButtonDropdownItems) {
-    actionButtonDropdownItems = [
-      ...(pluginsExtensibleAreasAggregatedState.actionButtonDropdownItems as unknown as ActionButtonPluginItem[]),
+  let mediaAreaItems: MediaButtonPluginItem[] = [];
+  if (pluginsExtensibleAreasAggregatedState.mediaAreaItems) {
+    mediaAreaItems = [
+      ...(pluginsExtensibleAreasAggregatedState.mediaAreaItems as unknown as MediaButtonPluginItem[]),
     ];
   }
 
@@ -60,7 +60,7 @@ const MediaAreaContainer = (props: MediaAreaContainerProps) => {
     <MediaArea
       isMobile={isMobile}
       isRTL={isRTL}
-      actionButtonDropdownItems={actionButtonDropdownItems}
+      mediaAreaItems={mediaAreaItems}
       isCameraAsContentEnabled={isCameraAsContentEnabled}
       hasCameraAsContent={hasCameraAsContent}
       handleTakePresenter={handleTakePresenter}

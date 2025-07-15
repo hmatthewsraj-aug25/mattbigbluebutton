@@ -5,7 +5,7 @@ import { colorPrimary } from '/imports/ui/stylesheets/styled-components/palette'
 import CoPresentIcon from '@mui/icons-material/CoPresent';
 import { useIsScreenGloballyBroadcasting, screenshareHasEnded } from '/imports/ui/components/screenshare/service';
 import { defineMessages, IntlShape } from 'react-intl';
-import { ActionButtonDropdownItemType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/action-button-dropdown-item/enums';
+import { MediaAreaItemType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/media-area-item/enums';
 import Styled from './styles';
 import Icon from '/imports/ui/components/common/icon/component';
 import { MediaButton } from '/imports/ui/components/actions-bar/media-area/media-sharing/media-button/component';
@@ -13,7 +13,7 @@ import ScreenshareButtonContainer from '/imports/ui/components/actions-bar/media
 import PresentationUploaderContainer from './presentation/container';
 import ExternalVideoView from './external-video/component';
 import CameraAsContentView from './camera-as-content/component';
-import { ActionButtonPluginItem } from '../types';
+import { MediaButtonPluginItem } from '../types';
 import { layoutSelectOutput } from '/imports/ui/components/layout/context';
 import { Output } from '/imports/ui/components/layout/layoutTypes';
 
@@ -24,7 +24,7 @@ interface MediaSharingModalProps {
   amIPresenter: boolean | undefined;
   amIModerator: boolean | undefined;
   isMeteorConnected: boolean;
-  actionButtonDropdownItems?: ActionButtonPluginItem[];
+  mediaAreaItems?: MediaButtonPluginItem[];
   isCameraAsContentEnabled: boolean;
   hasCameraAsContent: boolean;
   handleTakePresenter: () => void;
@@ -124,7 +124,7 @@ const intlMessages = defineMessages({
 
 const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
   open, onClose, intl, amIPresenter = false, isMeteorConnected,
-  actionButtonDropdownItems = [],
+  mediaAreaItems = [],
   isCameraAsContentEnabled,
   hasCameraAsContent,
   hasPresentation,
@@ -217,8 +217,8 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
               onClick={handleCameraAsContentClick}
             />
           )}
-          {actionButtonDropdownItems
-            .filter((item) => item.allowed && item.type === ActionButtonDropdownItemType.OPTION)
+          {mediaAreaItems
+            .filter((item) => item.allowed && item.type === MediaAreaItemType.OPTION)
             .map((item) => (
               <MediaButton
                 key={item.id}

@@ -1,37 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { defineMessages, IntlShape } from 'react-intl';
-import { ActionButtonDropdownItemType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/action-button-dropdown-item/enums';
+import { defineMessages } from 'react-intl';
+import { MediaAreaProps } from './types';
 import Styled from './styles';
 import MediaSharingModal from '/imports/ui/components/actions-bar/media-area/media-sharing/component';
-
-interface ActionButtonPluginItem {
-  type: ActionButtonDropdownItemType;
-  id: string;
-  icon?: string;
-  label?: string;
-  onClick?: () => void;
-  allowed: boolean;
-}
-
-interface MediaAreaProps {
-  amIPresenter?: boolean;
-  intl: IntlShape;
-  amIModerator?: boolean;
-  handleTakePresenter: () => void;
-  allowExternalVideo: boolean;
-  stopExternalVideoShare: () => void;
-  isCameraAsContentEnabled: boolean;
-  hasCameraAsContent: boolean;
-  isMeteorConnected: boolean;
-  hasPresentation: boolean;
-  isPresentationEnabled: boolean;
-  isSharingVideo: boolean;
-  actionButtonDropdownItems: ActionButtonPluginItem[];
-  isPresentationManagementDisabled?: boolean;
-  setPresentationFitToWidth: (fitToWidth: boolean) => void;
-  isMobile: boolean;
-  isRTL: boolean;
-}
 
 const defaultProps = {
   isPresentationManagementDisabled: false,
@@ -52,7 +23,7 @@ const MediaArea = (props: MediaAreaProps) => {
     amIPresenter,
     amIModerator,
     isMeteorConnected,
-    actionButtonDropdownItems,
+    mediaAreaItems,
     isCameraAsContentEnabled,
     hasCameraAsContent,
     hasPresentation,
@@ -99,7 +70,7 @@ const MediaArea = (props: MediaAreaProps) => {
         amIPresenter={amIPresenter}
         amIModerator={amIModerator}
         isMeteorConnected={isMeteorConnected}
-        actionButtonDropdownItems={actionButtonDropdownItems}
+        mediaAreaItems={mediaAreaItems}
         isCameraAsContentEnabled={isCameraAsContentEnabled}
         hasCameraAsContent={hasCameraAsContent}
         hasPresentation={hasPresentation}

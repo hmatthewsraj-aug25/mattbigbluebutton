@@ -1,8 +1,8 @@
 import { IntlShape } from 'react-intl';
-import { ActionButtonDropdownItemType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/action-button-dropdown-item/enums';
+import { MediaAreaItemType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/media-area-item/enums';
 
-export interface ActionButtonPluginItem {
-  type: ActionButtonDropdownItemType;
+export interface MediaButtonPluginItem {
+  type: MediaAreaItemType;
   id: string;
   icon?: string;
   label?: string;
@@ -20,4 +20,24 @@ export interface MediaAreaContainerProps {
   isMeteorConnected: boolean;
   setPresentationFitToWidth: (fitToWidth: boolean) => void;
   hasPresentation: boolean;
+}
+
+export interface MediaAreaProps {
+  amIPresenter?: boolean;
+  intl: IntlShape;
+  amIModerator?: boolean;
+  handleTakePresenter: () => void;
+  allowExternalVideo: boolean;
+  stopExternalVideoShare: () => void;
+  isCameraAsContentEnabled: boolean;
+  hasCameraAsContent: boolean;
+  isMeteorConnected: boolean;
+  hasPresentation: boolean;
+  isPresentationEnabled: boolean;
+  isSharingVideo: boolean;
+  mediaAreaItems: MediaButtonPluginItem[];
+  isPresentationManagementDisabled?: boolean;
+  setPresentationFitToWidth: (fitToWidth: boolean) => void;
+  isMobile: boolean;
+  isRTL: boolean;
 }
