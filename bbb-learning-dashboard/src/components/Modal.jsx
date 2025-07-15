@@ -28,7 +28,7 @@ export const ModalTitle = ({ children }) => (
 );
 
 export const ModalContent = ({ children }) => (
-  <div className="w-full max-h-[calc(100%-50px)] md:w-2/3 bg-gray-100 relative rounded">{children}</div>
+  <div className="w-full max-h-[calc(100%-50px)] md:w-2/3 bg-gray-100 relative rounded flex flex-col">{children}</div>
 );
 
 export const ModalDismissButton = ({ onClick }) => (
@@ -56,7 +56,7 @@ export const ModalDismissButton = ({ onClick }) => (
 );
 
 export const ModalBody = ({ children }) => (
-  <div className="p-6 overflow-auto max-h-full">
+  <div className="p-6 overflow-auto h-full">
     {children}
   </div>
 );

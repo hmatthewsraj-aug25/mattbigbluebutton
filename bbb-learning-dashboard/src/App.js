@@ -804,7 +804,7 @@ class App extends React.Component {
               <ModalContent>
                 <ModalTitle>
                   <FormattedMessage
-                    id="app.learningDashboard.helpModalTitle"
+                    id="app.learningDashboard.help.title"
                     defaultMessage="Learning Dashboard Help"
                   />
                 </ModalTitle>
