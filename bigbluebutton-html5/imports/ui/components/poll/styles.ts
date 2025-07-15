@@ -13,6 +13,7 @@ import {
   pollStatsElementWidth,
   pollResultWidth,
   borderSizeLarge,
+  borderRadiusRounded,
 } from '/imports/ui/stylesheets/styled-components/general';
 import {
   colorText,
@@ -29,11 +30,30 @@ import {
   colorWhite,
   pollBlue,
   pollStatsBorderColor,
+  colorOffWhite,
+  SegmentedButtonRingOffsetShadow,
+  SegmentedButtonRingShadow,
+  SegmentedButtonBoxShadowSm,
+  slate900,
+  darkCyanLime,
+  colorInfoBoxQuizBg,
+  colorInfoBoxQuizBorder,
+  colorInfoBoxQuizText,
+  colorSelectedCorrectAnswerText,
+  colorSelectedCorrectAnswerBg,
+  colorSelectedCorrectAnswerTextActive,
+  colorSelectedCorrectAnswerBgActive,
+  colorGreen600,
+  colorGreen100,
+  colorBlueLighter,
+  colorBlueLightest,
 } from '/imports/ui/stylesheets/styled-components/palette';
 import {
   fontSizeBase,
   fontSizeSmall,
+  fontSizeSmaller,
   lineHeightBase,
+  lineHeightComputed,
 } from '/imports/ui/stylesheets/styled-components/typography';
 
 const ToggleLabel = styled.span`
@@ -617,14 +637,14 @@ const SegmentedButtonWrapper = styled.div`
   width: 100%;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: ${mdPaddingX};
 `;
 
 const SegmentedButtonContainer = styled.div`
   display: flex;
   padding: 0.15rem;
-  background-color: rgb(243 244 246 / 1);
-  border-radius: .5rem;
+  background-color: ${colorOffWhite};
+  border-radius: ${borderRadiusRounded};
 `;
 
 interface TabSelectorButtonProps {
@@ -632,9 +652,6 @@ interface TabSelectorButtonProps {
 }
 
 const SegmentedButton = styled.button<TabSelectorButtonProps>`
-  --ring-offset-shadow: 0 0 #0000;
-  --ring-shadow: 0 0 #0000;
-  --shadow: 0 1px 2px 0 rgb(0 0 0 / .05);
   border: 0;
   background-color: transparent;
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -651,12 +668,11 @@ const SegmentedButton = styled.button<TabSelectorButtonProps>`
   }
 
   ${({ active }) => active && `
-    --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    box-shadow: var(--ring-offset-shadow, 0 0 #0000),
-                var(--ring-shadow, 0 0 #0000),
-                var(--shadow);
-    color: rgb(17 24 39 / 1);
-    background-color: rgb(255 255 255 / 1);
+    box-shadow: var(${SegmentedButtonRingOffsetShadow}, 0 0 #0000),
+                var(${SegmentedButtonRingShadow}, 0 0 #0000),
+                var(${SegmentedButtonBoxShadowSm});
+    color: ${slate900};
+    background-color: ${colorWhite};
   `}
 
 
@@ -684,7 +700,7 @@ const LiveResultTable = styled.table`
 `;
 
 const QuizCorrectAnswerCheckbox = styled.input`  
-  --accent: rgb(22 163 74 / 1);
+  --accent: ${darkCyanLime};
   --inputMask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="3" stroke="%23000" fill="none" stroke-linecap="round" stroke-linejoin="round"> <path d="M5 12l5 5l10 -10"/></svg>');
   
   appearance: none;
@@ -694,11 +710,11 @@ const QuizCorrectAnswerCheckbox = styled.input`
   border-radius: 50%;
   box-sizing: border-box;
   font-size: 1em;
-  height: 1.25rem;
+  height: ${lgPaddingX};
   margin: .1875em .1875em .1875em .25em;
   position: relative;
-  width: 1.25rem;
-  margin-right: 1rem;
+  width: ${lgPaddingX};
+  margin-right: ${mdPaddingX};
 
   &::after {
     background: var(--backgroundColorAfter, transparent);
@@ -733,14 +749,14 @@ const InfoBoxContainer = styled.div<InfoBoxContainerProps>`
   border-radius: .5rem;
   margin-bottom: 1rem;
 
-  color: rgb(29, 78, 216);
-  background-color: rgb(239, 246, 255);
-  border: rgb(191, 219, 254) solid 1px;
+  color: ${colorBlueLight};
+  background-color: ${colorBlueLightest};
+  border: 1px solid ${colorBlueLighter};
 
   ${({ isQuiz }) => isQuiz && `
-    background-color: rgb(240, 253, 244);
-    border: rgb(187, 247, 208) solid 1px;
-    color: rgb(21, 128, 61);
+    background-color: ${colorInfoBoxQuizBg};
+    border: 1px solid ${colorInfoBoxQuizBorder};
+    color: ${colorInfoBoxQuizText};
   `}
 `;
 
@@ -755,15 +771,15 @@ type SelectedCorrectAnswerIndicatorProps = {
 };
 
 const SelectedCorrectAnswerIndicator = styled.span<SelectedCorrectAnswerIndicatorProps>`
-  color:rgb(161, 98, 7);
+  color: ${colorSelectedCorrectAnswerText};
   line-height: 1.25rem;
   padding: 0.25rem 0.50rem;
-  background-color: rgb(254, 249, 195);
-  border-radius: 9999px; 
+  background-color: ${colorSelectedCorrectAnswerBg};
+  border-radius: 9999px;
 
   ${({ hasCorrectAnswer }) => hasCorrectAnswer && `
-    color: rgb(21, 128, 61);
-    background-color: rgb(220, 252, 231);
+    color: ${colorSelectedCorrectAnswerTextActive};
+    background-color: ${colorSelectedCorrectAnswerBgActive};
   `}
 `;
 
@@ -773,11 +789,11 @@ const CorrectLabel = styled.div`
   right: 2rem;
   transform:  translate(0, -50%);
   border-radius: 9999px; 
-  color: rgb(22, 163, 74);
-  background-color: rgb(220, 252, 231);
+  color: ${colorGreen600};
+  background-color: ${colorGreen100};
   padding: 0.25rem 0.50rem;
-  font-size: .75rem;
-  line-height: 1rem;
+  font-size: ${fontSizeSmaller};
+  line-height: ${lineHeightComputed};
 `;
 
 const PollInputContainer = styled.div`
