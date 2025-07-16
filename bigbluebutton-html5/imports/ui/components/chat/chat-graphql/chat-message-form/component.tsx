@@ -45,7 +45,6 @@ import { throttle } from '/imports/utils/throttle';
 import logger from '/imports/startup/client/logger';
 import { CHAT_EDIT_MESSAGE_MUTATION } from '../chat-message-list/page/chat-message/mutations';
 import ChatTypingIndicatorContainer from '../chat-typing-indicator/component';
-import ChatEditingWarning from '../chat-editing-warning/component';
 import { btnPrimaryBg } from '/imports/ui/stylesheets/styled-components/palette';
 
 import {
