@@ -404,7 +404,7 @@ class Settings extends Component {
       return (
         <Styled.UnsavedChangesModal
           title={intl.formatMessage(intlMessages.unsavedChangesModalTitle)}
-          modalisOpen={unsavedModalOpen}
+          modalIsOpen={unsavedModalOpen}
           dismiss={{
             callback: () => this.setState({ unsavedModalOpen: false }),
           }}
@@ -435,7 +435,7 @@ class Settings extends Component {
         title={intl.formatMessage(intlMessages.SettingsLabel)}
         width={modalWidth}
         height={modalHeight}
-        modalisOpen={isOpen}
+        modalIsOpen={isOpen}
         dismiss={{
           callback: this.handleClose,
         }}

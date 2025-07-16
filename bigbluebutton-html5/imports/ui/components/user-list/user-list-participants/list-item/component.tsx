@@ -72,6 +72,12 @@ const UserListItem: React.FC<UserListItemProps> = ({
       return userListItem.userId === user.userId;
     }) as PluginSdk.UserListItemAdditionalInformationInterface[];
   }
+  let userListDropdownItems = [] as PluginSdk.UserListDropdownInterface[];
+  if (pluginsExtensibleAreasAggregatedState.userListDropdownItems) {
+    userListDropdownItems = [
+      ...pluginsExtensibleAreasAggregatedState.userListDropdownItems,
+    ];
+  }
 
   const intl = useIntl();
   const layoutContextDispatch = layoutDispatch();
@@ -198,14 +204,15 @@ const UserListItem: React.FC<UserListItemProps> = ({
         intl={intl}
         userItemsFromPlugin={userItemsFromPlugin}
       />
+      {renderUserListItemIconsFromPlugin(userItemsFromPlugin)}
       <UserItemToolbar
         subjectUser={user}
         pinnedToolbarOptions={pinnedToolbarOptions}
         otherToolbarOptions={otherToolbarOptions}
         setOpenUserAction={setOpenUserAction}
         open={open}
+        userListDropdownItems={userListDropdownItems}
       />
-      {renderUserListItemIconsFromPlugin(userItemsFromPlugin)}
     </Styled.UserItemContents>
   );
 };

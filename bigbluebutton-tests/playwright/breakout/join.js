@@ -33,6 +33,7 @@ class Join extends Create {
       await breakoutUserPage.closeAudioModal();
     }
     await breakoutUserPage.hasElement(e.presentationTitle, 'should display the presentation title on the breakout room');
+    await breakoutUserPage.hasText(e.timeRemaining, /1[4-5]:[0-5][0-9]/, 'should have the time remaining counting down on the breakout room');
     return breakoutUserPage;
   }
 
@@ -153,8 +154,9 @@ class Join extends Create {
     }
     // join room and type on the shared notes
     const breakoutUserPage = await this.joinRoom();
-    await breakoutUserPage.hasElement(e.presentationTitle, 'should display the presentation title inside the breakout room.');
-    await breakoutUserPage.waitForSelector(e.whiteboard);
+    await breakoutUserPage.hasElement(e.presentationTitle, 'should display the presentation title inside the breakout room');
+    await breakoutUserPage.waitForSelector(e.whiteboard, ELEMENT_WAIT_LONGER_TIME);
+    await sleep(2000); // wait for the whiteboard to stabilize
     await breakoutUserPage.waitAndClick(e.sharedNotesSidebarButton);
     await breakoutUserPage.hasElement(e.hideNotesLabel, 'should display the hide notes element when shared notes is opened');
     const notesLocator = getNotesLocator(breakoutUserPage);
@@ -167,9 +169,9 @@ class Join extends Create {
     // check if the notes were exported
     await this.modPage.hasElement(e.presentationUploadProgressToast, 'should display the presentation upload progress toast');
     await this.modPage.waitAndClick(e.mediaAreaButton);
-    const shareNotesPDF = await this.modPage.getLocatorByIndex(e.actionsItem, 1);
+    const shareNotesPDF = await this.modPage.getLocatorByIndex(e.mediaAreaItem, 1);
     await expect(shareNotesPDF, 'should have the Notes name on the share notes pdf').toHaveText(/Notes/, { timeout: 30000 });
-    await expect(this.modPage.getLocatorByIndex(e.actionsItem, 2)).toHaveText("Upload/Manage presentations"); //This checks if no other content was exported.
+    await expect(this.modPage.getLocatorByIndex(e.mediaAreaItem, 2)).toHaveText("Upload/Manage presentations"); //This checks if no other content was exported.
     const expectedActionItems = [
       "Default presentation",
       "Exported breakout notes",
@@ -177,10 +179,11 @@ class Join extends Create {
       "Share an external video",
       "Share camera as content",
     ];
-    await this.modPage.hasElementCount(e.actionsItem, expectedActionItems.length);
+    await this.modPage.hasElementCount(e.mediaAreaItem, expectedActionItems.length);
     await shareNotesPDF.click();
     await hasCurrentPresentationToastElement(this.modPage, 'should display the current presentation toast when changing to the whiteboard exported file');
     // visual assertion
+    await sleep(2000); // ensure whiteboard zoom is stabilized
     const wbLocator = await this.modPage.getLocator(e.whiteboard);
     await expect(wbLocator).toHaveScreenshot('capture-breakout-notes.png', {
       maxDiffPixels: 1500,
@@ -216,9 +219,9 @@ class Join extends Create {
 
     await this.modPage.hasElement(e.presentationUploadProgressToast, 'should display the presentation upload progress toast', ELEMENT_WAIT_LONGER_TIME);
     await this.modPage.waitAndClick(e.mediaAreaButton);
-    const whiteboardPDF = await this.modPage.getLocatorByIndex(e.actionsItem, 1);
+    const whiteboardPDF = await this.modPage.getLocatorByIndex(e.mediaAreaItem, 1);
     await expect(whiteboardPDF).toHaveText(/Whiteboard/, { timeout: 30000 });
-    await expect(this.modPage.getLocatorByIndex(e.actionsItem, 2)).toHaveText("Upload/Manage presentations"); //This checks if no other content was exported.
+    await expect(this.modPage.getLocatorByIndex(e.mediaAreaItem, 2)).toHaveText("Upload/Manage presentations"); //This checks if no other content was exported.
     const expectedActionItems = [
       "Default presentation",
       "Exported breakout notes",
@@ -226,7 +229,7 @@ class Join extends Create {
       "Share an external video",
       "Share camera as content",
     ];
-    await this.modPage.hasElementCount(e.actionsItem, expectedActionItems.length);
+    await this.modPage.hasElementCount(e.mediaAreaItem, expectedActionItems.length);
     await this.modPage.press('Escape'); // close the actions menu
     await this.modPage.hasElement(e.presentationUploadProgressToast, 'should display the presentation upload progress toast with the exported whiteboard');
     await this.modPage.getLocator(e.presentationUploadProgressToast).click({
@@ -240,6 +243,7 @@ class Join extends Create {
     await whiteboardPDF.click();
     await hasCurrentPresentationToastElement(this.modPage, 'should display the current presentation toast when changing to the whiteboard exported file');
     // visual assertion
+    await sleep(2000); // ensure whiteboard zoom is stabilized
     const wbLocator = await this.modPage.getLocator(e.whiteboard);
     await expect(wbLocator).toHaveScreenshot('capture-breakout-whiteboard.png', {
       maxDiffPixels: 1500,

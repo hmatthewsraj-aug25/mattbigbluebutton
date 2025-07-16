@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import Styled from './styles';
@@ -134,9 +134,9 @@ class LockViewersComponent extends Component {
     const { intl } = this.props;
     return (
       status && (
-      <Styled.ToggleLabel>
-        {intl.formatMessage(intlMessages.lockedLabel)}
-      </Styled.ToggleLabel>
+        <Styled.ToggleLabel>
+          {intl.formatMessage(intlMessages.lockedLabel)}
+        </Styled.ToggleLabel>
       )
     );
   }

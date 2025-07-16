@@ -64,7 +64,6 @@ class Page {
           font-family: 'Liberation Sans', Arial, sans-serif;
         }`,
     });
-    await this.setHeightWidthViewPortSize();
   }
 
   async handleDownload(locator, testInfo, timeout = ELEMENT_WAIT_TIME) {

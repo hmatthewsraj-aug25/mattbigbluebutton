@@ -4,7 +4,7 @@ import * as uuidLib from 'uuid';
 
 import PresentationToolbarPluginStateContainer from './components/presentation-toolbar/manager';
 import UserListDropdownPluginStateContainer from './components/user-list-dropdown/manager';
-import ActionButtonDropdownPluginStateContainer from './components/action-button-dropdown/manager';
+import MediaAreaPluginStateContainer from './components/media-area/manager';
 import AudioSettingsDropdownPluginStateContainer from './components/audio-settings-dropdown/manager';
 import ActionBarPluginStateContainer from './components/action-bar/manager';
 import AppsGalleryPluginStateContainer from './components/apps-gallery/manager';
@@ -28,7 +28,7 @@ const extensibleAreaMap: ExtensibleAreaMap = {};
 const extensibleAreaComponentManagers: ExtensibleAreaComponentManager[] = [
   PresentationToolbarPluginStateContainer,
   UserListDropdownPluginStateContainer,
-  ActionButtonDropdownPluginStateContainer,
+  MediaAreaPluginStateContainer,
   AudioSettingsDropdownPluginStateContainer,
   ActionBarPluginStateContainer,
   AppsGalleryPluginStateContainer,

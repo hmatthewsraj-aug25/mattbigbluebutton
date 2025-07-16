@@ -108,7 +108,8 @@ const Avatar = styled(UserAvatar)<AvatarProps>`
 // ======================== Icon Right Container ========================
 
 const IconRightContainer = styled.div`
-  margin: .25rem;  
+  margin: .25rem;
+  align-content: center;
 `;
 
 export default {

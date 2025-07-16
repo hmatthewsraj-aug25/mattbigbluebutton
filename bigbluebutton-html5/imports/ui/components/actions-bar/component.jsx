@@ -52,6 +52,7 @@ class ActionsBar extends PureComponent {
                   size: 'lg',
                   circle: true,
                   label: plugin.tooltip,
+                  dataTest: plugin.dataTest,
                 };
                 if (plugin?.icon && typeof plugin.icon === 'object' && 'iconName' in plugin.icon) {
                   buttonProps.icon = plugin.icon.iconName;
@@ -76,6 +77,7 @@ class ActionsBar extends PureComponent {
                     key={`${plugin.type}-${plugin.id}`}
                     actionsBar
                     icon={plugin.icon}
+                    dataTest={plugin.dataTest}
                   />
                 );
                 break;
@@ -87,6 +89,7 @@ class ActionsBar extends PureComponent {
                     defaultOption={plugin.defaultOption}
                     onChange={plugin.onChange}
                     width={plugin.width}
+                    dataTest={plugin.dataTest}
                   />
                 );
                 break;
@@ -98,6 +101,7 @@ class ActionsBar extends PureComponent {
                     defaultOption={plugin.defaultOption}
                     onChange={plugin.onChange}
                     exclusive={plugin.exclusive}
+                    dataTest={plugin.dataTest}
                   />
                 );
                 break;

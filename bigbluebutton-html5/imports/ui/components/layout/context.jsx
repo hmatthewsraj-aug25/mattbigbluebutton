@@ -1209,7 +1209,7 @@ const reducer = (state, action) => {
     // EXTERNAL VIDEO
     case ACTIONS.SET_HAS_EXTERNAL_VIDEO: {
       const { externalVideo } = state.input;
-      if (externalVideo.hasExternalVideo === action.value) {
+      if (externalVideo?.hasExternalVideo === action.value) {
         return state;
       }
       return {

@@ -25,7 +25,7 @@ const propTypes = {
   shouldCloseOnOverlayClick: PropTypes.bool,
   shouldShowCloseButton: PropTypes.bool,
   overlayClassName: PropTypes.string,
-  modalisOpen: PropTypes.bool,
+  modalIsOpen: PropTypes.bool,
   width: PropTypes.string,
   height: PropTypes.string,
   padding: PropTypes.string,
@@ -40,7 +40,7 @@ const defaultProps = {
   shouldShowCloseButton: true,
   overlayClassName: 'modalOverlay',
   headerPosition: 'inner',
-  modalisOpen: false,
+  modalIsOpen: false,
 };
 
 class ModalSimple extends Component {
@@ -82,8 +82,8 @@ class ModalSimple extends Component {
   }
 
   handleOutsideClick(e) {
-    const { modalisOpen } = this.props;
-    if (this.modalRef.current && !this.modalRef.current.contains(e.target) && modalisOpen) {
+    const { modalIsOpen } = this.props;
+    if (this.modalRef.current && !this.modalRef.current.contains(e.target) && modalIsOpen) {
       this.handleRequestClose(e);
     }
   }
@@ -96,7 +96,7 @@ class ModalSimple extends Component {
       hideBorder,
       dismiss,
       className,
-      modalisOpen,
+      modalIsOpen,
       onRequestClose,
       shouldShowCloseButton,
       contentLabel,
@@ -116,10 +116,12 @@ class ModalSimple extends Component {
       // if anchorElement is provided, position of the modal to be centered below it
       const { isMobile } = deviceInfo;
 
+      const marginX = 10;
       const anchorRect = anchorElement.getBoundingClientRect();
       const anchorCenterX = anchorRect.left + anchorRect.width / 2;
       const modalWidth = 600;
-      const modalLeft = anchorCenterX - modalWidth / 2;
+      const modalLeft = Math.max(anchorCenterX - modalWidth / 2, marginX);
+      const windowWidth = document.documentElement.clientWidth;
 
       modalStyles = {
         content: {
@@ -127,6 +129,7 @@ class ModalSimple extends Component {
           left: isMobile ? null : `${modalLeft + window.scrollX}px`,
           overflow: 'visible',
           position: 'fixed',
+          maxWidth: windowWidth - (isMobile ? 0 : modalLeft + window.scrollX) - marginX * 2,
         },
       };
     }
@@ -134,7 +137,7 @@ class ModalSimple extends Component {
     return (
       <Styled.SimpleModal
         id={id || 'simpleModal'}
-        isOpen={modalisOpen}
+        isOpen={modalIsOpen}
         className={className}
         onRequestClose={this.handleRequestClose}
         contentLabel={title || contentLabel}
@@ -142,9 +145,10 @@ class ModalSimple extends Component {
         width={width}
         height={height}
         padding={padding}
+        style={modalStyles}
         {...otherProps}
       >
-        <FocusTrap active={modalisOpen} focusTrapOptions={{ initialFocus: false }}>
+        <FocusTrap active={modalIsOpen} focusTrapOptions={{ initialFocus: false }}>
           <div ref={this.modalRef}>
             <Styled.Header
               hideBorder={hideBorder}

@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl';
 import ExternalVideoModal from '/imports/ui/components/external-video-player/external-video-player-graphql/modal/component';
 import LayoutModalContainer from '/imports/ui/components/layout/modal/container';
 import BBBMenu from '/imports/ui/components/common/menu/component';
-import { ActionButtonDropdownItemType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/action-button-dropdown-item/enums';
+import { MediaAreaItemType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/media-area-item/enums';
 import Styled from './styles';
 import { colorPrimary, listItemBgHover } from '/imports/ui/stylesheets/styled-components/palette';
 import { LAYOUT_TYPE } from '../../layout/enums';
@@ -28,7 +28,7 @@ const propTypes = {
   setPushLayout: PropTypes.func.isRequired,
   showPushLayout: PropTypes.bool.isRequired,
   isCameraAsContentEnabled: PropTypes.bool.isRequired,
-  actionButtonDropdownItems: PropTypes.arrayOf(
+  mediaAreaItems: PropTypes.arrayOf(
     PropTypes.shape({
       allowed: PropTypes.bool,
       key: PropTypes.string,
@@ -150,7 +150,7 @@ class MediaAreaDropdown extends PureComponent {
       stopExternalVideoShare,
       amIModerator,
       hasCameraAsContent,
-      actionButtonDropdownItems,
+      mediaAreaItems,
       isCameraAsContentEnabled,
       presentations,
       isPresentationEnabled,
@@ -217,22 +217,24 @@ class MediaAreaDropdown extends PureComponent {
       });
     }
 
-    actionButtonDropdownItems.forEach((actionButtonItem) => {
-      switch (actionButtonItem.type) {
-        case ActionButtonDropdownItemType.OPTION:
+    mediaAreaItems.forEach((mediaAreaItem) => {
+      switch (mediaAreaItem.type) {
+        case MediaAreaItemType.OPTION:
           actions.push({
-            icon: actionButtonItem.icon,
-            label: actionButtonItem.label,
-            key: actionButtonItem.id,
-            onClick: actionButtonItem.onClick,
-            allowed: actionButtonItem.allowed,
+            icon: mediaAreaItem.icon,
+            label: mediaAreaItem.label,
+            key: mediaAreaItem.id,
+            onClick: mediaAreaItem.onClick,
+            allowed: mediaAreaItem.allowed,
+            dataTest: mediaAreaItem.dataTest,
           });
           break;
-        case ActionButtonDropdownItemType.SEPARATOR:
+        case MediaAreaItemType.SEPARATOR:
           actions.push({
-            key: actionButtonItem.id,
-            allowed: actionButtonItem.allowed,
+            key: mediaAreaItem.id,
+            allowed: mediaAreaItem.allowed,
             isSeparator: true,
+            dataTest: mediaAreaItem.dataTest,
           });
           break;
         default:
@@ -360,7 +362,7 @@ class MediaAreaDropdown extends PureComponent {
           )}
           actions={children}
           opts={{
-            id: 'actions-dropdown-menu',
+            id: 'media-area-dropdown-menu',
             keepMounted: true,
             transitionDuration: 0,
             elevation: 3,

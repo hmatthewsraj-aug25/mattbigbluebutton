@@ -220,6 +220,10 @@ const NotesContainerGraphql: React.FC<NotesContainerGraphqlProps> = (props) => {
       if (isScreenBroadcasting) screenshareHasEnded();
     }
     pinSharedNotes({ variables: { pinned } });
+    layoutContextDispatch({
+      type: ACTIONS.SET_NOTES_IS_PINNED,
+      value: pinned,
+    });
   };
 
   return (

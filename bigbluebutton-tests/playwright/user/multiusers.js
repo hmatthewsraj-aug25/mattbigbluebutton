@@ -91,7 +91,7 @@ class MultiUsers {
     await this.userPage.hasElement(e.startScreenSharing, 'should display the start screenshare button for the attendee');
     await this.userPage.hasElement(e.presentationToolbarWrapper, 'should display the presentation toolbar for the attendee');
     await this.userPage.hasElement(e.wbToolbar, 'should display the whiteboard toolbar for the attendee');
-    await this.userPage.hasElement(e.actions, 'should display the actions button for the attendee');
+    await this.userPage.hasElement(e.mediaAreaButton, 'should display the media area button for the attendee');
     await this.userPage.hasElement(e.userListItem, 'should display the user list item for the attendee');
     const isPresenter = await checkIsPresenter(this.userPage);
     await expect(isPresenter, 'should the attendee be presenter').toBeTruthy();
@@ -108,7 +108,7 @@ class MultiUsers {
     await this.modPage2.hasElement(e.userListItem, 'should display the user list item for the second moderator');
     const isPresenter = await checkIsPresenter(this.modPage2);
     await expect(isPresenter, 'should the second moderator to be presenter').toBeTruthy();
-    await this.modPage2.waitAndClick(e.actions);
+    await this.modPage2.waitAndClick(e.mediaAreaButton);
     await this.modPage2.hasElement(e.managePresentations, 'should display the manage presentations for the second moderator');
     await this.modPage2.hasElement(e.pollSidebarButton, 'should display the polling option for the second moderator');
     await this.modPage2.hasElement(e.shareExternalVideoBtn, 'should display the share external video button for the second moderator');
@@ -349,6 +349,27 @@ class MultiUsers {
     await expect(emojiRainLocator, 'should display the emoji rain element when enabled').toHaveCount(5, { timeout: ELEMENT_WAIT_TIME });
     await sleep(1000);
     await expect(emojiRainLocator, 'should stop displaying the emoji rain element after a second').toHaveCount(0, { timeout: ELEMENT_WAIT_TIME });
+  }
+
+  async clearAllStatusIcon() {
+    await this.modPage.waitForSelector(e.whiteboard);
+    await this.modPage2.waitForSelector(e.whiteboard);
+    
+    await this.modPage.waitAndClick(e.reactionsButton);
+    await this.modPage.waitAndClick(`${e.singleReactionButton}:nth-child(1)`);
+    await this.modPage.hasText(e.moderatorAvatar, '😃', 'should display the smiling emoji in the moderator avatar for the moderator');
+    await this.modPage.hasText(e.reactionsButton, '😃', 'should display the smiling emoji on the reactions button when used');
+
+    await this.modPage2.waitAndClick(e.reactionsButton);
+    await this.modPage2.waitAndClick(`${e.singleReactionButton}:nth-child(1)`);
+    await this.modPage2.hasText(e.moderatorAvatar, '😃', 'should display the smiling emoji in the moderator avatar for the moderator');
+    await this.modPage2.hasText(e.reactionsButton, '😃', 'should display the smiling emoji on the reactions button when used');
+
+    await this.modPage.waitAndClick(e.manageUsers);
+    await this.modPage.waitAndClick(e.clearStatus);
+
+    await this.modPage.hasText(e.moderatorAvatar, 'mo', 'should not display the emoji after clearing all icons');
+    await this.modPage2.hasText(e.moderatorAvatar, 'mo', 'should not display the emoji after clearing all icons');
   }
 }
 

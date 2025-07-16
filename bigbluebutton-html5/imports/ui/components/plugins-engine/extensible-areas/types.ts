@@ -10,7 +10,7 @@ export interface ExtensibleAreaStateManagerProps {
 export interface ExtensibleArea {
   presentationToolbarItems: PluginSdk.PresentationToolbarInterface[];
   userListDropdownItems: PluginSdk.UserListDropdownInterface[];
-  actionButtonDropdownItems: PluginSdk.ActionButtonDropdownInterface[];
+  mediaAreaItems: PluginSdk.MediaAreaInterface[];
   audioSettingsDropdownItems: PluginSdk.AudioSettingsDropdownInterface[];
   actionsBarItems: PluginSdk.ActionsBarInterface[];
   appsGalleryItems: PluginSdk.AppsGalleryInterface[];

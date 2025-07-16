@@ -28,10 +28,10 @@ const MediaAreaDropdownContainer = (props) => {
   const { pluginsExtensibleAreasAggregatedState } = useContext(PluginsContext);
   const meetingIsBreakout = useMeetingIsBreakout();
 
-  let actionButtonDropdownItems = [];
-  if (pluginsExtensibleAreasAggregatedState.actionButtonDropdownItems) {
-    actionButtonDropdownItems = [
-      ...pluginsExtensibleAreasAggregatedState.actionButtonDropdownItems,
+  let mediaAreaItems = [];
+  if (pluginsExtensibleAreasAggregatedState.mediaAreaItems) {
+    mediaAreaItems = [
+      ...pluginsExtensibleAreasAggregatedState.mediaAreaItems,
     ];
   }
 
@@ -71,7 +71,7 @@ const MediaAreaDropdownContainer = (props) => {
         sidebarNavigation,
         isMobile,
         isRTL,
-        actionButtonDropdownItems,
+        mediaAreaItems,
         presentations,
         setPresentation,
         isCameraAsContentEnabled,

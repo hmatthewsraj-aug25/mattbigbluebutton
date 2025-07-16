@@ -43,13 +43,32 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       isRTL={isRTL}
       data-test="chatTitle"
       title={title}
-      leftButtonProps={{}}
+      leftButtonProps={{
+        accessKey: chatId !== 'public' ? HIDE_CHAT_AK : null,
+        'aria-label': intl.formatMessage(intlMessages.hideChatLabel, { chatName: title }),
+        'data-test': isPublicChat ? 'hidePublicChat' : 'hidePrivateChat',
+        label: title,
+        onClick: () => {
+          layoutContextDispatch({
+            type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
+            value: false,
+          });
+          layoutContextDispatch({
+            type: ACTIONS.SET_ID_CHAT_OPEN,
+            value: '',
+          });
+          layoutContextDispatch({
+            type: ACTIONS.SET_SIDEBAR_CONTENT_PANEL,
+            value: PANELS.NONE,
+          });
+        },
+      }}
       rightButtonProps={{
         accessKey: HIDE_CHAT_AK,
-        'aria-label': intl.formatMessage(intlMessages.hideChatLabel, { 0: title }),
+        'aria-label': intl.formatMessage(intlMessages.closeChatLabel, { chatName: title }),
         'data-test': 'hideMessagesButton',
         icon: 'minus',
-        label: intl.formatMessage(intlMessages.hideChatLabel, { 0: title }),
+        label: intl.formatMessage(intlMessages.closeChatLabel, { chatName: title }),
         onClick: () => {
           updateVisible({ variables: { chatId, visible: false } });
           layoutContextDispatch({
@@ -107,7 +126,6 @@ const ChatHeaderContainer: React.FC = () => {
   }
   const isPublicChat = chatData.chat[0]?.public;
   const title = intl.formatMessage(intlMessages.messagesTitle);
-
   return (
     <>
       <h2 className="sr-only">{title}</h2>

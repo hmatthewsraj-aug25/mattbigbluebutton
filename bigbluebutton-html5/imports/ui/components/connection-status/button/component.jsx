@@ -6,8 +6,7 @@ import ConnectionStatusService from '/imports/ui/components/connection-status/se
 import SettingsMenuContainer from '/imports/ui/components/settings/container';
 import Icon from '/imports/ui/components/connection-status/icon/component';
 import Styled from './styles';
-import Auth from '/imports/ui/services/auth';
-import deviceInfo, { isMobile } from '/imports/utils/deviceInfo';
+import { isMobile } from '/imports/utils/deviceInfo';
 
 const intlMessages = defineMessages({
   label: {
@@ -33,7 +32,7 @@ class ConnectionStatusButton extends PureComponent {
   }
 
   renderIcon(level = 'normal') {
-    return(
+    return (
       <Styled.IconWrapper>
         <Icon
           level={level}
@@ -106,7 +105,7 @@ class ConnectionStatusButton extends PureComponent {
             disabled
             ghost
             circle
-            onClick={() => {}}
+            onClick={() => { }}
             data-test="connectionStatusButton"
             isMobile={isMobile}
           />
@@ -147,7 +146,7 @@ class ConnectionStatusButton extends PureComponent {
           size="sm"
           color={color}
           circle
-          onClick={() => this.setState({isModalOpen: true})}
+          onClick={() => this.setState({ isModalOpen: true })}
           data-test="connectionStatusButton"
         />
         {this.renderModal(isModalOpen, adjustYourSettingsModalIsOpen)}

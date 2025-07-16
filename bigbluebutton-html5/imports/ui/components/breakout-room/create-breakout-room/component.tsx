@@ -189,10 +189,6 @@ const intlMessages = defineMessages({
     id: 'app.createBreakoutRoom.record',
     description: 'label for checkbox to allow record',
   },
-  roomTime: {
-    id: 'app.createBreakoutRoom.roomTime',
-    description: 'used to provide current room time for aria label',
-  },
   numberOfRoomsIsValid: {
     id: 'app.createBreakoutRoom.numberOfRoomsError',
     description: 'Label an error message',
@@ -216,10 +212,6 @@ const intlMessages = defineMessages({
   roomNameInputDesc: {
     id: 'app.createBreakoutRoom.roomNameInputDesc',
     description: 'aria description for room name change',
-  },
-  movedUserLabel: {
-    id: 'app.createBreakoutRoom.movedUserLabel',
-    description: 'screen reader alert when users are moved to rooms',
   },
   manageRooms: {
     id: 'app.createBreakoutRoom.manageRoomsLabel',
@@ -331,7 +323,7 @@ const CreateBreakoutRoom: React.FC<CreateBreakoutRoomProps> = ({
           captureNotesFilename: `${r.name.replace(/\s/g, '_')}_${intl.formatMessage(intlMessages.captureNotesType)}`,
           captureSlidesFilename: `${r.name.replace(/\s/g, '_')}_${intl.formatMessage(intlMessages.captureSlidesType)}`,
           isDefaultName: r.name === intl.formatMessage(intlMessages.breakoutRoom, {
-            0: r.id,
+            roomNumber: r.id,
           }),
           users: r.users.map((u) => u.userId),
           freeJoin,
@@ -341,7 +333,7 @@ const CreateBreakoutRoom: React.FC<CreateBreakoutRoomProps> = ({
         });
       } else {
         const defaultName = intl.formatMessage(intlMessages.breakoutRoom, {
-          0: roomNumber,
+          roomNumber,
         });
 
         roomsArray.push({
@@ -548,7 +540,7 @@ const CreateBreakoutRoom: React.FC<CreateBreakoutRoomProps> = ({
                   {
                     intl.formatMessage(
                       intlMessages.minimumDurationWarnBreakout,
-                      { 0: MIN_BREAKOUT_TIME },
+                      { timeInMinutes: MIN_BREAKOUT_TIME },
                     )
                   }
                 </Styled.SpanWarn>

@@ -95,7 +95,7 @@ const ChatReplyIntention = () => {
           {messageToQuoteMarkdown(message)}
         </Styled.Markdown>
       </Styled.Message>
-      <Tooltip title={intl.formatMessage(intlMessages.cancel, { 0: CANCEL_KEY })}>
+      <Tooltip title={intl.formatMessage(intlMessages.cancel, { cancelKey: CANCEL_KEY })}>
         <Styled.CloseBtn
           onClick={(e) => {
             e.stopPropagation();
@@ -106,7 +106,7 @@ const ChatReplyIntention = () => {
           icon="close"
           tabIndex={hidden ? -1 : 0}
           aria-hidden={hidden}
-          aria-label={intl.formatMessage(intlMessages.cancel, { 0: CANCEL_KEY })}
+          aria-label={intl.formatMessage(intlMessages.cancel, { cancelKey: CANCEL_KEY })}
           data-test="closeChatReplyIntentionButton"
         />
       </Tooltip>
