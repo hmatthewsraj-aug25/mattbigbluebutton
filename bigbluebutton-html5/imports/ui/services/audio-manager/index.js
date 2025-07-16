@@ -954,42 +954,47 @@ class AudioManager {
         currentStreamData: MediaStreamUtils.getMediaStreamLogData(this.inputStream),
         streamData: MediaStreamUtils.getMediaStreamLogData(stream),
       },
-    }, 'Audio stream has become inactive');
+    }, `Audio stream has become inactive on ${getStoredAudioInputDeviceId()}`);
 
     if (stream === this.inputStream) {
       const currentDeviceId = this.inputDeviceId ?? 'none';
       const originalLabel = this.inputStream?.getAudioTracks()[0]?.label;
+      if (this._deviceReconnectTimer) {
+        clearTimeout(this._deviceReconnectTimer);
+        this._deviceReconnectTimer = null;
+      }
       this.inputStream = null;
 
       if (this.isUsingAudio() && originalLabel) {
         const checkDevice = async () => {
+          this._deviceReconnectTimer = null;
           try {
             await this.enumerateDevices();
             const found = this.inputDevices.find(d => d.label === originalLabel);
-            // Abort if the device was manually changed
-            if (this.inputStream && this.inputDeviceId !== currentDeviceId) {
+            // Abort if the device was manually changed to other than default or communications
+            if (this.inputStream && this.inputDeviceId !== 'default' && this.inputDeviceId !== 'communications') {
               logger.info({ logCode: 'audiomanager_stream_changed' }, `Audio stream changed from ${currentDeviceId} to ${this.inputDeviceId}, abort waiting`);
               return;
             }
-            if (found && this.inputStream) {
-              // Reset the stream as the audio device ID is always 'default' between connections and the change won't be detected by the handler
-              this.inputStream.getTracks().forEach(track => track.stop());
-              this.inputStream = null;
-              await this.liveChangeInputDevice(DEFAULT_INPUT_DEVICE_ID);
-              logger.info({ logCode: 'audiomanager_stream_reconnected' }, `Reconnected to: ${originalLabel}, ${getStoredAudioInputDeviceId()}`);
-            } else {
-              // Change to the new reported default and try again because audio captions start generating on top of the new "default" named device
+            if (!found || !this.inputStream) {
+              // Fallback first: use default device and retry
               if (!this.inputStream) {
                 await this.liveChangeInputDevice(DEFAULT_INPUT_DEVICE_ID);
-                logger.info({ logCode: 'audiomanager_stream_fallback' }, 'Original device not present, using fallback');
+                logger.info({ logCode: 'audiomanager_stream_fallback' }, 'Original audio device not present, using fallback and waiting for it to reappear');
               }
-              setTimeout(checkDevice, 2000);
+              this._deviceReconnectTimer = setTimeout(checkDevice, 2000);
+            } else {
+              // Original device found and we have a stream: reconnect
+              this.inputStream.getTracks().forEach(track => track.stop());
+              this.inputStream = null;
+              await this.liveChangeInputDevice(currentDeviceId);
+              logger.info({ logCode: 'audiomanager_stream_reconnected' }, `Reconnected to: ${originalLabel}, ${getStoredAudioInputDeviceId()}`);
             }
           } catch (error) {
-            setTimeout(checkDevice, 2000);
+            this._deviceReconnectTimer = setTimeout(checkDevice, 2000);
           }
         };
-        setTimeout(checkDevice, 2000);
+        this._deviceReconnectTimer = setTimeout(checkDevice, 2000);
       }
     }
   }
