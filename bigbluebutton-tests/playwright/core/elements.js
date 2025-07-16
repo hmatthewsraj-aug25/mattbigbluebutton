@@ -1,7 +1,6 @@
 // Common
-exports.actions = 'button[data-test="actionsButton"]';
-exports.actionsItem = 'div[id="actions-dropdown-menu"] ul li';
 exports.mediaAreaButton = 'button[data-test="mediaAreaButton"]';
+exports.mediaAreaItem = 'div[id="media-area-dropdown-menu"] ul li';
 exports.optionsButton = 'button[data-test="optionsButton"]';
 exports.modalConfirmButton = 'button[data-test="modalConfirmButton"]';
 exports.screenshareConnecting = 'div[data-test="screenshareConnecting"]';

@@ -362,7 +362,7 @@ class MediaAreaDropdown extends PureComponent {
           )}
           actions={children}
           opts={{
-            id: 'actions-dropdown-menu',
+            id: 'media-area-dropdown-menu',
             keepMounted: true,
             transitionDuration: 0,
             elevation: 3,

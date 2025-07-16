@@ -16,7 +16,7 @@ class CreateParameters extends MultiUsers {
   }
 
   async bannerText() {
-    await this.modPage.hasElement(e.actions, 'should the actions button be displayed');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should the media area button be displayed');
     await this.modPage.hasElement(e.notificationBannerBar, 'should display the banner text on the top of the meeting');
   }
 

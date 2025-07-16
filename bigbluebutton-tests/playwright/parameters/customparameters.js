@@ -17,7 +17,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async showPublicChatOnLogin() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.wasRemoved(e.hidePublicChat, 'should display the hide public chat element when the public chat is open');
   }
 
@@ -72,7 +72,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async autoSwapLayout() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.waitAndClick(e.minimizePresentation);
     const resp = await this.modPage.page.evaluate((elem) => {
       return document.querySelectorAll(elem)[0].offsetHeight !== 0;
@@ -140,7 +140,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async bannerText() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.notificationBannerBar, 'should display the notification banner bar with a text');
   }
 
@@ -154,14 +154,14 @@ class CustomParameters extends MultiUsers {
   }
 
   async hidePresentationOnJoin() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
     await this.userPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the attendee');
     await this.userPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the attendee');
   }
 
   async hidePresentationOnJoinScreenshare() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
     await this.userPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the attendee');
     await this.userPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the attendee');
@@ -169,19 +169,19 @@ class CustomParameters extends MultiUsers {
     
     await this.userPage.hasElement(e.screenShareVideo, 'should display the screenshare element');
     await this.modPage.waitAndClick(e.stopScreenSharing);
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
     await this.userPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the attendee');
     await this.userPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the attendee');
   }
 
   async hidePresentationOnJoinShareExternalVideo() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
     await this.userPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the attendee');
     await this.userPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the attendee');
 
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.shareExternalVideoBtn);
     await this.modPage.type(e.videoModalInput, e.youtubeLink);
     await this.modPage.waitAndClick(e.startShareVideoBtn);
@@ -192,7 +192,7 @@ class CustomParameters extends MultiUsers {
     const userFrame = await this.userPage.getYoutubeFrame();
     await userFrame.hasElement('video', 'should display the video frame');
 
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.shareExternalVideoBtn);
 
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
@@ -201,7 +201,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async hidePresentationOnJoinPinSharedNotes() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
     await this.userPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the attendee');
     await this.userPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the attendee');
@@ -220,7 +220,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async hidePresentationOnJoinChangeLayout() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
     await this.userPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the attendee');
     await this.userPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the attendee');
@@ -238,7 +238,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async hidePresentationOnJoinReturnFromBreakouts() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
     await this.userPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the attendee');
     await this.userPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the attendee');
@@ -270,7 +270,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async hidePresentationOnJoinUploadLargePresentation() {
-    await this.modPage.hasElement(e.actions, 'should display the actions button');
+    await this.modPage.hasElement(e.mediaAreaButton, 'should display the media area button');
     await this.modPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the moderator');
     await this.userPage.hasElement(e.restorePresentation, 'should display the restore presentation button for the attendee');
     await this.userPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the attendee');
@@ -392,7 +392,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async hideActionsBarTest() {
-    await this.modPage.wasRemoved(e.actions, 'should not display the actions button');
+    await this.modPage.wasRemoved(e.mediaAreaButton, 'should not display the media area button');
     await this.modPage.wasRemoved(e.joinAudio, 'should not display the join audio button');
     await this.modPage.wasRemoved(e.joinVideo, 'should not display the join video button');
     await this.modPage.wasRemoved(e.startScreenSharing, 'should not display the start screensharing');
