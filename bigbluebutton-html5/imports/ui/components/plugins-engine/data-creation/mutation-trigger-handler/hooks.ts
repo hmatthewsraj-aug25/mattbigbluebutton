@@ -2,7 +2,6 @@
 import { MutationResult } from '@apollo/client';
 import { useState, useEffect } from 'react';
 import { isEqual } from 'radash';
-import usePreviousValue from '/imports/ui/hooks/usePreviousValue';
 import { DataCreationHookEnums } from 'bigbluebutton-html-plugin-sdk/dist/cjs/data-creation/enums';
 import { UpdatedEventDetails } from 'bigbluebutton-html-plugin-sdk/dist/cjs/core/types';
 import { MutationResultObject } from 'bigbluebutton-html-plugin-sdk/dist/cjs/data-creation/types';
@@ -21,14 +20,14 @@ import projectMutationResult from './utils';
 const useUpdateMutationResultForPlugin = (
   resultFromGraphql: MutationResult<any>, mutation: string, options?: object,
 ) => {
-  const [projectionResult, setProjectionResult] = useState(projectMutationResult(resultFromGraphql));
-  const previousProjectionResult = usePreviousValue(projectionResult);
+  const projection = projectMutationResult(resultFromGraphql);
+  const [projectionResult, setProjectionResult] = useState(projection);
 
   useEffect(() => {
-    const currentProjectionResult = projectMutationResult(resultFromGraphql);
-    if (!isEqual(currentProjectionResult, previousProjectionResult)) {
-      setProjectionResult(currentProjectionResult);
-    }
+    setProjectionResult((prev) => {
+      if (!isEqual(prev, projection)) return projection;
+      return prev;
+    });
   }, [resultFromGraphql]);
 
   useEffect(() => {
