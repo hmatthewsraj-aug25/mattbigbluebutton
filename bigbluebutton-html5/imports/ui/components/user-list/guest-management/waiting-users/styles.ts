@@ -142,7 +142,7 @@ const WaitingUsersHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  align-self: stretch; 
+  align-self: stretch;
   cursor: pointer;
 `;
 
@@ -171,12 +171,11 @@ const GuestOptionsContainer = styled.div`
   height: 1.5rem;
 `;
 
-const AcceptDenyButtonsContainer = styled.div`
-  display: inline-flex;
-  justify-content: space-between
+export const AcceptDenyButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 0px 0.5rem 0.5rem;
-  gap: 1.5rem;
 `;
 
 const AcceptDenyButtonText = styled.div`
@@ -220,12 +219,9 @@ const GuestLobbyMessageContainer = styled.div`
 `;
 
 const SwitchTitle = styled(FormControlLabel)`
-  //height: 1.5rem;
-  //width: 1.5rem;
-  //flex-shrink: 0;
   .MuiFormControlLabel-label {
     color: ${colorText};
-    font-size: ${fontSizeBase}
+    font-size: ${fontSizeBase};
     font-weight: ${textFontWeight};
     line-height: normal;
   }
@@ -237,9 +233,7 @@ const MessageSwitch = materialStyled(Switch)(({ theme }) => ({
   padding: 0,
   display: 'flex',
   '&:active': {
-    '& .MuiSwitch-thumb': {
-      // width: 10,
-    },
+    '& .MuiSwitch-thumb': {},
     '& .MuiSwitch-switchBase.Mui-checked': {
       transform: 'translateX(9px)',
     },
@@ -292,11 +286,7 @@ const SendButton = styled(Button)`
     border-radius: 0 0.75rem 0.75rem 0;
   }
 
-  [dir="rtl"]  & {
-    -webkit-transform: scale(-1, 1);
-    -moz-transform: scale(-1, 1);
-    -ms-transform: scale(-1, 1);
-    -o-transform: scale(-1, 1);
+  [dir="rtl"] & {
     transform: scale(-1, 1);
   }
 `;
@@ -362,7 +352,7 @@ const NoMessageText = styled.div`
 const GuestLobbyMessage = styled.div`
   color: ${colorText};
   font-size: ${fontSizeSmall};
-  font-style: italic;  
+  font-style: italic;
 `;
 
 export const ToggleButton = styled(ButtonBase)`
@@ -420,6 +410,20 @@ export const TitleText = styled.span`
   padding-right: 1rem;
 `;
 
+export const RememberChoiceContainer = styled.div`
+  .MuiFormControlLabel-label {
+    font-size: ${fontSizeSmall};
+    color: ${colorGrayDark};
+    font-weight: ${textFontWeight};
+  }
+`;
+
+export const ActionButtonsWrapper = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+`;
+
 export default {
   TitleText,
   ExpandIcon,
@@ -451,4 +455,6 @@ export default {
   NoMessageText,
   GuestLobbyMessage,
   WaitingUsersContainer,
+  RememberChoiceContainer,
+  ActionButtonsWrapper,
 };
