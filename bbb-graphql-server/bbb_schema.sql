@@ -1039,6 +1039,7 @@ CREATE UNLOGGED TABLE "chat" (
 	"chatId"  varchar(100),
 	"access" varchar(20),
 	"createdBy" varchar(25),
+	"totalMessages" integer,
 	CONSTRAINT "chat_pkey" PRIMARY KEY ("meetingId", "chatId")
 );
 CREATE INDEX "idx_chat_pk_reverse" ON "chat"("chatId","meetingId");
@@ -1151,6 +1152,27 @@ FOR EACH ROW
 EXECUTE FUNCTION "update_chatMessage_messageSequence"();
 
 
+CREATE OR REPLACE FUNCTION "update_chat_totalMessages"()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE "chat"
+    SET "totalMessages" = (
+    				SELECT count("messageId")
+    				FROM chat_message cm
+    				WHERE cm."meetingId" = chat."meetingId"
+    				AND cm."chatId" = chat."chatId"
+    )
+    WHERE chat."meetingId" = NEW."meetingId"
+    AND chat."chatId" = NEW."chatId";
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "trigger_update_chat_totalMessages"
+AFTER INSERT OR DELETE ON "chat_message" FOR EACH ROW
+EXECUTE FUNCTION "update_chat_totalMessages"();
+
+
 CREATE OR REPLACE FUNCTION "update_chatUser_clear_lastTypingAt_trigger_func"() RETURNS TRIGGER AS $$
 BEGIN
   UPDATE "chat_user"
@@ -1205,15 +1227,21 @@ CREATE OR REPLACE VIEW "v_chat" AS
 SELECT 	"user"."meetingId",
         "user"."userId",
         case when "user"."userId" = "chat"."createdBy" then true else false end "amIOwner",
-		chat."chatId",
+		"chat"."chatId",
 		cu."visible",
 		chat_with."userId" AS "participantId",
-		count(DISTINCT cm."messageId") "totalMessages",
-		sum(CASE WHEN cm."senderId" != "user"."userId"
-		    and cm."createdAt" < current_timestamp - '2 seconds'::interval --set a delay while user send lastSeenAt
-		    and cm."createdAt" > coalesce(cu."lastSeenAt","user"."registeredAt") THEN 1 ELSE 0 end) "totalUnread",
+		"chat"."totalMessages",
+		(
+            select count(1)
+            from chat_message cm
+            where cm."meetingId" = chat."meetingId"
+            and cm."chatId" = chat."chatId"
+            and cm."senderId" != "user"."userId"
+            and cm."createdAt" < current_timestamp - '2 seconds'::interval --set a delay while user send lastSeenAt
+            and cm."createdAt" > coalesce(cu."lastSeenAt","user"."registeredAt")
+        ) "totalUnread",
 		cu."lastSeenAt",
-		CASE WHEN chat."access" = 'PUBLIC_ACCESS' THEN true ELSE false end public
+		CASE WHEN "chat"."access" = 'PUBLIC_ACCESS' THEN true ELSE false end "public"
 FROM "user"
 JOIN "chat_user" cu ON cu."meetingId" = "user"."meetingId" AND cu."userId" = "user"."userId"
 --now it will always add chat_user for public chat onUserJoin
@@ -1223,10 +1251,7 @@ LEFT JOIN "chat_user" chat_with ON chat_with."meetingId" = chat."meetingId" AND
                                     chat_with."chatId" = chat."chatId" AND
                                     chat_with."userId" != cu."userId"  AND
                                     chat_with."chatId" != 'MAIN-PUBLIC-GROUP-CHAT'
-LEFT JOIN chat_message cm ON cm."meetingId" = chat."meetingId" AND
-                             cm."chatId" = chat."chatId"
-WHERE cu."visible" is true
-GROUP BY "user"."meetingId", "user"."userId", chat."meetingId", chat."chatId", cu."visible", cu."lastSeenAt", chat_with."userId";
+WHERE cu."visible" is true;
 
 create index idx_v_chat_with on chat_user("meetingId","chatId","userId") where "chatId" != 'MAIN-PUBLIC-GROUP-CHAT';
 
@@ -1653,9 +1678,11 @@ CREATE UNLOGGED TABLE "poll" (
 "type" varchar(30),
 "secret" boolean,
 "multipleResponses" boolean,
+"quiz" boolean,
 "ended" boolean,
 "published" boolean,
 "publishedAt" timestamp with time zone,
+"publishedShowingAnswer" boolean,
 "createdAt" timestamp with time zone not null default current_timestamp,
 FOREIGN KEY ("meetingId", "ownerId") REFERENCES "user"("meetingId","userId") ON DELETE CASCADE
 );
@@ -1668,6 +1695,7 @@ CREATE UNLOGGED TABLE "poll_option" (
 	"pollId" varchar(100) REFERENCES "poll"("pollId") ON DELETE CASCADE,
 	"optionId" integer,
 	"optionDesc" TEXT,
+	"correctOption" boolean,
 	CONSTRAINT "poll_option_pkey" PRIMARY KEY ("pollId", "optionId")
 );
 CREATE INDEX "idx_poll_option_pollId" ON "poll_option"("pollId");
@@ -1693,15 +1721,20 @@ poll."type",
 poll."questionText",
 poll."meetingId" AS "pollOwnerMeetingId",
 poll."ownerId" AS "pollOwnerId",
-poll.published,
+poll."published",
 o."optionId",
 o."optionDesc",
+case
+    when poll."published" is false then o."correctOption" --when not published only presenter can see
+    when poll."published" and poll."publishedShowingAnswer" then o."correctOption"
+    else null
+end "correctOption",
 count(r."optionId") AS "optionResponsesCount",
 sum(count(r."optionId")) OVER (partition by poll."pollId") "pollResponsesCount"
 FROM poll
 JOIN poll_option o ON o."pollId" = poll."pollId"
 LEFT JOIN poll_response r ON r."pollId" = poll."pollId" AND o."optionId" = r."optionId"
-GROUP BY poll."pollId", o."optionId", o."optionDesc"
+GROUP BY poll."pollId", o."pollId", o."optionId"
 ORDER BY poll."pollId";
 
 CREATE VIEW "v_poll_user" AS
