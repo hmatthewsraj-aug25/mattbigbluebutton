@@ -108,23 +108,21 @@ const PushLayoutEngine = (props) => {
 
   useEffect(() => {
     const Settings = getSettingsSingletonInstance();
+    let { selectedLayout: currentLayout } = Settings.layout;
     const hasLayoutEngineLoadedOnce = Session.getItem('hasLayoutEngineLoadedOnce');
 
     const changeLayout = LAYOUT_TYPE[getFromUserSettings('bbb_change_layout', null)];
     const defaultLayout = LAYOUT_TYPE[getFromUserSettings('bbb_default_layout', null)];
     const enforcedLayout = LAYOUT_TYPE[enforceLayoutResult] || null;
 
-    Settings.layout.selectedLayout = enforcedLayout
-      || changeLayout
-      || defaultLayout
-      || meetingLayout;
+    Settings.layout.selectedLayout = enforcedLayout || changeLayout || defaultLayout
+      || (pushLayoutMeeting ? (meetingLayout || currentLayout) : (currentLayout));
 
-    let { selectedLayout: actualLayout } = Settings.layout;
     if (isMobile()) {
-      actualLayout = actualLayout === 'custom' ? 'smart' : actualLayout;
-      Settings.layout.selectedLayout = actualLayout;
+      currentLayout = currentLayout === 'custom' ? 'smart' : currentLayout;
+      Settings.layout.selectedLayout = currentLayout;
     }
-    Session.setItem('isGridEnabled', actualLayout === LAYOUT_TYPE.VIDEO_FOCUS);
+    Session.setItem('isGridEnabled', currentLayout === LAYOUT_TYPE.VIDEO_FOCUS);
 
     Settings.save(setLocalSettings);
 
@@ -139,7 +137,7 @@ const PushLayoutEngine = (props) => {
     MediaService.setPresentationIsOpen(layoutContextDispatch, presentationLastState);
     Session.setItem('presentationLastState', presentationLastState);
 
-    if (actualLayout === 'custom') {
+    if (currentLayout === 'custom') {
       setTimeout(() => {
         layoutContextDispatch({
           type: ACTIONS.SET_FOCUSED_CAMERA_ID,
@@ -183,7 +181,7 @@ const PushLayoutEngine = (props) => {
         }
       }, 0);
     }
-    if (actualLayout === 'participantsAndChatOnly') {
+    if (currentLayout === 'participantsAndChatOnly') {
       layoutContextDispatch({
         type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
         value: true,
@@ -197,9 +195,12 @@ const PushLayoutEngine = (props) => {
 
   useEffect(() => {
     if (!selectedLayout) return () => { };
-    const meetingLayoutDidChange = meetingLayout !== prevProps.meetingLayout;
-    const pushLayoutMeetingDidChange = pushLayoutMeeting !== prevProps.pushLayoutMeeting;
-    const enforceLayoutDidChange = enforceLayoutResult !== prevProps.enforceLayoutResult;
+    const meetingLayoutDidChange = prevProps.meetingLayout !== undefined
+      && meetingLayout !== prevProps.meetingLayout;
+    const pushLayoutMeetingDidChange = prevProps.pushLayoutMeeting !== undefined
+      && pushLayoutMeeting !== prevProps.pushLayoutMeeting;
+    const enforceLayoutDidChange = enforceLayoutResult !== undefined
+      && enforceLayoutResult !== prevProps.enforceLayoutResult;
     const shouldSwitchLayout = isPresenter
       ? meetingLayoutDidChange || enforceLayoutDidChange
       : ((meetingLayoutDidChange || pushLayoutMeetingDidChange) && pushLayoutMeeting)
@@ -393,7 +394,7 @@ const PushLayoutEngineContainer = (props) => {
 
   const validatePluginLayout = (layout) => {
     const layoutTypes = Object.keys(LAYOUT_TYPE);
-    return layout && layoutTypes.includes(layout) ? layout : null;
+    return layout && layoutTypes.includes(layout) ? layout : undefined;
   };
   const pluginEnforcedLayout = validatePluginLayout(
     pluginLayoutChange.pluginEnforcedLayout,
@@ -438,7 +439,7 @@ const PushLayoutEngineContainer = (props) => {
   const validateEnforceLayout = (currUser) => {
     const layoutTypes = Object.keys(LAYOUT_TYPE);
     const enforceLayout = currUser?.enforceLayout;
-    return enforceLayout && layoutTypes.includes(enforceLayout) ? enforceLayout : null;
+    return enforceLayout && layoutTypes.includes(enforceLayout) ? enforceLayout : undefined;
   };
 
   const enforceLayout = validateEnforceLayout(currentUserData);

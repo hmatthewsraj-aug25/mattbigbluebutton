@@ -86,7 +86,7 @@ const LayoutObserver: React.FC = () => {
   );
 
   useEffect(() => {
-    if (deviceType !== previousDeviceType) {
+    if (deviceType && deviceType !== previousDeviceType) {
       const Settings = getSettingsSingletonInstance();
       const currentLayout = Settings.layout.selectedLayout;
       if (!isLayoutSupported(deviceType, currentLayout)) {
@@ -214,6 +214,7 @@ const LayoutObserver: React.FC = () => {
   }, [meetingLayout, layoutContextDispatch, layoutType]);
 
   useEffect(() => {
+    if (!deviceType) return;
     const layoutSupported = isLayoutSupported(deviceType, selectedLayout);
     if (layoutSupported) {
       layoutContextDispatch({
@@ -228,8 +229,8 @@ const LayoutObserver: React.FC = () => {
       });
       const Settings = getSettingsSingletonInstance();
       updateSettings({
-        application: {
-          ...Settings.application,
+        layout: {
+          ...Settings.layout,
           selectedLayout: LAYOUT_TYPE.SMART_LAYOUT,
         },
       }, null, setLocalSettings);
