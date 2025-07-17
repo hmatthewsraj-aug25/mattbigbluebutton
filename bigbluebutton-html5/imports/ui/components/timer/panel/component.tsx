@@ -141,10 +141,6 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     }
   }, [songTrack]);
 
-  const headerMessage = useMemo(() => {
-    return stopwatch ? intlMessages.stopwatch : intlMessages.timer;
-  }, [stopwatch]);
-
   const switchTimer = (stopwatch: boolean) => {
     timerSwitchMode({ variables: { stopwatch } });
   };

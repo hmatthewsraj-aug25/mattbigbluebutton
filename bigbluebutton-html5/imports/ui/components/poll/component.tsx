@@ -245,7 +245,6 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   const isQuizEnabled = useIsQuizEnabled();
   const ALLOW_CUSTOM_INPUT = POLL_SETTINGS.allowCustomResponseInput;
   const MAX_CUSTOM_FIELDS = POLL_SETTINGS.maxCustom;
-  const [stopPoll] = useMutation(POLL_CANCEL);
 
   const intl = useIntl();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);

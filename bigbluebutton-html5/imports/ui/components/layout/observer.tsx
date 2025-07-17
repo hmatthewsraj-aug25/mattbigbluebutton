@@ -35,8 +35,6 @@ const LayoutObserver: React.FC = () => {
   const sidebarContentInput = layoutSelectInput((i: Input) => i.sidebarContent);
   const presentationInput = layoutSelectInput((i: Input) => i.presentation);
   const sharedNotesInput = layoutSelectInput((i: Input) => i.sharedNotes);
-  const sidebarContent = layoutSelectInput((i: Input) => i.sidebarContent);
-  const { sidebarContentPanel } = sidebarContent;
 
   const [layoutIsReady, setLayoutIsReady] = useState(false);
   const [, setEnableResize] = useState(!window.matchMedia(MOBILE_MEDIA).matches);
