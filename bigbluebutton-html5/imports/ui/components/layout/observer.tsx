@@ -281,26 +281,6 @@ const LayoutObserver: React.FC = () => {
   }, [isChatEnabled, layoutIsReady]);
 
   useEffect(() => {
-    if (layoutIsReady && sidebarContentPanel === PANELS.NONE) {
-      if (getFromUserSettings('bbb_show_participants_on_login', window.meetingClientSettings.public.layout.showParticipantsOnLogin) && !deviceInfo.isPhone) {
-        layoutContextDispatch({
-          type: ACTIONS.SET_SIDEBAR_NAVIGATION_IS_OPEN,
-          value: true,
-        });
-      } else {
-        layoutContextDispatch({
-          type: ACTIONS.SET_SIDEBAR_NAVIGATION_IS_OPEN,
-          value: false,
-        });
-        layoutContextDispatch({
-          type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
-          value: false,
-        });
-      }
-    }
-  }, [layoutIsReady]);
-
-  useEffect(() => {
     if (Session.equals('layoutReady', true)) {
       if (!checkedUserSettings.current) {
         const Settings = getSettingsSingletonInstance();
