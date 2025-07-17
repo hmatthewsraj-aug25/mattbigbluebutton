@@ -3,14 +3,12 @@ import React, {
 } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
-import { useMutation } from '@apollo/client';
 import { Input } from '../layout/layoutTypes';
 import { layoutDispatch, layoutSelectInput } from '../layout/context';
 import { addAlert } from '../screenreader-alert/service';
 import { PANELS, ACTIONS } from '../layout/enums';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
 import { GetHasCurrentPresentationResponse, getHasCurrentPresentation } from './queries';
-import { POLL_CANCEL } from './mutations';
 import {
   getSplittedQuestionAndOptions,
   pollTypes,
