@@ -8,7 +8,6 @@ import org.bigbluebutton.core.domain.MeetingState2x
 import org.bigbluebutton.core.running.{ HandlerHelpers, LiveMeeting, LogHelper }
 
 trait PluginDataChannelPushEntryMsgHdlr extends HandlerHelpers with LogHelper {
-trait PluginDataChannelPushEntryMsgHdlr extends HandlerHelpers {
   this: PluginHdlrs =>
 
   def broadcastEvent(msg: PluginDataChannelPushEntryMsg, entryId: String, liveMeeting: LiveMeeting, bus: MessageBus): Unit = {
