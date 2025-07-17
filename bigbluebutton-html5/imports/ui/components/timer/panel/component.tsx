@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
@@ -10,12 +9,11 @@ import {
   useMutation,
 } from '@apollo/client';
 import Styled from './styles';
-import GET_TIMER, { GetTimerResponse, TimerData } from '../../../core/graphql/queries/timer';
-import logger from '/imports/startup/client/logger';
 import { layoutDispatch } from '../../layout/context';
 import { ACTIONS, PANELS } from '../../layout/enums';
 import {
   TIMER_ACTIVATE,
+  TIMER_DEACTIVATE,
   TIMER_RESET,
   TIMER_SET_SONG_TRACK,
   TIMER_SET_TIME,
@@ -23,10 +21,9 @@ import {
   TIMER_STOP,
   TIMER_SWITCH_MODE,
 } from '../mutations';
-import useTimeSync from '/imports/ui/core/local-states/useTimeSync';
 import humanizeSeconds from '/imports/utils/humanizeSeconds';
-import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedSubscription';
-import connectionStatus from '/imports/ui/core/graphql/singletons/connectionStatus';
+import useTimer from '/imports/ui/core/hooks/useTimer';
+import { TimerData } from '/imports/ui/core/graphql/queries/timer';
 
 const MAX_HOURS = 23;
 const MILLI_IN_HOUR = 3600000;
@@ -69,6 +66,10 @@ const intlMessages = defineMessages({
     id: 'app.timer.button.reset',
     description: 'Timer reset button',
   },
+  deactivate: {
+    id: 'app.timer.button.deactivate',
+    description: 'Timer deactivate button',
+  },
   hours: {
     id: 'app.timer.hours',
     description: 'Timer hours label',
@@ -103,8 +104,9 @@ const intlMessages = defineMessages({
   },
 });
 
-interface TimerPanelProps extends Omit<TimerData, 'elapsed'> {
+interface TimerPanelProps extends Omit<TimerData, 'active' | 'elapsed' | 'startedAt' | 'startedOn'| 'accumulated'> {
   timePassed: number;
+  isPaused: boolean;
 }
 
 const TimerPanel: React.FC<TimerPanelProps> = ({
@@ -113,8 +115,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   time,
   running,
   timePassed,
-  startedOn,
-  active,
+  isPaused,
 }) => {
   const [timerReset] = useMutation(TIMER_RESET);
   const [timerStart] = useMutation(TIMER_START);
@@ -122,27 +123,23 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
   const [timerSwitchMode] = useMutation(TIMER_SWITCH_MODE);
   const [timerSetSongTrack] = useMutation(TIMER_SET_SONG_TRACK);
   const [timerSetTime] = useMutation(TIMER_SET_TIME);
+  const [timerDeactivate] = useMutation(TIMER_DEACTIVATE);
 
   const intl = useIntl();
   const layoutContextDispatch = layoutDispatch();
 
-  const [runningTime, setRunningTime] = useState<number>(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval>>();
-
-  const [displayHours, setDisplayHours] = useState(0);
-  const [displayMinutes, setDisplayMinutes] = useState(0);
-  const [displaySeconds, setDisplaySeconds] = useState(0);
+  const [focusedUnit, setFocusedUnit] = useState<'hours' | 'minutes' | 'seconds'>('seconds');
+  const [lastSelectedTrack, setLastSelectedTrack] = useState<string | null>(null);
+  const timeInSeconds = Math.max(0, Math.floor(timePassed / 1000));
+  const hours = Math.floor(timeInSeconds / 3600);
+  const minutes = Math.floor((timeInSeconds % 3600) / 60);
+  const seconds = timeInSeconds % 60;
 
   useEffect(() => {
-    const timeInSeconds = Math.floor(time / 1000);
-    const h = Math.floor(timeInSeconds / 3600);
-    const m = Math.floor((timeInSeconds % 3600) / 60);
-    const s = timeInSeconds % 60;
-
-    setDisplayHours(h);
-    setDisplayMinutes(m);
-    setDisplaySeconds(s);
-  }, [time]);
+    if (songTrack && songTrack !== 'noTrack') {
+      setLastSelectedTrack(songTrack);
+    }
+  }, [songTrack]);
 
   const headerMessage = useMemo(() => {
     return stopwatch ? intlMessages.stopwatch : intlMessages.timer;
@@ -156,35 +153,86 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     timerSetSongTrack({ variables: { track } });
   };
 
-  const syncTimeWithBackend = useCallback(() => {
-    const newTimeInMillis = (displayHours * MILLI_IN_HOUR)
-      + (displayMinutes * MILLI_IN_MINUTE)
-      + (displaySeconds * MILLI_IN_SECOND);
+  const handleMusicSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isEnabled = event.target.checked;
+    if (isEnabled) {
+      setTrack(lastSelectedTrack || 'track1');
+    } else {
+      setTrack('noTrack');
+    }
+  };
+
+  const syncTimeWithBackend = useCallback((h: number, m: number, s: number) => {
+    let valid_seconds = s;
+    if (!stopwatch && h === 0 && m === 0 && s === 0) {
+      valid_seconds = 1;
+    }
+
+    const newTimeInMillis = (h * MILLI_IN_HOUR)
+      + (m * MILLI_IN_MINUTE)
+      + (valid_seconds * MILLI_IN_SECOND);
 
     if (newTimeInMillis !== time) {
       timerSetTime({ variables: { time: newTimeInMillis } });
-      timerStop();
-      timerReset();
+      if (isPaused) {
+        // The timer needs to be reset here because the time
+        // already passed has to be zero
+        timerReset();
+      }
     }
-  }, [displayHours, displayMinutes, displaySeconds, time, timerSetTime, timerStop, timerReset]);
+  }, [time, timerSetTime, stopwatch, isPaused]);
 
   const handleHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value || '0', 10);
     if (Number.isNaN(value)) return;
-    setDisplayHours(Math.max(0, Math.min(value, MAX_HOURS)));
+    const newHours = Math.max(0, Math.min(value, MAX_HOURS));
+    syncTimeWithBackend(newHours, minutes, seconds);
   };
 
   const handleMinutesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value || '0', 10);
     if (Number.isNaN(value)) return;
-    setDisplayMinutes(Math.max(0, Math.min(value, 59)));
+    const newMinutes = Math.max(0, Math.min(value, 59));
+    syncTimeWithBackend(hours, newMinutes, seconds);
   };
 
   const handleSecondsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value || '0', 10);
+    const hasHourOrMinutes = hours > 0 || minutes > 0;
+    const value = parseInt(event.target.value || (hasHourOrMinutes ? '0' : '1'), 10);
     if (Number.isNaN(value)) return;
-    setDisplaySeconds(Math.max(0, Math.min(value, 59)));
+    const newSeconds = Math.max(hasHourOrMinutes ? 0 : 1, Math.min(value, 59));
+    syncTimeWithBackend(hours, hours, newSeconds);
   };
+
+  const changeTime = useCallback((amountInSeconds: number) => {
+    if (running) return;
+
+    const currentTimeInSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    let newTotalSeconds = currentTimeInSeconds + amountInSeconds;
+
+    const maxSeconds = (MAX_HOURS * 3600) + (59 * 60) + 59;
+    newTotalSeconds = Math.max(0, Math.min(newTotalSeconds, maxSeconds));
+
+    const h = Math.floor(newTotalSeconds / 3600);
+    const m = Math.floor((newTotalSeconds % 3600) / 60);
+    const s = newTotalSeconds % 60;
+
+    syncTimeWithBackend(h, m, s);
+  }, [running, hours, minutes, seconds]);
+
+  const handleIncrement = useCallback(() => {
+    let incrementAmount = 1;
+    if (focusedUnit === 'minutes') incrementAmount = 60;
+    if (focusedUnit === 'hours') incrementAmount = 3600;
+    changeTime(incrementAmount);
+  }, [focusedUnit, changeTime]);
+
+  const handleDecrement = useCallback(() => {
+    let decrementAmount = -1;
+    if (focusedUnit === 'minutes') decrementAmount = -60;
+    if (focusedUnit === 'hours') decrementAmount = -3600;
+    changeTime(decrementAmount);
+  }, [focusedUnit, changeTime]);
 
   const closePanel = useCallback(() => {
     layoutContextDispatch({
@@ -197,167 +245,117 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     });
   }, []);
 
+  const handleDeactivate = useCallback(() => {
+    timerDeactivate();
+    closePanel();
+  }, [timerDeactivate, closePanel]);
+
   const handleReset = useCallback(() => {
     timerStop();
     timerReset();
-    setRunningTime(time);
-  }, [time, timerStop, timerReset]);
+  }, [timerStop, timerReset]);
 
-  useEffect(() => {
-    setRunningTime(timePassed);
-  }, []);
-
-  useEffect(() => {
-    if (startedOn === 0) {
-      setRunningTime(timePassed);
-    }
-  }, [startedOn]);
-
-  useEffect(() => {
-    if (running) {
-      setRunningTime(timePassed < 0 ? 0 : timePassed);
-      intervalRef.current = setInterval(() => {
-        setRunningTime((prev) => {
-          const calcTime = (Math.round(prev / 1000) * 1000);
-          if (stopwatch) {
-            return (calcTime < 0 ? 0 : calcTime) + 1000;
-          }
-          const t = (calcTime) - 1000;
-          return t < 0 ? 0 : t;
-        });
-      }, 1000);
-    } else if (!running) {
-      clearInterval(intervalRef.current);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, [running]);
-
-  useEffect(() => {
-    if (!running) return;
-    const serverTime = timePassed >= 0 ? timePassed : 0;
-    setRunningTime((prev) => {
-      if (Math.abs(serverTime - prev) > 2000) return serverTime;
-      return prev;
-    });
-  }, [timePassed, stopwatch, startedOn]);
-
-  useEffect(() => {
-    if (!active) {
-      closePanel();
-    }
-  }, [active]);
-
-  const timerControls = useMemo(() => {
-    const label = running ? intlMessages.stop : intlMessages.start;
-    const color = running ? 'danger' : 'primary';
+  const timerMusicOptions = useMemo(() => {
     const TIMER_CONFIG = window.meetingClientSettings.public.timer;
+    if (!TIMER_CONFIG.music.enabled) return null;
 
     return (
-      <div>
-        {!stopwatch ? (
-          <Styled.StopwatchTime>
-            <Styled.StopwatchTimeInput>
-              <Styled.TimerInput
-                type="number"
-                disabled={stopwatch || running}
-                value={String(displayHours).padStart(2, '0')}
-                maxLength={2}
-                max={MAX_HOURS}
-                min="0"
-                onChange={handleHoursChange}
-                onBlur={syncTimeWithBackend}
-                data-test="hoursInput"
-              />
-              <Styled.StopwatchTimeInputLabel>
-                {intl.formatMessage(intlMessages.hours)}
-              </Styled.StopwatchTimeInputLabel>
-            </Styled.StopwatchTimeInput>
-            <Styled.StopwatchTimeColon>:</Styled.StopwatchTimeColon>
-            <Styled.StopwatchTimeInput>
-              <Styled.TimerInput
-                type="number"
-                disabled={stopwatch || running}
-                value={String(displayMinutes).padStart(2, '0')}
-                maxLength={2}
-                max="59"
-                min="0"
-                onChange={handleMinutesChange}
-                onBlur={syncTimeWithBackend}
-                data-test="minutesInput"
-              />
-              <Styled.StopwatchTimeInputLabel>
-                {intl.formatMessage(intlMessages.minutes)}
-              </Styled.StopwatchTimeInputLabel>
-            </Styled.StopwatchTimeInput>
-            <Styled.StopwatchTimeColon>:</Styled.StopwatchTimeColon>
-            <Styled.StopwatchTimeInput>
-              <Styled.TimerInput
-                type="number"
-                disabled={stopwatch || running}
-                value={String(displaySeconds).padStart(2, '0')}
-                maxLength={2}
-                max="59"
-                min="0"
-                onChange={handleSecondsChange}
-                onBlur={syncTimeWithBackend}
-                data-test="secondsInput"
-              />
-              <Styled.StopwatchTimeInputLabel>
-                {intl.formatMessage(intlMessages.seconds)}
-              </Styled.StopwatchTimeInputLabel>
-            </Styled.StopwatchTimeInput>
-          </Styled.StopwatchTime>
-        ) : null}
-        {TIMER_CONFIG.music.enabled && !stopwatch
-          ? (
-            <Styled.TimerSongsWrapper>
-              <Styled.TimerSongsTitle stopwatch={stopwatch}>
-                {intl.formatMessage(intlMessages.songs)}
-              </Styled.TimerSongsTitle>
-              <Styled.TimerTracks>
-                {TRACKS.map((track) => (
-                  <Styled.TimerTrackItem key={track}>
-                    <label htmlFor={track}>
-                      <input
-                        type="radio"
-                        name="track"
-                        id={track}
-                        value={track}
-                        checked={songTrack === track}
-                        onChange={(event) => setTrack(event.target.value)}
-                        disabled={stopwatch || running}
-                      />
-                      {intl.formatMessage(intlMessages[track as keyof typeof intlMessages])}
-                    </label>
-                  </Styled.TimerTrackItem>
-                ))}
-              </Styled.TimerTracks>
-            </Styled.TimerSongsWrapper>
-          ) : null}
-        <Styled.TimerControls>
-          <Styled.TimerControlButton
-            color={color}
-            label={intl.formatMessage(label)}
-            onClick={() => {
-              if (running) {
-                timerStop();
-              } else {
-                syncTimeWithBackend();
-                timerStart();
-              }
-            }}
-            data-test="startStopTimer"
-          />
-          <Styled.TimerControlButton
-            color="secondary"
-            label={intl.formatMessage(intlMessages.reset)}
-            onClick={handleReset}
-            data-test="resetTimerStopWatch"
-          />
-        </Styled.TimerControls>
-      </div>
+      <Styled.TimerSongsWrapper>
+        <Styled.MusicSwitchLabel
+          control={(
+            <Styled.MaterialSwitch
+              checked={(songTrack !== 'noTrack') && !stopwatch}
+              onChange={handleMusicSwitchChange}
+              disabled={running || stopwatch}
+            />
+          )}
+          label={intl.formatMessage(intlMessages.songs)}
+        />
+        {(songTrack !== 'noTrack' && !stopwatch) && (
+          <Styled.TimerTracks>
+            {TRACKS.map((track) => {
+              if (track === 'noTrack') return null;
+              return (
+                <Styled.TimerTrackItem key={track}>
+                  <label htmlFor={track}>
+                    <input
+                      type="radio"
+                      name="track"
+                      id={track}
+                      value={track}
+                      checked={songTrack === track}
+                      onChange={(event) => setTrack(event.target.value)}
+                      disabled={running || stopwatch}
+                    />
+                    {intl.formatMessage(intlMessages[track as keyof typeof intlMessages])}
+                  </label>
+                </Styled.TimerTrackItem>
+              );
+            })}
+          </Styled.TimerTracks>
+        )}
+      </Styled.TimerSongsWrapper>
     );
-  }, [songTrack, stopwatch, time, running, displayHours, displayMinutes, displaySeconds, handleReset]);
+  }, [songTrack, stopwatch, running]);
+
+  let controlButtons;
+  if (running) {
+    controlButtons = (
+      <Styled.ButtonRow>
+        <Styled.ResetButton
+          color="secondary"
+          label={intl.formatMessage(intlMessages.reset)}
+          onClick={handleReset}
+          data-test="resetTimerStopWatch"
+        />
+        <Styled.ControlButton
+          color="danger"
+          label={intl.formatMessage(intlMessages.stop)}
+          onClick={timerStop}
+          data-test="startStopTimer"
+        />
+      </Styled.ButtonRow>
+    );
+  } else if (isPaused) {
+    controlButtons = (
+      <Styled.ButtonRow>
+        <Styled.ResetButton
+          color="secondary"
+          label={intl.formatMessage(intlMessages.reset)}
+          onClick={handleReset}
+          data-test="resetTimerStopWatch"
+        />
+        <Styled.ControlButton
+          color="primary"
+          label={intl.formatMessage(intlMessages.start)}
+          onClick={timerStart}
+          data-test="startStopTimer"
+        />
+      </Styled.ButtonRow>
+    );
+  } else {
+    controlButtons = (
+      <Styled.ButtonRow>
+        <Styled.ControlButton
+          color="primary"
+          label={intl.formatMessage(intlMessages.start)}
+          onClick={() => {
+            if (!stopwatch) {
+              const newStartTime = (hours * MILLI_IN_HOUR)
+                + (minutes * MILLI_IN_MINUTE)
+                + (seconds * MILLI_IN_SECOND);
+
+              if (newStartTime !== time) {
+                timerSetTime({ variables: { time: newStartTime } });
+              }
+            }
+            timerStart();
+          }}
+          data-test="startStopTimer"
+        />
+      </Styled.ButtonRow>
+    );
+  }
 
   return (
     <>
@@ -365,7 +363,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
         title={intl.formatMessage(intlMessages.title)}
         leftButtonProps={{
           onClick: closePanel,
-          'aria-label': intl.formatMessage(intlMessages.hideTimerLabel, { 0: intl.formatMessage(intlMessages.timer) }),
+          'aria-label': intl.formatMessage(intlMessages.hideTimerLabel, { 0: intl.formatMessage(headerMessage) }),
           label: intl.formatMessage(headerMessage),
         }}
         rightButtonProps={{
@@ -380,23 +378,7 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
       <Styled.Separator />
       <Styled.TimerScrollableContent id="timer-scroll-box">
         <Styled.TimerContent>
-          <Styled.TimerCurrent
-            aria-hidden
-            data-test="timerCurrent"
-          >
-            {humanizeSeconds(Math.floor(runningTime / 1000))}
-          </Styled.TimerCurrent>
           <Styled.TimerType>
-            <Styled.TimerSwitchButton
-              label={intl.formatMessage(intlMessages.stopwatch)}
-              onClick={() => {
-                timerStop();
-                switchTimer(true);
-              }}
-              disabled={stopwatch || running}
-              color={stopwatch ? 'primary' : 'secondary'}
-              data-test="stopwatchButton"
-            />
             <Styled.TimerSwitchButton
               label={intl.formatMessage(intlMessages.timer)}
               onClick={() => {
@@ -407,8 +389,100 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
               color={!stopwatch ? 'primary' : 'secondary'}
               data-test="timerButton"
             />
+            <Styled.TimerSwitchButton
+              label={intl.formatMessage(intlMessages.stopwatch)}
+              onClick={() => {
+                timerStop();
+                timerReset();
+                switchTimer(true);
+              }}
+              disabled={stopwatch || running}
+              color={stopwatch ? 'primary' : 'secondary'}
+              data-test="stopwatchButton"
+            />
           </Styled.TimerType>
-          {timerControls}
+
+          {stopwatch ? (
+            <Styled.TimerCurrent
+              aria-hidden
+              data-test="timerCurrent"
+            >
+              {humanizeSeconds(Math.floor(timePassed / 1000))}
+            </Styled.TimerCurrent>
+          ) : (
+            <Styled.TimeInputWrapper>
+              <Styled.IncrementDecrementButton
+                color="primary"
+                label="-"
+                onClick={handleDecrement}
+                disabled={running}
+              />
+              <Styled.TimeInputGroup>
+                <>
+                  <Styled.TimerInput
+                    type="number"
+                    readOnly={running}
+                    disabled={running}
+                    value={String(hours).padStart(2, '0')}
+                    maxLength={2}
+                    max={MAX_HOURS}
+                    min="0"
+                    onChange={handleHoursChange}
+                    onFocus={() => setFocusedUnit('hours')}
+                    data-test="hoursInput"
+                    isSelected={!running && focusedUnit === 'hours'}
+                  />
+                  <Styled.TimeInputColon>:</Styled.TimeInputColon>
+                  <Styled.TimerInput
+                    type="number"
+                    readOnly={running}
+                    disabled={running}
+                    value={String(minutes).padStart(2, '0')}
+                    maxLength={2}
+                    max="59"
+                    min="0"
+                    onChange={handleMinutesChange}
+                    onFocus={() => setFocusedUnit('minutes')}
+                    data-test="minutesInput"
+                    isSelected={!running && focusedUnit === 'minutes'}
+                  />
+                  <Styled.TimeInputColon>:</Styled.TimeInputColon>
+                  <Styled.TimerInput
+                    type="number"
+                    readOnly={running}
+                    disabled={running}
+                    value={String(seconds).padStart(2, '0')}
+                    maxLength={2}
+                    max="59"
+                    min="0"
+                    onChange={handleSecondsChange}
+                    onFocus={() => setFocusedUnit('seconds')}
+                    data-test="secondsInput"
+                    isSelected={!running && focusedUnit === 'seconds'}
+                  />
+                </>
+              </Styled.TimeInputGroup>
+              <Styled.IncrementDecrementButton
+                color="primary"
+                label="+"
+                onClick={handleIncrement}
+                disabled={running}
+              />
+            </Styled.TimeInputWrapper>
+          )}
+
+          {timerMusicOptions}
+
+          <Styled.FooterSeparator />
+          <Styled.ControlsContainer>
+            {controlButtons}
+            <Styled.DeactivateButton
+              color="default"
+              label={intl.formatMessage(intlMessages.deactivate)}
+              onClick={handleDeactivate}
+              data-test="deactivateTimer"
+            />
+          </Styled.ControlsContainer>
         </Styled.TimerContent>
       </Styled.TimerScrollableContent>
     </>
@@ -416,65 +490,43 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
 };
 
 const TimerPanelContaier: React.FC = () => {
-  const [timeSync] = useTimeSync();
   const [timerActivate] = useMutation(TIMER_ACTIVATE);
 
   const {
-    loading: timerLoading,
-    error: timerError,
     data: timerData,
-  } = useDeduplicatedSubscription<GetTimerResponse>(GET_TIMER);
+  } = useTimer();
 
   const activateTimer = useCallback(() => {
     const TIMER_CONFIG = window.meetingClientSettings.public.timer;
-    const stopwatch = true;
+    const stopwatch = false;
     const running = false;
     const time = TIMER_CONFIG.time * MILLI_IN_MINUTE;
 
     return timerActivate({ variables: { stopwatch, running, time } });
   }, []);
 
-  if (timerLoading || !timerData) return null;
-
-  if (timerError) {
-    connectionStatus.setSubscriptionFailed(true);
-    logger.error(
-      {
-        logCode: 'subscription_Failed',
-        extraInfo: {
-          error: timerError,
-        },
-      },
-      'Subscription failed to load',
-    );
+  const currentTimer = timerData;
+  if (!currentTimer?.active) {
+    activateTimer();
     return null;
   }
-
-  const timer = timerData.timer[0];
-
-  const currentDate: Date = new Date();
-  const startedAtDate: Date = new Date(timer.startedAt);
-  const adjustedCurrent: Date = new Date(currentDate.getTime() + timeSync);
-  const timeDifferenceMs: number = adjustedCurrent.getTime() - startedAtDate.getTime();
-
-  const timePassed = timer.stopwatch ? (
-    Math.floor(((timer.running ? timeDifferenceMs : 0) + timer.accumulated))
-  ) : (
-    Math.floor(((timer.time) - (timer.accumulated + (timer.running ? timeDifferenceMs : 0)))));
-
-  if (!timer.active) activateTimer();
+  const {
+    stopwatch,
+    songTrack,
+    running,
+    time,
+    timePassed = 0,
+    startedAt,
+  } = currentTimer;
 
   return (
     <TimerPanel
-      stopwatch={timer.stopwatch ?? false}
-      songTrack={timer.songTrack ?? 'noTrack'}
-      running={timer.running ?? false}
+      stopwatch={stopwatch}
+      songTrack={songTrack}
+      running={running}
       timePassed={timePassed}
-      accumulated={timer.accumulated}
-      active
-      time={timer.time}
-      startedOn={timer.startedOn}
-      startedAt={timer.startedAt}
+      time={time}
+      isPaused={!running && startedAt !== null}
     />
   );
 };

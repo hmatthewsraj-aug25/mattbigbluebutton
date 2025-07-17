@@ -507,9 +507,8 @@ export interface Timer {
   enabled: boolean
   alarm: boolean
   music: Music
-  interval: Interval
   time: number
-  tabIndicator: boolean
+  serverSyncTimeInterval: number
 }
 
 export interface Music {
@@ -518,11 +517,6 @@ export interface Music {
   track1: string
   track2: string
   track3: string
-}
-
-export interface Interval {
-  clock: number
-  offset: number
 }
 
 export interface Chat {

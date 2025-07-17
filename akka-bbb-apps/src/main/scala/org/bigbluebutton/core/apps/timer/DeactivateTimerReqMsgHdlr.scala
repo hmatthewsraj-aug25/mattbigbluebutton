@@ -32,7 +32,7 @@ trait DeactivateTimerReqMsgHdlr extends RightsManagementTrait {
     } else {
       TimerModel.setRunning(liveMeeting.timerModel, running = false)
       TimerModel.setIsActive(liveMeeting.timerModel, active = false)
-      TimerModel.setStopwatch(liveMeeting.timerModel, stopwatch = true)
+      TimerModel.setStopwatch(liveMeeting.timerModel, stopwatch = false)
       TimerModel.reset(liveMeeting.timerModel)
       TimerDAO.update(liveMeeting.props.meetingProp.intId, liveMeeting.timerModel)
       broadcastEvent()
