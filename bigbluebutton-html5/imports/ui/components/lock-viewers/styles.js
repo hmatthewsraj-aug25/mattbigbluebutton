@@ -1,11 +1,9 @@
 import styled from 'styled-components';
 import { styled as materialStyled } from '@mui/material/styles';
-import { Switch } from '@mui/material';
+import { Checkbox } from '@mui/material';
 import {
-  jumboPaddingY,
   smPaddingX,
   titlePositionLeft,
-  mdPaddingX,
 } from '/imports/ui/stylesheets/styled-components/general';
 import { fontSizeBase, fontSizeSmall } from '/imports/ui/stylesheets/styled-components/typography';
 import {
@@ -40,13 +38,13 @@ const Container = styled.div`
 const Description = styled.div`
   text-align: start;
   color: ${colorGray};
-  margin-bottom: ${jumboPaddingY};
+  margin-bottom: 1rem;
 `;
 
 const Form = styled.div`
   display: flex;
   flex-flow: column;
-  gap: 0.6rem;
+  padding-top: 0.5rem;
 `;
 
 const SubHeader = styled.header`
@@ -67,14 +65,15 @@ const Row = styled.div`
   display: flex;
   flex-flow: row;
   flex-grow: 1;
-  justify-content: space-between;
-  gap: 1.1rem;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  align-items: center;
 
   & > :first-child {
-    margin:  0 ${mdPaddingX} 0 0;
+    margin: 0;
 
     [dir="rtl"] & {
-      margin: 0 0 0 ${mdPaddingX};
+      margin: 0;
     }
   }
 `;
@@ -151,50 +150,13 @@ const ButtonApply = styled(Button)`
   border-radius: 1rem;
 `;
 
-const MaterialSwitch = materialStyled(Switch)(({ theme }) => ({
-  width: '2.3rem',
-  height: '1.2rem',
-  padding: 0,
-  display: 'flex',
-  '&:active': {
-    '& .MuiSwitch-switchBase.Mui-checked': {
-      transform: 'translateX(1.2rem)',
-    },
+const MaterialCheckbox = materialStyled(Checkbox)({
+  padding: '0.2rem',
+  color: colorGray,
+  '&.Mui-checked': {
+    color: colorPrimary,
   },
-  '& .MuiSwitch-switchBase': {
-    padding: '0.2rem',
-    '&.Mui-checked': {
-      transform: 'translateX(1.2rem)',
-      color: '#fff',
-      '& + .MuiSwitch-track': {
-        opacity: 1,
-        backgroundColor: colorPrimary,
-        ...theme.applyStyles('dark', {
-          backgroundColor: colorPrimary,
-        }),
-      },
-    },
-  },
-  '& .MuiSwitch-thumb': {
-    boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-    width: '0.6rem',
-    height: '0.6rem',
-    borderRadius: '0.5rem',
-    transition: theme.transitions.create(['width'], {
-      duration: 200,
-    }),
-    transform: 'translateY(1px)',
-  },
-  '& .MuiSwitch-track': {
-    borderRadius: '0.6rem',
-    opacity: 1,
-    backgroundColor: 'rgba(0,0,0,.25)',
-    boxSizing: 'border-box',
-    ...theme.applyStyles('dark', {
-      backgroundColor: 'rgba(255,255,255,.35)',
-    }),
-  },
-}));
+});
 
 export default {
   ToggleLabel,
@@ -214,5 +176,5 @@ export default {
   Actions,
   ButtonCancel,
   ButtonApply,
-  MaterialSwitch,
+  MaterialCheckbox,
 };
