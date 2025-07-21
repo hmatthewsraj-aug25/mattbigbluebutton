@@ -3,14 +3,12 @@ import React, {
 } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
-import { useMutation } from '@apollo/client';
 import { Input } from '../layout/layoutTypes';
 import { layoutDispatch, layoutSelectInput } from '../layout/context';
 import { addAlert } from '../screenreader-alert/service';
 import { PANELS, ACTIONS } from '../layout/enums';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
 import { GetHasCurrentPresentationResponse, getHasCurrentPresentation } from './queries';
-import { POLL_CANCEL } from './mutations';
 import {
   getSplittedQuestionAndOptions,
   pollTypes,
@@ -245,7 +243,6 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   const isQuizEnabled = useIsQuizEnabled();
   const ALLOW_CUSTOM_INPUT = POLL_SETTINGS.allowCustomResponseInput;
   const MAX_CUSTOM_FIELDS = POLL_SETTINGS.maxCustom;
-  const [stopPoll] = useMutation(POLL_CANCEL);
 
   const intl = useIntl();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -739,22 +736,6 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
       <Styled.HeaderContainer
         data-test="pollPaneTitle"
         title={intl.formatMessage(intlMessages.pollPaneTitle)}
-        leftButtonProps={{
-          'aria-label': intl.formatMessage(intlMessages.hidePollDesc),
-          'data-test': 'hidePollDesc',
-          label: intl.formatMessage(intlMessages.pollPaneTitle),
-          onClick: () => {
-            if (hasPoll) stopPoll();
-            layoutContextDispatch({
-              type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
-              value: false,
-            });
-            layoutContextDispatch({
-              type: ACTIONS.SET_SIDEBAR_CONTENT_PANEL,
-              value: PANELS.NONE,
-            });
-          },
-        }}
         rightButtonProps={{
           'aria-label': intl.formatMessage(intlMessages.minimize, { 0: intl.formatMessage(intlMessages.pollPaneTitle) }),
           'data-test': 'minimizePolling',

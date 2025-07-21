@@ -16,13 +16,9 @@ interface ChatHeaderProps {
 }
 
 const intlMessages = defineMessages({
-  closeChatLabel: {
-    id: 'app.chat.closeChatLabel',
-    description: 'aria-label for closing chat button',
-  },
-  hideChatLabel: {
-    id: 'app.chat.hideChatLabel',
-    description: 'aria-label for hiding chat button',
+  genericMinimizePanel: {
+    id: 'app.sidebarContent.minimizePanelLabel',
+    description: 'Generic minimize label for panels',
   },
   messagesTitle: {
     id: 'app.userList.messagesTitle',
@@ -43,32 +39,12 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       isRTL={isRTL}
       data-test="chatTitle"
       title={title}
-      leftButtonProps={{
-        accessKey: chatId !== 'public' ? HIDE_CHAT_AK : null,
-        'aria-label': intl.formatMessage(intlMessages.hideChatLabel, { chatName: title }),
-        'data-test': isPublicChat ? 'hidePublicChat' : 'hidePrivateChat',
-        label: title,
-        onClick: () => {
-          layoutContextDispatch({
-            type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
-            value: false,
-          });
-          layoutContextDispatch({
-            type: ACTIONS.SET_ID_CHAT_OPEN,
-            value: '',
-          });
-          layoutContextDispatch({
-            type: ACTIONS.SET_SIDEBAR_CONTENT_PANEL,
-            value: PANELS.NONE,
-          });
-        },
-      }}
       rightButtonProps={{
         accessKey: HIDE_CHAT_AK,
-        'aria-label': intl.formatMessage(intlMessages.closeChatLabel, { chatName: title }),
-        'data-test': 'hideMessagesButton',
+        'aria-label': intl.formatMessage(intlMessages.genericMinimizePanel, { 0: title }),
+        'data-test': isPublicChat ? 'hidePublicChat' : 'hidePrivateChat',
         icon: 'minus',
-        label: intl.formatMessage(intlMessages.closeChatLabel, { chatName: title }),
+        label: intl.formatMessage(intlMessages.genericMinimizePanel, { 0: title }),
         onClick: () => {
           updateVisible({ variables: { chatId, visible: false } });
           layoutContextDispatch({

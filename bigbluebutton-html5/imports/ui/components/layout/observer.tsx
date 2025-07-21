@@ -35,8 +35,6 @@ const LayoutObserver: React.FC = () => {
   const sidebarContentInput = layoutSelectInput((i: Input) => i.sidebarContent);
   const presentationInput = layoutSelectInput((i: Input) => i.presentation);
   const sharedNotesInput = layoutSelectInput((i: Input) => i.sharedNotes);
-  const sidebarContent = layoutSelectInput((i: Input) => i.sidebarContent);
-  const { sidebarContentPanel } = sidebarContent;
 
   const [layoutIsReady, setLayoutIsReady] = useState(false);
   const [, setEnableResize] = useState(!window.matchMedia(MOBILE_MEDIA).matches);
@@ -279,26 +277,6 @@ const LayoutObserver: React.FC = () => {
       }
     }
   }, [isChatEnabled, layoutIsReady]);
-
-  useEffect(() => {
-    if (layoutIsReady && sidebarContentPanel === PANELS.NONE) {
-      if (getFromUserSettings('bbb_show_participants_on_login', window.meetingClientSettings.public.layout.showParticipantsOnLogin) && !deviceInfo.isPhone) {
-        layoutContextDispatch({
-          type: ACTIONS.SET_SIDEBAR_NAVIGATION_IS_OPEN,
-          value: true,
-        });
-      } else {
-        layoutContextDispatch({
-          type: ACTIONS.SET_SIDEBAR_NAVIGATION_IS_OPEN,
-          value: false,
-        });
-        layoutContextDispatch({
-          type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
-          value: false,
-        });
-      }
-    }
-  }, [layoutIsReady]);
 
   useEffect(() => {
     if (Session.equals('layoutReady', true)) {

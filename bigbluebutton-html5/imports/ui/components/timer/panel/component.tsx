@@ -141,10 +141,6 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     }
   }, [songTrack]);
 
-  const headerMessage = useMemo(() => {
-    return stopwatch ? intlMessages.stopwatch : intlMessages.timer;
-  }, [stopwatch]);
-
   const switchTimer = (stopwatch: boolean) => {
     timerSwitchMode({ variables: { stopwatch } });
   };
@@ -361,11 +357,6 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
     <>
       <Styled.HeaderContainer
         title={intl.formatMessage(intlMessages.title)}
-        leftButtonProps={{
-          onClick: closePanel,
-          'aria-label': intl.formatMessage(intlMessages.hideTimerLabel, { 0: intl.formatMessage(headerMessage) }),
-          label: intl.formatMessage(headerMessage),
-        }}
         rightButtonProps={{
           'aria-label': intl.formatMessage(intlMessages.hideTimerLabel, { 0: intl.formatMessage(intlMessages.timer) }),
           'data-test': 'closeTimer',
