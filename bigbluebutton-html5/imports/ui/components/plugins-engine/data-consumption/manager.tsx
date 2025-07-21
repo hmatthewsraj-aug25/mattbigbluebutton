@@ -189,6 +189,7 @@ const PluginDataConsumptionManager: React.FC = () => {
               setDataConsumptionHookWithArgumentUtilizationCount={setSubscriptionHookWithArgumentUtilizationCount}
             >
               <HookComponent
+                key={makeCustomHookIdentifierFromArgs(hookWithArguments.hookArguments)}
                 numberOfUses={hookWithArguments.numberOfUses}
                 hookArguments={hookWithArguments.hookArguments}
               />
