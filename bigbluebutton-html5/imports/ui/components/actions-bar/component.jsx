@@ -237,6 +237,8 @@ class ActionsBar extends PureComponent {
                     isDarkThemeEnabled={isDarkThemeEnabled}
                   />
                 )}
+              {((amIPresenter || amIModerator)
+                && shouldShowOptionsButton) && (<Styled.Divider />)}
               <MediaAreaContainer {...{
                 amIPresenter,
                 amIModerator,
