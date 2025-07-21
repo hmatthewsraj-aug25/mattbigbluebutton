@@ -8,6 +8,7 @@ export interface MediaButtonPluginItem {
   label?: string;
   onClick?: () => void;
   allowed: boolean;
+  dataTest: string;
 }
 
 export interface MediaAreaContainerProps {

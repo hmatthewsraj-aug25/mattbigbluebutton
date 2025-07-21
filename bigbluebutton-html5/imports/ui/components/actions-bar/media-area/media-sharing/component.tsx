@@ -222,7 +222,7 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
             .map((item) => (
               <MediaButton
                 key={item.id}
-                dataTest={`media-sharing-plugin-${item.id}`}
+                dataTest={item.dataTest}
                 color="default"
                 text={item.label || ''}
                 icon={item.icon ? <Icon iconName={item.icon} /> : undefined}

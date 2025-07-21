@@ -30,8 +30,8 @@ export const MediaButton: FunctionComponent<MediaButtonProps> = ({
   }
 
   return (
-    <Styled.MediaButtonContainer>
-      <Styled.ButtonFrame color={color} onClick={onClick} data-test={dataTest}>
+    <Styled.MediaButtonContainer data-test={dataTest}>
+      <Styled.ButtonFrame color={color} onClick={onClick}>
         {showSettingsIcon && (
           <Styled.SettingsContainer>
             <IconButton
