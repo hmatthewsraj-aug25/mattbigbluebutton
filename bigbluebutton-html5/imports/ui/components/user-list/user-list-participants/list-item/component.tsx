@@ -104,10 +104,12 @@ const UserListItem: React.FC<UserListItemProps> = ({
   const whiteboardAccess = hasWhiteboardAccess(user);
   const { data: talkingUsers } = useWhoIsTalking();
   const { data: unmutedUsers } = useWhoIsUnmuted();
+  const isMuted = !unmutedUsers[user.userId];
+
   const voiceUser = {
     ...user.voice,
     talking: talkingUsers[user.userId],
-    muted: !unmutedUsers[user.userId],
+    muted: isMuted,
   };
   const actionsPermitions = generateActionsPermissions(
     user,
@@ -115,7 +117,7 @@ const UserListItem: React.FC<UserListItemProps> = ({
     lockSettings,
     usersPolicies,
     isBreakout,
-    !unmutedUsers[user.userId],
+    isMuted,
     isChatEnabled,
     isPrivateChatEnabled,
   );
@@ -125,6 +127,7 @@ const UserListItem: React.FC<UserListItemProps> = ({
   } = createToolbarOptions(
     intl,
     user,
+    isMuted,
     whiteboardAccess,
     actionsPermitions,
     lockSettings,

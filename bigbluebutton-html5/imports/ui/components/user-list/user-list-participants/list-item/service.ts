@@ -61,6 +61,18 @@ const intlMessages = defineMessages({
     id: 'app.userList.menu.unmuteUserAudio.label',
     description: 'Forcefully unmute this user',
   },
+  microphoneOpen: {
+    id: 'app.userList.menu.microphoneOpen',
+    description: 'Tooltip for when a user microphone is open',
+  },
+  microphoneClosed: {
+    id: 'app.userList.menu.microphoneClosed',
+    description: 'Tooltip for when a user microphone is closed',
+  },
+  listenOnly: {
+    id: 'app.userList.menu.listenOnly',
+    description: 'Text for identifying listen only user',
+  },
   removeWhiteboardAccess: {
     id: 'app.userList.menu.removeWhiteboardAccess.label',
     description: 'label to remove user whiteboard access',
@@ -324,6 +336,7 @@ export const toggleVoice = (userId: string, muted: boolean, voiceToggle: (userId
 export const createToolbarOptions = (
   intl: IntlShape,
   user: User,
+  isMuted: boolean,
   whiteboardAccess: boolean,
   actionsPermitions: UserActionPermissions,
   lockSettings: LockSettings,
@@ -354,9 +367,58 @@ export const createToolbarOptions = (
     allowedToRemove,
   } = actionsPermitions;
 
+  const subjectUserInAudio = user.voice?.joined && !user.voice?.deafened;
   const userLocked = user.locked
     && lockSettings?.hasActiveLockSetting
     && !user.isModerator;
+
+  const audioStateOption = (() => {
+    if (!subjectUserInAudio) return null;
+
+    const isListenOnly = user.voice?.listenOnly;
+
+    if (isListenOnly) {
+      return {
+        key: 'audio',
+        label: intl.formatMessage(intlMessages.listenOnly),
+        icon: 'listen',
+        onClick: () => {},
+        disabled: true,
+        dataTest: 'listenOnly',
+      };
+    }
+
+    const hasPermissionToUnmute = allowedToUnmuteAudio;
+    const hasPermissionToMute = allowedToMuteAudio;
+
+    if (isMuted) {
+      return {
+        key: 'audio',
+        icon: 'mute',
+        label: hasPermissionToUnmute
+          ? intl.formatMessage(intlMessages.unmuteUserAudioLabel)
+          : intl.formatMessage(intlMessages.microphoneClosed),
+        onClick: hasPermissionToUnmute
+          ? () => toggleVoice(user.userId, false)
+          : () => {},
+        disabled: !hasPermissionToUnmute,
+        dataTest: 'audioState',
+      };
+    }
+
+    return {
+      key: 'audio',
+      icon: 'unmute',
+      label: hasPermissionToMute
+        ? intl.formatMessage(intlMessages.muteUserAudioLabel)
+        : intl.formatMessage(intlMessages.microphoneOpen),
+      onClick: hasPermissionToMute
+        ? () => toggleVoice(user.userId, true)
+        : () => {},
+      disabled: !hasPermissionToMute,
+      dataTest: 'audioState',
+    };
+  })();
 
   return {
     pinnedToolbarOptions: [
@@ -371,26 +433,7 @@ export const createToolbarOptions = (
         icon: 'group_chat',
         dataTest: 'startPrivateChat',
       },
-      {
-        allowed: allowedToMuteAudio,
-        key: 'mute',
-        label: intl.formatMessage(intlMessages.muteUserAudioLabel),
-        onClick: () => {
-          toggleVoice(user.userId, true);
-        },
-        icon: 'unmute',
-        dataTest: 'muteUser',
-      },
-      {
-        allowed: allowedToUnmuteAudio,
-        key: 'unmute',
-        label: intl.formatMessage(intlMessages.unmuteUserAudioLabel),
-        onClick: () => {
-          toggleVoice(user.userId, false);
-        },
-        icon: 'mute',
-        dataTest: 'unmuteUser',
-      },
+      ...(audioStateOption ? [{ ...audioStateOption, allowed: true }] : []),
       {
         allowed: allowedToChangeWhiteboardAccess && !!pageId,
         key: 'changeWhiteboardAccess',
