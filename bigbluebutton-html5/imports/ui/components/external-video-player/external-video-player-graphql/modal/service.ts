@@ -5,7 +5,12 @@ const PANOPTO_MATCH_URL = /https?:\/\/([^/]+\/Panopto)(\/Pages\/Viewer\.aspx\?id
 const DAILYMOTION_MATCH_URL = /https?:\/\/(?:www\.)?dailymotion\.com\/video\/[a-zA-Z0-9]+(?:\?[^\s]*)?/g;
 
 export const isUrlValid = (url: string) => {
-  const parsed = new URL(url);
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch (e) {
+    return false; // Invalid URL
+  }
   const pathname = parsed.pathname.toLowerCase();
 
   // Block .mov video files - https://github.com/cookpete/react-player/issues/1760
