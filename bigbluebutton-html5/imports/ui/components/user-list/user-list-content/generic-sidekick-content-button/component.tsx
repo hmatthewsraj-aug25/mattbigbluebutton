@@ -1,6 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { GenericContentType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/generic-content-item/enums';
 import * as PluginSdk from 'bigbluebutton-html-plugin-sdk';
+import { SidekickAreaOptionsEnum } from 'bigbluebutton-html-plugin-sdk/dist/cjs/ui-commands/sidekick-area/options/enums';
+import { RenameGenericContentSidekickAreaCommandArguments } from 'bigbluebutton-html-plugin-sdk/dist/cjs/ui-commands/sidekick-area/options/types';
 import Styled from './styles';
 import { PANELS } from '/imports/ui/components/layout/enums';
 import { PluginsContext } from '/imports/ui/components/components-data/plugin-context/context';
@@ -15,11 +17,23 @@ interface MappedMenuItems {
   [key: string]: PluginSdk.GenericContentSidekickArea[]
 }
 
+interface PendingRenameObject {
+  menuId: string;
+  newName: string;
+}
+
+interface RenamedSectionObject {
+  [oldName: string]: string;
+}
+
 const GenericSidekickContentNavButton = ({
   sidebarContentPanel, layoutContextDispatch,
 }: GenericComponentSidekickMenuProps) => {
   const { pluginsExtensibleAreasAggregatedState } = useContext(PluginsContext);
   let genericSidekickContentExtensibleArea = [] as PluginSdk.GenericContentSidekickArea[];
+
+  const [pendingRenameCommand, setPendingRenameCommand] = useState<PendingRenameObject | null>(null);
+  const [renamedSection, setRenamedSection] = useState<RenamedSectionObject>({});
 
   if (pluginsExtensibleAreasAggregatedState.genericContentItems) {
     const genericMainContent = pluginsExtensibleAreasAggregatedState.genericContentItems
@@ -42,6 +56,53 @@ const GenericSidekickContentNavButton = ({
     groupBySidekickMenuSection[section] = alreadySetArray;
   });
 
+  useEffect(() => {
+    if (pendingRenameCommand) {
+      setRenamedSection((prev) => {
+        const newObj = prev;
+        const {
+          menuId: genericContentId,
+          newName,
+        } = pendingRenameCommand;
+        Object.entries(groupBySidekickMenuSection).forEach(([section, listOfMenu]) => {
+          const isSectionIdInside = listOfMenu.some(
+            (menu) => menu.id === genericContentId,
+          );
+          if (isSectionIdInside) {
+            newObj[section] = newName;
+          }
+        });
+        return newObj;
+      });
+      setPendingRenameCommand(null);
+    }
+  }, [pendingRenameCommand]);
+
+  const handleGenericContentRename = ((ev: CustomEvent<RenameGenericContentSidekickAreaCommandArguments>) => {
+    const {
+      id: menuId,
+      newName,
+    } = ev.detail;
+    setPendingRenameCommand({
+      menuId,
+      newName,
+    });
+  }) as EventListener;
+
+  useEffect(() => {
+    window.addEventListener(
+      SidekickAreaOptionsEnum.RENAME_GENERIC_CONTENT_SECTION,
+      handleGenericContentRename,
+    );
+
+    return () => {
+      window.removeEventListener(
+        SidekickAreaOptionsEnum.RENAME_GENERIC_CONTENT_SECTION,
+        handleGenericContentRename,
+      );
+    };
+  }, []);
+
   if (Object.keys(groupBySidekickMenuSection).length !== 0) {
     return Object.keys(groupBySidekickMenuSection).map((section) => (
       <Styled.Section
@@ -49,7 +110,7 @@ const GenericSidekickContentNavButton = ({
       >
         <Styled.Container>
           <Styled.SmallTitle>
-            {section}
+            {renamedSection[section] || section}
           </Styled.SmallTitle>
         </Styled.Container>
         {groupBySidekickMenuSection[section].map((genericContentSidekickAreaObject) => (
