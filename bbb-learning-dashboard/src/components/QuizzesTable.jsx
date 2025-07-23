@@ -282,6 +282,12 @@ const QuizzesTable = (props) => {
       default: 'bg-gray-500/10 text-gray-700 border border-gray-300 rounded-full px-2 font-bold',
     };
 
+    const symbols = {
+      success: <>&#9989;</>,
+      error: <>&#10060;</>,
+      unknown: <>&#9203;</>,
+    };
+
     return (
       <Box
         ref={wrapper}
@@ -315,10 +321,9 @@ const QuizzesTable = (props) => {
           }}
           className={variants[type]}
         >
-          {type === 'success' && <>&#9989;</>}
-          {type === 'error' && <>&#10060;</>}
-          {responses.length ? (
+          {['success', 'error', 'unknown'].includes(type) ? (
             <>
+              {symbols[type]}
               &nbsp;
               {responses.map((response) => {
                 const key = pollAnswerIds[response.toLowerCase()]
@@ -388,14 +393,16 @@ const QuizzesTable = (props) => {
       ...commonColProps,
       sortable: true,
       valueGetter: (params) => {
-        const [, userAnswers] = params?.value;
+        const { userAnswers } = params?.value;
         return userAnswers || [];
       },
       renderCell: (params) => {
         let type = 'default';
-        const [isCorrect] = params?.row[params?.field];
+        const { isCorrect, hasCorrectOption } = params?.row[params?.field];
         if (isCorrect != null) {
           type = isCorrect ? 'success' : 'error';
+        } else if (!hasCorrectOption) {
+          type = 'unknown';
         }
         return (
           <GridCellExpand
@@ -417,8 +424,13 @@ const QuizzesTable = (props) => {
       .entries(quizzes || {})
       .map(([quizId, quiz]) => {
         const userAnswers = u.answers[quizId];
-        const isCorrect = userAnswers ? userAnswers.includes(quiz.correctOption) : null;
-        return [quizId, [isCorrect, userAnswers ?? []]];
+        const isCorrect = userAnswers?.length && quiz?.correctOption
+          ? userAnswers.includes(quiz.correctOption)
+          : null;
+        return [
+          quizId,
+          { isCorrect, userAnswers: userAnswers ?? [], hasCorrectOption: !!quiz.correctOption },
+        ];
       });
 
     gridRows.push({
