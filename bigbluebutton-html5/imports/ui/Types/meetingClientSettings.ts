@@ -473,6 +473,10 @@ export interface Poll {
     confirmationStep: boolean
     confirmationStepModifierKey: 'shift' | 'ctrl' | 'alt'
   }
+  quiz: {
+    enabled: boolean
+    quickPollCorrectAnswerSuffix: string
+  }
 }
 
 export interface Captions {
@@ -783,6 +787,7 @@ export interface Text {
 
 export interface Toolbar {
   multiUserPenOnly: boolean
+  initialSelectedTool: string
   presenterTools: string[]
   multiUserTools: string[]
 }

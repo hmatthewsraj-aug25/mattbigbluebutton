@@ -485,6 +485,10 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
         confirmationStep: true,
         confirmationStepModifierKey: 'shift',
       },
+      quiz: {
+        enabled: false,
+        quickPollCorrectAnswerSuffix: '__',
+      },
     },
     captions: {
       enabled: true,
@@ -861,6 +865,7 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
       },
       toolbar: {
         multiUserPenOnly: false,
+        initialSelectedTool: 'draw',
         presenterTools: [
           'select',
           'hand',

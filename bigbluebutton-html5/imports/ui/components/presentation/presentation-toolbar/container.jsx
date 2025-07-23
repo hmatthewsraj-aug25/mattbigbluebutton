@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useMutation } from '@apollo/client';
 import FullscreenService from '/imports/ui/components/common/fullscreen-button/service';
-import { useIsInfiniteWhiteboardEnabled, useIsPollingEnabled } from '/imports/ui/services/features';
+import { useIsInfiniteWhiteboardEnabled, useIsPollingEnabled, useIsQuizEnabled } from '/imports/ui/services/features';
 import { PluginsContext } from '/imports/ui/components/components-data/plugin-context/context';
 import { POLL_CANCEL, POLL_CREATE } from '/imports/ui/components/poll/mutations';
 import { PRESENTATION_SET_ZOOM, PRESENTATION_SET_PAGE, PRESENTATION_SET_PAGE_INFINITE_WHITEBOARD } from '../mutations';
@@ -86,6 +86,7 @@ const PresentationToolbarContainer = (props) => {
   const { pluginsExtensibleAreasAggregatedState } = pluginsContext;
 
   const WHITEBOARD_CONFIG = window.meetingClientSettings.public.whiteboard;
+  const isQuizEnabled = useIsQuizEnabled();
 
   const {
     userIsPresenter,
@@ -104,7 +105,9 @@ const PresentationToolbarContainer = (props) => {
   const [createPoll] = useMutation(POLL_CREATE);
   const [presentationSetZoom] = useMutation(PRESENTATION_SET_ZOOM);
   const [presentationSetPage] = useMutation(PRESENTATION_SET_PAGE);
-  const [presentationSetPageInfiniteWhiteboard] = useMutation(PRESENTATION_SET_PAGE_INFINITE_WHITEBOARD);
+  const [presentationSetPageInfiniteWhiteboard] = useMutation(
+    PRESENTATION_SET_PAGE_INFINITE_WHITEBOARD,
+  );
 
   const resetSlide = () => {
     const { pageId, num } = currentPresentationPage;
@@ -170,7 +173,9 @@ const PresentationToolbarContainer = (props) => {
     pollId,
     answers = [],
     question,
-    isMultipleResponse = false,
+    multipleResponse = false,
+    isQuiz = false,
+    correctAnswer = '',
     modifierKey = false,
   ) => {
     Session.setItem('openPanel', 'poll');
@@ -184,8 +189,10 @@ const PresentationToolbarContainer = (props) => {
         pollType,
         secretPoll: false,
         question,
-        isMultipleResponse,
+        multipleResponse,
         answers,
+        isQuiz: isQuizEnabled ? isQuiz : false,
+        correctAnswer: isQuizEnabled ? correctAnswer : '',
       });
     } else {
       createPoll({
@@ -194,8 +201,11 @@ const PresentationToolbarContainer = (props) => {
           pollId: `${pollId}/${new Date().getTime()}`,
           secretPoll: false,
           question,
-          isMultipleResponse,
+          multipleResponse,
+          quiz: false,
           answers,
+          isQuiz: isQuizEnabled ? isQuiz : false,
+          correctAnswer: isQuizEnabled ? correctAnswer : '',
         },
       });
     }
@@ -258,4 +268,10 @@ PresentationToolbarContainer.propTypes = {
 
   // Actions required for the presenter toolbar
   layoutSwapped: PropTypes.bool,
+
+  userIsPresenter: PropTypes.bool,
+  presentationId: PropTypes.string,
+  hasPoll: PropTypes.bool.isRequired,
+  currentSlide: PropTypes.number.isRequired,
+  currentPresentationPage: PropTypes.number.isRequired,
 };
