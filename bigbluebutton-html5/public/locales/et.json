@@ -712,7 +712,7 @@
     "app.talkingIndicator.wasTalking": "{0} lõpetas rääkimise",
     "app.mediaSharing.modal.title": "Meedia jagamine",
     "app.mediaSharing.modal.slides": "Slaidid",
-    "app.mediaSharing.modal.videoLink": "Mängi videot lingilt",
+    "app.mediaSharing.modal.videoLink": "Esita video lingilt",
     "app.mediaSharing.modal.mustBePresenter": "Sisu jagamiseks pead olema esitleja.",
     "app.mediaSharing.modal.share": "Jaga",
     "app.mediaSharing.modal.stopSharing": "Lõpeta jagamine",
