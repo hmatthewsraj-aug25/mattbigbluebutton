@@ -1290,7 +1290,7 @@
     "app.video.virtualBackground.remove": "Eemalda lisatud pilt",
     "app.video.virtualBackground.genericError": "Kaameraefekti rakendamine ebaõnnestus. Proovi uuesti.",
     "app.video.virtualBackground.camBgAriaDesc": "Veebikaamera virtuaalseks taustaks määratakse {backgroundName}",
-    "app.video.virtualBackground.maximumFileSizeExceeded": "Maksimaalne failisuurus ületatud ({maxFileSize} MB).",
+    "app.video.virtualBackground.maximumFileSizeExceeded": "Maksimaalne failisuurus ületatud ({maxFileSize} MB)",
     "app.video.virtualBackground.typeNotAllowed": "Failitüüp pole lubatud.",
     "app.video.virtualBackground.errorOnRead": "Faili lugemisel läks midagi valesti.",
     "app.video.virtualBackground.uploaded": "Üles laaditud",
