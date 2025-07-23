@@ -245,7 +245,7 @@
     "app.screenshare.presenterSharingLabel": "Sa jagad nüüd oma ekraani",
     "app.screenshare.screenshareFinalError": "Kood {errorCode}. Ei saanud ekraani jagada.",
     "app.screenshare.screenshareRetryError": "Kood {errorCode}. Proovi uuesti ekraani jagada.",
-    "app.screenshare.screenshareRetryOtherEnvError": "Kood {errorCode}. Ei saa ekraani jagada. Proovi uuesti muu brauseri või seadmega.",
+    "app.screenshare.screenshareRetryOtherEnvError": "Kood {errorCode}. Ei saanud ekraani jagada. Proovi uuesti muu brauseri või seadmega.",
     "app.screenshare.screenshareUnsupportedEnv": "Kood {errorCode}. Brauserit ei toetata. Proovi uuesti muu brauseri või seadmega.",
     "app.screenshare.screensharePermissionError": "Kood {errorCode}. Ekraani hõivamiseks on vaja luba.",
     "app.screenshare.screenshareToastHelpLabel": "Lisateave",
