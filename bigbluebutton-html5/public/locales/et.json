@@ -341,7 +341,7 @@
     "app.presentationUploader.dropdownExportOptionsUncomplete": "Keelatud, kuni üleslaadimine on lõpetatud",
     "app.presentationUploader.export.linkAvailable": "Faili {presentationName} allalaadimise link on avalikus vestluses.",
     "app.presentationUploader.currentPresentationLabel": "Aktiivne esitlus",
-    "app.presentationUploder.extraHint": "TÄHELEPANU: ükski fail ei tohi suuruselt ületada {maxFileSize} MB ja {maxFilePages} lehte.",
+    "app.presentationUploder.extraHint": "OLULINE: ükski fail ei tohi suuruselt ületada {maxFileSize} MB ja {maxFilePages} lehte.",
     "app.presentationUploder.uploadLabel": "Laadi üles",
     "app.presentationUploder.confirmLabel": "Kinnita",
     "app.presentationUploder.confirmDesc": "Salvesta muudatused ja käivita esitlus",
