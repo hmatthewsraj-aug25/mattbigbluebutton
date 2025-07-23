@@ -40,6 +40,7 @@ class Presentation extends MultiUsers {
     await this.modPage.hasElement(e.webcamMirroredVideoPreview, 'should display the camera preview when sharing camera as content');
     await this.modPage.waitAndClick(e.startSharingWebcam);
     await this.modPage.hasElement(e.screenShareVideo);
+    await this.modPage.waitAndClick(e.closeIcon);
     await this.modPage.closeAllToastNotifications();
     const modWhiteboardLocator = this.modPage.getLocator(e.screenShareVideo);
     await expect(modWhiteboardLocator, 'should display the same screenshot as taken before').toHaveScreenshot('moderator-share-camera-as-content.png', {
@@ -71,13 +72,13 @@ class Presentation extends MultiUsers {
     const { externalVideoPlayer } = getSettings();
 
     await this.modPage.hasElement(e.whiteboard, 'should display the whiteboard when the moderator joins the meeting');
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     if (!externalVideoPlayer) {
       await this.modPage.hasElement(e.managePresentations, 'should display the manage presentation options on the actions button');
       return this.modPage.wasRemoved(e.shareExternalVideoBtn, 'should not display the option to share an external video, since is deactivated');
     }
     await this.modPage.waitAndClick(e.shareExternalVideoBtn);
-    await this.modPage.hasElement(e.closeModal, 'should display the close modal button after the moderator opens the modal for sharing external video');
+    await this.modPage.hasElement(e.closeIcon, 'should display the close modal button after the moderator opens the modal for sharing external video');
     await this.modPage.type(e.videoModalInput, e.youtubeLink);
     await this.modPage.waitAndClick(e.startShareVideoBtn);
 
@@ -249,7 +250,7 @@ class Presentation extends MultiUsers {
 
   async fitToWidthTest() {
     await this.modPage.waitForSelector(e.whiteboard, ELEMENT_WAIT_LONGER_TIME);
-    await this.modPage.waitAndClick(e.userListToggleBtn);
+    await this.modPage.waitAndClick(e.hidePublicChat);
     const width1 = (await this.modPage.getElementBoundingBox(e.whiteboard)).width;
     // check if its off
     const fitToWidthButtonLocator = this.modPage.getLocator(`${e.fitToWidthButton} > span>>nth=0`);
@@ -272,7 +273,7 @@ class Presentation extends MultiUsers {
 
     await this.modPage.waitForSelector(e.whiteboard, ELEMENT_WAIT_LONGER_TIME);
     // enable original presentation download
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.managePresentations);
     if (!originalPresentationDownloadable) {
       await this.modPage.hasElement(e.presentationOptionsDownloadBtn, 'should display the option download button for the presentation');
@@ -292,7 +293,7 @@ class Presentation extends MultiUsers {
     //! await this.modPage.handleDownload(this.modPage.getLocator(e.presentationDownloadBtn), testInfo);
     //! await this.userPage.handleDownload(this.userPage.getLocator(e.presentationDownloadBtn), testInfo);
     // disable original presentation download
-    await this.modPage.waitAndClick(e.actions);
+    
     await this.modPage.waitAndClick(e.managePresentations);
     await this.modPage.waitAndClick(e.presentationOptionsDownloadBtn);
     await this.modPage.waitAndClick(e.disableOriginalPresentationDownloadBtn);
@@ -305,16 +306,16 @@ class Presentation extends MultiUsers {
     const { presentationWithAnnotationsDownloadable } = getSettings();
 
     await this.modPage.waitForSelector(e.whiteboard, ELEMENT_WAIT_LONGER_TIME);
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.managePresentations);
     await this.modPage.waitAndClick(e.presentationOptionsDownloadBtn);
     if (!presentationWithAnnotationsDownloadable) {
-      await this.modPage.hasElement(e.presentationOptionsDownloadBtn);
+      await this.modPage.hasElement(e.presentationOptionsDownloadBtn, 'should display the presentation download options button for the moderator');
       return this.modPage.wasRemoved(e.sendPresentationInCurrentStateBtn);
     }
     await this.modPage.waitAndClick(e.sendPresentationInCurrentStateBtn);
     await this.modPage.hasElement(e.downloadPresentationToast);
-    await this.userPage.hasElement(e.downloadPresentation, ELEMENT_WAIT_EXTRA_LONG_TIME);
+    await this.userPage.hasElement(e.downloadPresentation, 'should display the download presentation button for the attendee', ELEMENT_WAIT_EXTRA_LONG_TIME);
     const downloadPresentationLocator = this.userPage.getLocator(e.downloadPresentation);
     await this.userPage.handleDownload(downloadPresentationLocator, testInfo);
   }
