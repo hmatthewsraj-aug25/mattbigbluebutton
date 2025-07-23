@@ -51,7 +51,7 @@
     "app.chat.toolbar.reactions.andLabel": "ja",
     "app.chat.toolbar.reactions.findReactionButtonLabel": "Leia reaktsioon",
     "app.chat.toolbar.edit.editing": "Sõnumi muutmine",
-    "app.chat.toolbar.edit.cancel": "Tühistamiseks vajuta {cancelKey}.",
+    "app.chat.toolbar.edit.cancel": "Tühistamiseks vajuta klahvi {cancelKey}.",
     "app.chat.toolbar.edit.edited": "Muudetud",
     "app.chat.toolbar.delete.cancelLabel": "Tühista",
     "app.chat.toolbar.delete.confirmationTitle": "Kas oled kindel?",
