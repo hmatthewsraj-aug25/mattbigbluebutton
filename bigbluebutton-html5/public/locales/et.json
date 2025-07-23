@@ -252,7 +252,7 @@
     "app.cameraAsContent.presenterLoadingLabel": "Sinu kaamerat laaditakse",
     "app.cameraAsContent.viewerLoadingLabel": "Esitleja kaamerat laaditakse",
     "app.cameraAsContent.presenterSharingLabel": "Sa näitad nüüd oma kaamerat",
-    "app.meeting.ended": "Sessioon on lõppenud",
+    "app.meeting.ended": "See sessioon on lõppenud",
     "app.meeting.endedFromAPI": "Sessioon on lõppenud - süsteem lõpetas sessiooni",
     "app.meeting.endedWhenNoUserJoined": "Sessioon on lõppenud, sest ükski kasutaja ei liitunud",
     "app.meeting.endedWhenLastUserLeft": "Sessioon on lõppenud, sest viimane kasutaja lahkus",
