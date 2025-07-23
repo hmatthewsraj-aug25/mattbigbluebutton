@@ -243,7 +243,7 @@
     "app.screenshare.presenterLoadingLabel": "Sinu ekraanijagamist laaditakse",
     "app.screenshare.viewerLoadingLabel": "Esitleja ekraani laaditakse",
     "app.screenshare.presenterSharingLabel": "Sa jagad nüüd oma ekraani",
-    "app.screenshare.screenshareFinalError": "Kood {errorCode}. Ei saa ekraani jagada.",
+    "app.screenshare.screenshareFinalError": "Kood {errorCode}. Ei saanud ekraani jagada.",
     "app.screenshare.screenshareRetryError": "Kood {errorCode}. Proovi uuesti ekraani jagada.",
     "app.screenshare.screenshareRetryOtherEnvError": "Kood {errorCode}. Ei saa ekraani jagada. Proovi uuesti muu brauseri või seadmega.",
     "app.screenshare.screenshareUnsupportedEnv": "Kood {errorCode}. Brauserit ei toetata. Proovi uuesti muu brauseri või seadmega.",
