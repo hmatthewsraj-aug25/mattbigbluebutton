@@ -1546,6 +1546,7 @@ const updatePresentationAreaContent = (
       default:
         break;
     }
+    if (typeof shouldOpenPresentation !== 'boolean') return;
     layoutContextDispatch({
       type: ACTIONS.SET_PRESENTATION_IS_OPEN,
       value: shouldOpenPresentation,
