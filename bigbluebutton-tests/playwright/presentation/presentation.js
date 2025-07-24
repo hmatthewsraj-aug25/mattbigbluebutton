@@ -315,6 +315,7 @@ class Presentation extends MultiUsers {
     }
     await this.modPage.waitAndClick(e.sendPresentationInCurrentStateBtn);
     await this.modPage.hasElement(e.downloadPresentationToast);
+    await sleep(1000)
     await this.userPage.hasElement(e.downloadPresentation, 'should display the download presentation button for the attendee', ELEMENT_WAIT_EXTRA_LONG_TIME);
     const downloadPresentationLocator = this.userPage.getLocator(e.downloadPresentation);
     await this.userPage.handleDownload(downloadPresentationLocator, testInfo);
@@ -322,10 +323,10 @@ class Presentation extends MultiUsers {
 
   async removeAllPresentation() {
     await this.modPage.waitForSelector(e.whiteboard, ELEMENT_WAIT_LONGER_TIME);
-    await this.modPage.waitAndClick(e.actions);
+    await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.managePresentations);
     await this.modPage.waitAndClick(e.removePresentation);
-    await this.modPage.waitAndClick(e.confirmManagePresentation);
+    await this.modPage.hasElementDisabled(e.sharePresentationButton);
 
     await this.modPage.wasRemoved(e.whiteboard, 'should not display the whiteboard for the moderator');
     await this.modPage.wasRemoved(e.minimizePresentation, 'should not display the minimize presentation button for the moderator');
