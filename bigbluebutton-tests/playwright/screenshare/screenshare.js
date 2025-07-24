@@ -52,19 +52,7 @@ class ScreenShare extends Page {
     await this.hasElement(e.whiteboard, 'should display the whiteboard');
   }
 
-  async stopScreenshareAndVerify() {
-    const { screensharingEnabled } = getSettings();
-
-    if (!screensharingEnabled) {
-      await this.hasElement(e.joinVideo, 'should display the join video button');
-      return this.wasRemoved(e.startScreenSharing, 'should not display the start screenshare button');
-    }
-
-    // Start screenshare first
-    await startScreenshare(this);
-    await this.hasElement(e.isSharingScreen, 'should display the screenshare element');
-    await this.hasElement(e.stopScreenSharing, 'should display the stop screenshare button');
-
+  async stopSharing() {
     // Stop screenshare
     await this.waitAndClick(e.stopScreenSharing);
 
