@@ -184,14 +184,18 @@ export interface Transcription {
 }
 
 export interface DefaultSettings {
+  layout: LayoutSettings
   application: Application
   audio: Audio
   dataSaving: DataSaving
   transcription: Transcription
 }
+export interface LayoutSettings {
+  selectedLayout: string
+  pushLayout: boolean
+}
 
 export interface Application {
-  selectedLayout: string
   animations: boolean
   chatAudioAlerts: boolean
   chatPushAlerts: boolean
@@ -476,6 +480,10 @@ export interface Poll {
   maxTypedAnswerLength: number
   chatMessage: boolean
   quickPollConfirmationStep: boolean
+  quiz: {
+    enabled: boolean
+    quickPollCorrectAnswerSuffix: string
+  }
 }
 
 export interface Captions {
@@ -503,9 +511,8 @@ export interface Timer {
   enabled: boolean
   alarm: boolean
   music: Music
-  interval: Interval
   time: number
-  tabIndicator: boolean
+  serverSyncTimeInterval: number
 }
 
 export interface Music {
@@ -514,11 +521,6 @@ export interface Music {
   track1: string
   track2: string
   track3: string
-}
-
-export interface Interval {
-  clock: number
-  offset: number
 }
 
 export interface Chat {
@@ -789,6 +791,7 @@ export interface Text {
 
 export interface Toolbar {
   multiUserPenOnly: boolean
+  initialSelectedTool: string
   presenterTools: string[]
   multiUserTools: string[]
 }

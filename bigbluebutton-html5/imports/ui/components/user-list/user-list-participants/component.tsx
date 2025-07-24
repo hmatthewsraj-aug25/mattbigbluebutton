@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import { UI_DATA_LISTENER_SUBSCRIBED } from 'bigbluebutton-html-plugin-sdk/dist/cjs/ui-data-hooks/consts';
-import { UserListUiDataPayloads } from 'bigbluebutton-html-plugin-sdk/dist/cjs/ui-data-hooks/user-list/types';
+import { UI_DATA_LISTENER_SUBSCRIBED } from 'bigbluebutton-html-plugin-sdk/dist/cjs/ui-data/hooks/consts';
+import { UserListUiDataPayloads } from 'bigbluebutton-html-plugin-sdk/dist/cjs/ui-data/domain/user-list/types';
 import * as PluginSdk from 'bigbluebutton-html-plugin-sdk';
 import { User } from '/imports/ui/Types/user';
 import Styled from './styles';
@@ -8,6 +8,7 @@ import UserListParticipantsPageContainer from './page/component';
 import IntersectionWatcher from './intersection-watcher/intersectionWatcher';
 import { setLocalUserList } from '/imports/ui/core/hooks/useLoadedUserList';
 import roveBuilder from '/imports/ui/core/utils/keyboardRove';
+import { USERS_PER_USER_LIST_PAGE } from '/imports/ui/components/user-list/user-list-participants/constants';
 
 interface UserListParticipantsContainerProps {
   count: number;
@@ -23,7 +24,7 @@ const UserListParticipants: React.FC<UserListParticipantsProps> = ({
   const [visibleUsers, setVisibleUsers] = React.useState<{
     [key: number]: User[];
   }>({});
-  const userListRef = React.useRef<HTMLDivElement | null>(null);
+  const userListRef = React.useRef<HTMLUListElement | null>(null);
   const selectedUserRef = React.useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -77,20 +78,18 @@ const UserListParticipants: React.FC<UserListParticipantsProps> = ({
   }, []);
   // --- End of plugin related code ---
 
-  const amountOfPages = Math.ceil(count / 50);
+  const amountOfPages = Math.ceil(count / USERS_PER_USER_LIST_PAGE);
   return (
     (
       <Styled.UserListColumn
-      // @ts-ignore
         onKeyDown={rove}
         tabIndex={0}
-        ref={userListRef}
       >
-        <Styled.VirtualizedList>
+        <Styled.VirtualizedList as="ul" ref={userListRef}>
           {
             Array.from({ length: amountOfPages }).map((_, i) => {
               const isLastItem = amountOfPages === (i + 1);
-              const restOfUsers = count % 50;
+              const restOfUsers = count % USERS_PER_USER_LIST_PAGE;
               const key = i;
               return i === 0
                 ? (
@@ -98,7 +97,7 @@ const UserListParticipants: React.FC<UserListParticipantsProps> = ({
                     key={key}
                     index={i}
                     isLastItem={isLastItem}
-                    restOfUsers={isLastItem ? restOfUsers : 50}
+                    restOfUsers={isLastItem ? restOfUsers : USERS_PER_USER_LIST_PAGE}
                     setVisibleUsers={setVisibleUsers}
                   />
                 )
@@ -108,13 +107,13 @@ const UserListParticipants: React.FC<UserListParticipantsProps> = ({
                     key={i}
                     ParentRef={userListRef}
                     isLastItem={isLastItem}
-                    restOfUsers={isLastItem ? restOfUsers : 50}
+                    restOfUsers={isLastItem ? restOfUsers : USERS_PER_USER_LIST_PAGE}
                   >
                     <UserListParticipantsPageContainer
                       key={key}
                       index={i}
                       isLastItem={isLastItem}
-                      restOfUsers={isLastItem ? restOfUsers : 50}
+                      restOfUsers={isLastItem ? restOfUsers : USERS_PER_USER_LIST_PAGE}
                       setVisibleUsers={setVisibleUsers}
                     />
                   </IntersectionWatcher>
@@ -131,7 +130,7 @@ const UserListParticipantsContainer: React.FC<UserListParticipantsContainerProps
   return (
     <>
       <UserListParticipants
-        count={count}
+        count={count ?? 0}
       />
     </>
   );

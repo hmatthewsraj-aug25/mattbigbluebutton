@@ -114,7 +114,7 @@ const RoomManagmentState: React.FC<RoomManagmentStateProps> = ({
 
   const roomName = (room: number) => {
     const defaultName = intl.formatMessage(intlMessages.breakoutRoom, {
-      0: room,
+      roomNumber: room,
     });
     if (roomNames[room]) {
       return roomNames[room];
@@ -163,7 +163,7 @@ const RoomManagmentState: React.FC<RoomManagmentStateProps> = ({
       // Return keys with empty arrays
       return Object.keys(userAssignedRooms).filter((key) => {
         return userAssignedRooms[key].length === 0
-        || userAssignedRooms[key].includes(0);
+          || userAssignedRooms[key].includes(0);
       });
     }
     // Return keys whose array includes the given number
@@ -253,7 +253,7 @@ const RoomManagmentState: React.FC<RoomManagmentStateProps> = ({
       (lastBreakoutData
         && lastBreakoutData.breakoutRoom_createdLatest.length > 0)
       && (runningRooms
-      && runningRooms.length === 0)
+        && runningRooms.length === 0)
     ) {
       const assignUsers = lastBreakoutData.user.reduce((acc: { [key: string]: number[] }, user) => {
         //  means user wasn't either not assigned or not joined a breakout room

@@ -57,7 +57,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = ({
 }) => {
   const [isResizing, setIsResizing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [isFullscreen, setIsFullScreen] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [resizeStart, setResizeStart] = useState({ width: 0, height: 0 });
   const [cameraMaxWidth, setCameraMaxWidth] = useState(0);
   const [draggedAtLeastOneTime, setDraggedAtLeastOneTime] = useState(false);
@@ -228,7 +228,7 @@ const WebcamComponent: React.FC<WebcamComponentProps> = ({
           onMouseDown={
             cameraDock.isDraggable ? (e) => e.preventDefault() : undefined
           }
-          disabled={!cameraDock.isDraggable || isResizing || isFullscreen}
+          disabled={!cameraDock.isDraggable || isResizing || isFullScreen}
           position={
             {
               x: cameraDock.left - cameraDock.right + draggableOffset.left,
@@ -266,10 +266,11 @@ const WebcamComponent: React.FC<WebcamComponentProps> = ({
               });
             }}
             enable={{
-              top: !isFullscreen && !isDragging && cameraDock?.resizableEdge?.top,
-              bottom: !isFullscreen && !isDragging && cameraDock?.resizableEdge?.bottom,
-              left: !isFullscreen && !isDragging && cameraDock?.resizableEdge?.left,
-              right: !isFullscreen && !isDragging && cameraDock?.resizableEdge?.right,
+              top: !isFullScreen && !isDragging && !swapLayout && cameraDock?.resizableEdge?.top,
+              bottom: !isFullScreen && !isDragging && !swapLayout
+              && cameraDock?.resizableEdge?.bottom,
+              left: !isFullScreen && !isDragging && !swapLayout && cameraDock?.resizableEdge?.left,
+              right: !isFullScreen && !isDragging && !swapLayout && cameraDock?.resizableEdge?.right,
               topLeft: false,
               topRight: false,
               bottomLeft: false,
@@ -282,11 +283,11 @@ const WebcamComponent: React.FC<WebcamComponentProps> = ({
             }}
           >
             <Styled.Draggable
-              $isDraggable={!!cameraDock.isDraggable && !isFullscreen && !isDragging}
+              $isDraggable={!!cameraDock.isDraggable && !isFullScreen && !isDragging}
               $isDragging={isDragging}
               id="cameraDock"
               role="region"
-              draggable={cameraDock.isDraggable && !isFullscreen ? 'true' : undefined}
+              draggable={cameraDock.isDraggable && !isFullScreen ? 'true' : undefined}
               style={{
                 width: isIphone ? mobileWidth : desktopWidthWithSidebar,
                 height: isIphone ? mobileHeight : isDesktopHeight,

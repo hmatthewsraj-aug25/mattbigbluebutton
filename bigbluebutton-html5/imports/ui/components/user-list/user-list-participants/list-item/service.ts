@@ -454,8 +454,8 @@ export const createToolbarOptions = (
       {
         allowed: allowedToChangeUserLockStatus,
         key: 'unlockUser',
-        label: userLocked ? intl.formatMessage(intlMessages.unlockUserLabel, { 0: user.name })
-          : intl.formatMessage(intlMessages.lockUserLabel, { 0: user.name }),
+        label: userLocked ? intl.formatMessage(intlMessages.unlockUserLabel, { userName: user.name })
+          : intl.formatMessage(intlMessages.lockUserLabel, { userName: user.name }),
         onClick: () => {
           setLocked({
             variables: {

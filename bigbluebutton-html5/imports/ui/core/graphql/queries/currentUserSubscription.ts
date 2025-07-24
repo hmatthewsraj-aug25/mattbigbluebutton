@@ -19,6 +19,7 @@ subscription userCurrentSubscription {
     hasDrawPermissionOnCurrentPage
     inactivityWarningDisplay
     inactivityWarningTimeoutSecs
+    requestedUnmuteByMod
     isDialIn
     isModerator
     currentlyInMeeting
@@ -62,6 +63,12 @@ subscription userCurrentSubscription {
       currentlyInRoom
       sequence
       shortName
+    }
+    breakoutRoomsSummary {
+        totalOfBreakoutRooms
+        totalOfIsUserCurrentlyInRoom
+        totalOfShowInvitation
+        totalOfJoinURL
     }
     cameras {
       streamId

@@ -50,7 +50,6 @@
 - `layout: Object` [Type layout](#type-layout)
 - `learningDashboard: Object` [Type meeting_learningDashboard](#type-meeting_learningDashboard)
 - `lockSettings: Object` [Type meeting_lockSettings](#type-meeting_lockSettings)
-- `metadata: Array` [Type meeting_metadata](#type-meeting_metadata)
 - `polls: Array` [Type poll](#type-poll)
 - `recording: Object` [Type meeting_recording](#type-meeting_recording)
 - `recordingPolicies: Object` [Type meeting_recordingPolicies](#type-meeting_recordingPolicies)
@@ -380,13 +379,13 @@ Permission: Restricted to User Viewing Self-Related Data
 - `lastFloorTime`
 - `listenOnly`
 - `muted`
+- `requestedUnmuteByMod`
 - `deafened`
 - `spoke`
 - `startTime`
 - `talking`
 - `userId`
 - `voiceConf`
-- `voiceConfCallState`
 - `voiceUserId`
 ### Relationships:
 - `user: Object` [Type User](#type-user)
@@ -415,7 +414,9 @@ Permission: Restricted to User Viewing Self-Related Data
 - `pollId`
 - `published`
 - `publishedAt`
+- `publishedShowingAnswer`
 - `questionText`
+- `quiz`
 - `secret`
 - `type`
 ### Relationships:
@@ -434,8 +435,9 @@ Permission: Restricted to User Viewing Self-Related Data
 ## Type: poll_response
 Permission: Restricted to Poll Owner or User Viewing Self-Related Data
 ### Fields:
-- `optionDesc`
 - `optionId`
+- `optionDesc`
+- `correctOption`
 - `optionResponsesCount`
 - `pollId`
 - `pollResponsesCount`
@@ -488,7 +490,6 @@ Permission: Restricted to Poll Owner or User Viewing Self-Related Data
 - `running`
 - `songTrack`
 - `startedAt`
-- `startedOn`
 - `stopwatch`
 - `time`
 
@@ -809,10 +810,8 @@ Permission: Restricted to Moderators
 
 ## Type: meeting_clientPluginSettings
 ### Fields:
-- `dataChannels`
 - `name`
 - `settings`
-- `url`
 
 ## Type: pollUserCurrent
 Permission: Restricted to User Viewing Self-Related Data
@@ -863,11 +862,6 @@ Permission: Restricted to User Viewing Self-Related Data
 - `messageValues`
 - `notificationType`
 - `role`
-
-## Type: meeting_metadata
-### Fields:
-- `name`
-- `value`
 
 ## Type: user_transcriptionError
 Permission: Restricted to User Viewing Self-Related Data

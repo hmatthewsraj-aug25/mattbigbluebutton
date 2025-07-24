@@ -118,8 +118,11 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
       enableCopyNetworkStatsButton: true,
       userSettingsStorage: 'session',
       defaultSettings: {
-        application: {
+        layout: {
           selectedLayout: 'custom',
+          pushLayout: false,
+        },
+        application: {
           animations: true,
           chatAudioAlerts: false,
           chatPushAlerts: false,
@@ -486,6 +489,10 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
       maxTypedAnswerLength: 45,
       chatMessage: true,
       quickPollConfirmationStep: false,
+      quiz: {
+        enabled: false,
+        quickPollCorrectAnswerSuffix: '__',
+      },
     },
     captions: {
       enabled: true,
@@ -520,12 +527,8 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
         track2: 'CalmMusic',
         track3: 'aristocratDrums',
       },
-      interval: {
-        clock: 100,
-        offset: 60000,
-      },
       time: 5,
-      tabIndicator: false,
+      serverSyncTimeInterval: 300000, // 5 minutes
     },
     chat: {
       enabled: true,
@@ -865,6 +868,7 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
       },
       toolbar: {
         multiUserPenOnly: false,
+        initialSelectedTool: 'draw',
         presenterTools: [
           'select',
           'hand',
@@ -878,6 +882,23 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
           'highlight',
           'more',
           'actions',
+          'ellipse',
+          'diamond',
+          'triangle',
+          'trapezoid',
+          'rhombus',
+          'hexagon',
+          'cloud',
+          'star',
+          'oval',
+          'x-box',
+          'check-box',
+          'arrow-left',
+          'arrow-up',
+          'arrow-down',
+          'arrow-right',
+          'line',
+          'frame',
         ],
         multiUserTools: [
           'select',
@@ -892,6 +913,23 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
           'highlight',
           'more',
           'actions',
+          'ellipse',
+          'diamond',
+          'triangle',
+          'trapezoid',
+          'rhombus',
+          'hexagon',
+          'cloud',
+          'star',
+          'oval',
+          'x-box',
+          'check-box',
+          'arrow-left',
+          'arrow-up',
+          'arrow-down',
+          'arrow-right',
+          'line',
+          'frame',
         ],
       },
     },

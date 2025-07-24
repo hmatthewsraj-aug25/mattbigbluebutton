@@ -7,8 +7,7 @@ export interface TimerData {
   time: number;
   stopwatch: boolean;
   running: boolean;
-  startedOn: number;
-  startedAt: string;
+  startedAt: number | undefined;
   elapsed: boolean;
 }
 
@@ -25,11 +24,26 @@ export const GET_TIMER = gql`
       time
       stopwatch
       running
-      startedOn
       startedAt
       elapsed
     }
   }
 `;
 
-export default GET_TIMER;
+export interface GetServerTimeResponse {
+  // eslint-disable-next-line camelcase
+  current_time: Array<{ currentTimestamp: Date }>;
+}
+
+export const GET_SERVER_TIME = gql`
+  query getServerTime {
+    current_time {
+      currentTimestamp
+    }
+  }
+`;
+
+export default {
+  GET_TIMER,
+  GET_SERVER_TIME,
+};

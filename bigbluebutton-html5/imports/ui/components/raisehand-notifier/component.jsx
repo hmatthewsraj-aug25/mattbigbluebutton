@@ -115,7 +115,7 @@ class RaiseHandNotifier extends Component {
 
     const raisedHandMessageString = length === 1
       ? messages.raisedHandDescOneUser : messages.raisedHandDesc;
-    return intl.formatMessage(raisedHandMessageString, { 0: formattedNames });
+    return intl.formatMessage(raisedHandMessageString, { userNames: formattedNames });
   }
 
   raisedHandAvatars() {
@@ -126,7 +126,7 @@ class RaiseHandNotifier extends Component {
     const avatars = users.map((u) => (
       <TooltipContainer
         key={`statusToastAvatar-${u.userId}`}
-        title={intl.formatMessage(messages.lowerHandDescOneUser, { 0: u.name })}
+        title={intl.formatMessage(messages.lowerHandDescOneUser, { userName: u.name })}
       >
         <Styled.ButtonAvatar
           role="button"

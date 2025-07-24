@@ -442,7 +442,7 @@ The encoding options can be adjusted to speed up encoding or increase quality of
 
 #### Reduce bandwidth from webcams
 
-You can use a banwidth usage on your BigBlueButton server using a tool such as `bmon` (`sudo apt-get install bmon`). You can change the maximum bandwidth settings for each webcam options (low, medium, high, high definition) by editing `/usr/share/bigbluebutton/html5-client/private/config/settings.yml` and modifying the entries for
+You can use a bandwidth usage on your BigBlueButton server using a tool such as `bmon` (`sudo apt-get install bmon`). You can change the maximum bandwidth settings for each webcam options (low, medium, high, high definition) by editing `/usr/share/bigbluebutton/html5-client/private/config/settings.yml` and modifying the entries for
 
 ```yaml
 cameraProfiles:
@@ -1432,6 +1432,7 @@ These configs can be set in `/etc/bigbluebutton/bbb-web.properties`
 | `maxPinnedCameras`                       | Maximum number of cameras pinned simultaneously                                               | Integer (0=disable)                                          | 3                              |
 | `muteOnStart`                            | Mute the meeting on start                                                                     | true/false                                                   | false _`overwritable`_         |
 | `allowModsToUnmuteUsers`                 | Gives moderators permission to unmute other users                                             | true/false                                                   | false _`overwritable`_         |
+| `requireUserConsentBeforeUnmuting`       | Allows participants to accept or decline when a moderator asks them to unmute.                                    | true/false                                                   | false _`overwritable`_         |
 | `allowModsToEjectCameras`                | Gives moderators permission to close other users' webcams                                     | true/false                                                   | false _`overwritable`_         |
 | `usersTimeout`                           | Timeout (millis) to remove a joined user after her/him left meeting without a rejoin          | Integer                                                      | 60000 (60s)                    |
 | `waitingGuestUsersTimeout`               | Timeout (millis) to remove guest users that stopped fetching for her/his status               | Integer                                                      | 30000 (30s)                    |
@@ -1517,6 +1518,7 @@ Useful tools for development:
 | `userdata-bbb_multi_user_pen_only=` | If set to `true`, only the pen tool will be available to non-participants when multi-user whiteboard is enabled | `false`       |
 | `userdata-bbb_presenter_tools=`     | Pass in an array of permitted tools from `settings.yml`. The options we support are: `select`, `hand`, `draw`, `eraser`, `arrow`, `text`, `note`, `rectangle` and *`more`. Example: `userdata-bbb_presenter_tools=['eraser', 'note']` will allow only the eraser and note tools.                                                     | all enabled   |
 | `userdata-bbb_multi_user_tools=`    | Pass in an array of permitted tools for non-presenters from `settings.yml`. The options we support are: `select`, `hand`, `draw`, `eraser`, `arrow`, `text`, `note`, `rectangle` and *`more`. Example: `userdata-bbb_multi_user_tools=['eraser', 'note']` will allow only the eraser and note tools.                                          | all enabled   |
+| `userdata-bbb_initial_selected_tool=`     | Pass in the id of the tool to be initially selected on client startup.                                                     | draw   |
 *more: More includes the rest of the extra shapes, those being: `rectangle`, `ellipse`, `diamond`, `triangle`, `trapezoid`, `rhombus`, `hexagon`, `cloud`, `star`, `oval`, `x-box`, `check-box`, `arrow-left`, `arrow-up`, `arrow-down`, `arrow-right`, `frame`, `line`, `laser`.
 
 The use of *more will include all shapes listed above.

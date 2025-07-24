@@ -1,6 +1,6 @@
 const { MultiUsers } = require("../user/multiusers");
 const e = require('../core/elements');
-const { reopenChatSidebar, checkScreenshots } = require('./util');
+const { reopenChatSidebar, checkScreenshots, checkDefaultLocationReset } = require('./util');
 const { sleep } = require("../core/helpers");
 
 class Layouts extends MultiUsers {
@@ -59,13 +59,10 @@ class Layouts extends MultiUsers {
     await this.modPage.hasElement(e.dropAreaTop);
     await this.modPage.hasElement(e.dropAreaSidebarBottom);
     await this.modPage.page.mouse.up();
-    await this.modPage.dragAndDropWebcams(e.dropAreaSidebarBottom);
-    await checkScreenshots(this, 'should be on custom layout', 'video', 'custom-layout', 2);
-    await this.modPage.dragAndDropWebcams(e.dropAreaSidebarBottom);
-    await checkScreenshots(this, 'should be on custom layout', 'video', 'custom-layout', 3);
-    await this.modPage.waitAndClick(e.userListToggleBtn);
-    await this.modPage.wasRemoved(e.chatButton, 'should not be displayed the chat button');
+    await checkDefaultLocationReset(this.modPage);
+    
     await this.modPage.wasRemoved(e.sendButton, 'should not be displayed the send button');
+
     await checkScreenshots(this, 'should be on custom layout', 'video', 'custom-layout', 4);
     await reopenChatSidebar(this.modPage);
   }

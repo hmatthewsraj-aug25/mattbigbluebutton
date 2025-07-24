@@ -1,5 +1,5 @@
-import React, { Fragment, Component } from 'react';
-import { defineMessages, injectIntl } from 'react-intl';
+import React, { Component } from 'react';
+import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import Styled from './styles';
 
@@ -20,6 +20,10 @@ const intlMessages = defineMessages({
     id: 'app.lock-viewers.description',
     description: 'description for lock viewers feature',
   },
+  restrictParticipantsLabel: {
+    id: 'app.lock-viewers.restrictParticipantsLabel',
+    description: 'label for restricting participants section',
+  },
   featuresLable: {
     id: 'app.lock-viewers.featuresLable',
     description: 'features label',
@@ -37,7 +41,7 @@ const intlMessages = defineMessages({
     description: 'label for other viewers webcam toggle',
   },
   microphoneLabel: {
-    id: 'app.lock-viewers.microphoneLable',
+    id: 'app.lock-viewers.microphoneLabel',
     description: 'label for microphone toggle',
   },
   publicChatLabel: {
@@ -45,7 +49,7 @@ const intlMessages = defineMessages({
     description: 'label for public chat toggle',
   },
   privateChatLabel: {
-    id: 'app.lock-viewers.PrivateChatLable',
+    id: 'app.lock-viewers.PrivateChatLabel',
     description: 'label for private chat toggle',
   },
   notesLabel: {
@@ -130,17 +134,6 @@ class LockViewersComponent extends Component {
     });
   }
 
-  displayLockStatus(status) {
-    const { intl } = this.props;
-    return (
-      status && (
-      <Styled.ToggleLabel>
-        {intl.formatMessage(intlMessages.lockedLabel)}
-      </Styled.ToggleLabel>
-      )
-    );
-  }
-
   render() {
     const {
       closeModal,
@@ -157,7 +150,6 @@ class LockViewersComponent extends Component {
 
     const { lockSettingsProps, usersProp } = this.state;
 
-    console.log({ usersProp, lockSettingsProps });
     return (
       <Styled.LockViewersModal
         onRequestClose={closeModal}
@@ -171,15 +163,24 @@ class LockViewersComponent extends Component {
       >
         <Styled.Container>
           <Styled.Description>
-            {`${intl.formatMessage(intlMessages.lockViewersDescription)}`}
+            <FormattedMessage
+              id="app.lock-viewers.description"
+              description="description for lock viewers feature"
+              values={{
+                b: (chunks) => <b>{chunks}</b>,
+              }}
+            />
           </Styled.Description>
+          <Styled.Bold>
+            {intl.formatMessage(intlMessages.restrictParticipantsLabel)}
+          </Styled.Bold>
 
           <Styled.Form>
             <Styled.Row data-test="lockShareWebcamItem">
               <Styled.ColToggle>
                 <Styled.FormElementLeft>
-                  <Styled.MaterialSwitch
-                    checked={!lockSettingsProps.disableCam}
+                  <Styled.MaterialCheckbox
+                    checked={lockSettingsProps.disableCam}
                     onChange={() => this.toggleLockSettings('disableCam')}
                     inputProps={{
                       'aria-label': `${intl.formatMessage(intlMessages.webcamLabel)}`,
@@ -200,8 +201,8 @@ class LockViewersComponent extends Component {
             <Styled.Row data-test="lockSeeOtherViewersWebcamItem">
               <Styled.ColToggle>
                 <Styled.FormElementLeft>
-                  <Styled.MaterialSwitch
-                    checked={!usersProp.webcamsOnlyForModerator}
+                  <Styled.MaterialCheckbox
+                    checked={usersProp.webcamsOnlyForModerator}
                     onChange={() => this.toggleUserProps('webcamsOnlyForModerator')}
                     inputProps={{
                       'aria-label': intl.formatMessage(intlMessages.otherViewersWebcamLabel),
@@ -222,8 +223,8 @@ class LockViewersComponent extends Component {
             <Styled.Row data-test="lockShareMicrophoneItem">
               <Styled.ColToggle>
                 <Styled.FormElementLeft>
-                  <Styled.MaterialSwitch
-                    checked={!lockSettingsProps.disableMic}
+                  <Styled.MaterialCheckbox
+                    checked={lockSettingsProps.disableMic}
                     onChange={() => this.toggleLockSettings('disableMic')}
                     inputProps={{
                       'aria-label': intl.formatMessage(intlMessages.microphoneLabel),
@@ -247,8 +248,8 @@ class LockViewersComponent extends Component {
                 <Styled.Row data-test="lockPublicChatItem">
                   <Styled.ColToggle>
                     <Styled.FormElementLeft>
-                      <Styled.MaterialSwitch
-                        checked={!lockSettingsProps.disablePublicChat}
+                      <Styled.MaterialCheckbox
+                        checked={lockSettingsProps.disablePublicChat}
                         onChange={() => this.toggleLockSettings('disablePublicChat')}
                         inputProps={{
                           'aria-label': intl.formatMessage(intlMessages.publicChatLabel),
@@ -270,8 +271,8 @@ class LockViewersComponent extends Component {
                   <Styled.Row data-test="lockPrivateChatItem">
                     <Styled.ColToggle>
                       <Styled.FormElementLeft>
-                        <Styled.MaterialSwitch
-                          checked={!lockSettingsProps.disablePrivateChat}
+                        <Styled.MaterialCheckbox
+                          checked={lockSettingsProps.disablePrivateChat}
                           onChange={() => this.toggleLockSettings('disablePrivateChat')}
                           inputProps={{
                             'aria-label': intl.formatMessage(intlMessages.privateChatLabel),
@@ -297,8 +298,8 @@ class LockViewersComponent extends Component {
                 <Styled.Row data-test="lockEditSharedNotesItem">
                   <Styled.ColToggle>
                     <Styled.FormElementLeft>
-                      <Styled.MaterialSwitch
-                        checked={!lockSettingsProps.disableNotes}
+                      <Styled.MaterialCheckbox
+                        checked={lockSettingsProps.disableNotes}
                         onChange={() => this.toggleLockSettings('disableNotes')}
                         inputProps={{
                           'aria-label': intl.formatMessage(intlMessages.notesLabel),
@@ -321,8 +322,8 @@ class LockViewersComponent extends Component {
             <Styled.Row data-test="lockUserListItem">
               <Styled.ColToggle>
                 <Styled.FormElementLeft>
-                  <Styled.MaterialSwitch
-                    checked={!lockSettingsProps.hideUserList}
+                  <Styled.MaterialCheckbox
+                    checked={lockSettingsProps.hideUserList}
                     onChange={() => this.toggleLockSettings('hideUserList')}
                     inputProps={{
                       'aria-label': intl.formatMessage(intlMessages.userListLabel),
@@ -344,8 +345,8 @@ class LockViewersComponent extends Component {
             <Styled.Row data-test="hideViewersCursorItem">
               <Styled.ColToggle>
                 <Styled.FormElementLeft>
-                  <Styled.MaterialSwitch
-                    checked={!lockSettingsProps.hideViewersCursor}
+                  <Styled.MaterialCheckbox
+                    checked={lockSettingsProps.hideViewersCursor}
                     onChange={() => this.toggleLockSettings('hideViewersCursor')}
                     inputProps={{
                       'aria-label': intl.formatMessage(intlMessages.hideCursorsLabel),
@@ -367,8 +368,8 @@ class LockViewersComponent extends Component {
             <Styled.Row data-test="hideViewersAnnotation">
               <Styled.ColToggle>
                 <Styled.FormElementLeft>
-                  <Styled.MaterialSwitch
-                    checked={!lockSettingsProps.hideViewersAnnotation}
+                  <Styled.MaterialCheckbox
+                    checked={lockSettingsProps.hideViewersAnnotation}
                     onChange={() => this.toggleLockSettings('hideViewersAnnotation')}
                     inputProps={{
                       'aria-label': intl.formatMessage(intlMessages.hideAnnotationsLabel),

@@ -105,9 +105,9 @@ const intlMessages = defineMessages({
     id: 'app.createBreakoutRoom.setTimeHigherThanMeetingTimeError',
     description: 'Label for error when new breakout rooms time would be higher than remaining time in parent meeting',
   },
-  breakoutPanelClose: {
-    id: 'app.createBreakoutRoom.closePanel',
-    description: 'Label for the close button in the breakouts panel',
+  genericMinimizePanel: {
+    id: 'app.sidebarContent.minimizePanelLabel',
+    description: 'Generic minimize label for panels',
   },
 });
 
@@ -172,6 +172,9 @@ const BreakoutRoom: React.FC<BreakoutRoomProps> = ({
     }
   }, [breakouts, stopMediaOnMainRoom, presenter]);
 
+  const title = intl.formatMessage(intlMessages.breakoutTitle);
+  const minimizeButtonLabel = intl.formatMessage(intlMessages.genericMinimizePanel, { 0: title });
+
   return (
     <Styled.PanelContent
       ref={panelRef}
@@ -180,18 +183,13 @@ const BreakoutRoom: React.FC<BreakoutRoomProps> = ({
       }}
     >
       <Styled.HeaderContainer
-        title={intl.formatMessage(intlMessages.breakoutTitle)}
-        leftButtonProps={{
-          'aria-label': intl.formatMessage(intlMessages.breakoutAriaTitle),
-          label: intl.formatMessage(intlMessages.breakoutTitle),
-          onClick: closePanel,
-        }}
+        title={title}
         data-test="breakoutRoomManagerHeader"
         rightButtonProps={{
-          'aria-label': intl.formatMessage(intlMessages.breakoutPanelClose),
-          label: intl.formatMessage(intlMessages.breakoutPanelClose),
+          'aria-label': minimizeButtonLabel,
+          label: minimizeButtonLabel,
           onClick: closePanel,
-          icon: 'close',
+          icon: 'minus',
         }}
         customRightButton={isModerator && (
           <BreakoutDropdown
@@ -213,8 +211,8 @@ const BreakoutRoom: React.FC<BreakoutRoomProps> = ({
           showChangeTimeForm={showChangeTimeForm}
           isModerator={isModerator}
           durationInSeconds={durationInSeconds}
-          toggleShowChangeTimeForm={setShowChangeTimeForm}
           createdTime={createdTime}
+          toggleShowChangeTimeForm={setShowChangeTimeForm}
         />
         {isModerator ? <BreakoutMessageForm /> : null}
         {isModerator ? <Styled.Separator /> : null}
@@ -231,7 +229,7 @@ const BreakoutRoom: React.FC<BreakoutRoomProps> = ({
                   <Styled.BreakoutRoomList key={`breakoutRoomList-${breakout.breakoutRoomId}`}>
                     <Styled.BreakoutRoomListNameLabel data-test={breakout.shortName} aria-hidden>
                       {breakout.isDefaultName
-                        ? intl.formatMessage(intlMessages.breakoutRoom, { 0: breakout.sequence })
+                        ? intl.formatMessage(intlMessages.breakoutRoom, { roomNumber: breakout.sequence })
                         : breakout.shortName}
                       <Styled.UsersAssignedNumberLabel>
                         (

@@ -52,6 +52,7 @@ public class ApiParams {
     public static final String AUDIO_BRIDGE = "audioBridge";
     public static final String MEETING_KEEP_EVENTS = "meetingKeepEvents";
     public static final String ALLOW_MODS_TO_UNMUTE_USERS = "allowModsToUnmuteUsers";
+    public static final String REQUIRE_USER_CONSENT_BEFORE_UNMUTING = "requireUserConsentBeforeUnmuting";
     public static final String ALLOW_REQUESTS_WITHOUT_SESSION = "allowRequestsWithoutSession";
     public static final String ALLOW_MODS_TO_EJECT_CAMERAS = "allowModsToEjectCameras";
     public static final String NAME = "name";
@@ -75,6 +76,7 @@ public class ApiParams {
     public static final String GROUPS = "groups";
     public static final String DISABLED_FEATURES = "disabledFeatures";
     public static final String PLUGIN_MANIFESTS = "pluginManifests";
+    public static final String PLUGIN_MANIFESTS_FETCH_URL = "pluginManifestsFetchUrl";
     public static final String DISABLED_FEATURES_EXCLUDE = "disabledFeaturesExclude";
     public static final String NOTIFY_RECORDING_IS_ON = "notifyRecordingIsOn";
 

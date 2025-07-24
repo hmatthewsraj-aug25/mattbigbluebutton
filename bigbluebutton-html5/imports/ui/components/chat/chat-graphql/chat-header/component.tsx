@@ -16,13 +16,9 @@ interface ChatHeaderProps {
 }
 
 const intlMessages = defineMessages({
-  closeChatLabel: {
-    id: 'app.chat.closeChatLabel',
-    description: 'aria-label for closing chat button',
-  },
-  hideChatLabel: {
-    id: 'app.chat.hideChatLabel',
-    description: 'aria-label for hiding chat button',
+  genericMinimizePanel: {
+    id: 'app.sidebarContent.minimizePanelLabel',
+    description: 'Generic minimize label for panels',
   },
   messagesTitle: {
     id: 'app.userList.messagesTitle',
@@ -43,13 +39,12 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       isRTL={isRTL}
       data-test="chatTitle"
       title={title}
-      leftButtonProps={{}}
       rightButtonProps={{
         accessKey: HIDE_CHAT_AK,
-        'aria-label': intl.formatMessage(intlMessages.hideChatLabel, { 0: title }),
-        'data-test': 'hideMessagesButton',
+        'aria-label': intl.formatMessage(intlMessages.genericMinimizePanel, { 0: title }),
+        'data-test': isPublicChat ? 'hidePublicChat' : 'hidePrivateChat',
         icon: 'minus',
-        label: intl.formatMessage(intlMessages.hideChatLabel, { 0: title }),
+        label: intl.formatMessage(intlMessages.genericMinimizePanel, { 0: title }),
         onClick: () => {
           updateVisible({ variables: { chatId, visible: false } });
           layoutContextDispatch({
@@ -107,7 +102,6 @@ const ChatHeaderContainer: React.FC = () => {
   }
   const isPublicChat = chatData.chat[0]?.public;
   const title = intl.formatMessage(intlMessages.messagesTitle);
-
   return (
     <>
       <h2 className="sr-only">{title}</h2>

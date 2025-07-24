@@ -10,7 +10,7 @@ import SidebarNavigation from './component';
 import { User } from '/imports/ui/Types/user';
 import { Input, Layout, Output } from '/imports/ui/components/layout/layoutTypes';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
-import useTimer from '/imports/ui/core/hooks/useTImer';
+import useTimer from '/imports/ui/core/hooks/useTimer';
 import { TIMER_ICON, TIMER_LABEL, TIMER_APP_KEY } from '/imports/ui/components/timer/constants';
 import { POLLS_ICON, POLLS_LABEL, POLLS_APP_KEY } from '/imports/ui/components/poll/constants';
 import { ACTIONS, DEVICE_TYPE, PANELS } from '/imports/ui/components/layout/enums';

@@ -1,15 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
-import { useMutation } from '@apollo/client';
 import { Input } from '../layout/layoutTypes';
 import { layoutDispatch, layoutSelectInput } from '../layout/context';
 import { addAlert } from '../screenreader-alert/service';
 import { PANELS, ACTIONS } from '../layout/enums';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
 import { GetHasCurrentPresentationResponse, getHasCurrentPresentation } from './queries';
-import { POLL_CANCEL } from './mutations';
-import { getSplittedQuestionAndOptions, pollTypes, validateInput } from './service';
+import {
+  getSplittedQuestionAndOptions,
+  pollTypes,
+  pollTypesKeys,
+  validateInput,
+} from './service';
 import Toggle from '/imports/ui/components/common/switch/component';
 import Styled from './styles';
 import ResponseChoices from './components/ResponseChoices';
@@ -18,7 +23,10 @@ import PollQuestionArea from './components/PollQuestionArea';
 import LiveResultContainer from './components/LiveResult';
 import Session from '/imports/ui/services/storage/in-memory';
 import useDeduplicatedSubscription from '../../core/hooks/useDeduplicatedSubscription';
+import SessionStorage from '/imports/ui/services/storage/session';
 import { useStorageKey } from '../../services/storage/hooks';
+import QuizAndPollTabSelector from './components/QuizAndPollTabSelector';
+import { useIsQuizEnabled } from '../../services/features';
 
 const intlMessages = defineMessages({
   pollPaneTitle: {
@@ -44,10 +52,6 @@ const intlMessages = defineMessages({
   dragDropPollInstruction: {
     id: 'app.poll.dragDropPollInstruction',
     description: 'instructions for upload poll options via drag and drop',
-  },
-  ariaInputCount: {
-    id: 'app.poll.ariaInputCount',
-    description: 'aria label for custom poll input field',
   },
   customPlaceholder: {
     id: 'app.poll.customPlaceholder',
@@ -236,47 +240,60 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
   hasPoll,
 }) => {
   const POLL_SETTINGS = window.meetingClientSettings.public.poll;
+  const isQuizEnabled = useIsQuizEnabled();
   const ALLOW_CUSTOM_INPUT = POLL_SETTINGS.allowCustomResponseInput;
   const MAX_CUSTOM_FIELDS = POLL_SETTINGS.maxCustom;
-  const [stopPoll] = useMutation(POLL_CANCEL);
 
   const intl = useIntl();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [customInput, setCustomInput] = React.useState(false);
+  const [isQuiz, setIsQuiz] = React.useState(false);
   const [question, setQuestion] = useState<string[] | string>('');
   const [questionAndOptions, setQuestionAndOptions] = useState<string[] | string>('');
-  const [optList, setOptList] = useState<Array<{ val: string }>>([]);
+  const [optList, setOptList] = useState<Array<{key: string, val: string}>>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isMultipleResponse, setIsMultipleResponse] = useState(false);
+  const [multipleResponse, setMultipleResponse] = useState(false);
   const [secretPoll, setSecretPoll] = useState(false);
   const [warning, setWarning] = useState<string | null>('');
   const [isPasting, setIsPasting] = useState(false);
   const [type, setType] = useState<string | null>('');
+  const [correctAnswer, setCorrectAnswer] = useState<{
+    text: string;
+    index: number;
+  }>({ text: '', index: -1 });
 
   const quickPollVariables = useStorageKey('quickPollVariables') as {
-    isMultipleResponse: boolean;
+    multipleResponse: boolean;
     pollType: string;
     question: string;
     secretPoll: boolean;
-    answers: string[]
+    answers: string[];
+    isQuiz: boolean;
+    correctAnswer: string;
   };
 
   useEffect(() => {
     if (quickPollVariables) {
       const {
         answers,
-        isMultipleResponse,
+        multipleResponse,
         pollType,
         question,
         secretPoll,
+        isQuiz,
+        correctAnswer,
       } = quickPollVariables;
       const isCustom = pollType === pollTypes.Custom;
+
+      const questionAndOptionsList = isCustom
+        ? [question, ...answers].join('\n')
+        : '';
 
       setError(null);
       setWarning(null);
       setCustomInput(isCustom);
-      setIsMultipleResponse(isMultipleResponse);
-      setQuestionAndOptions(isCustom ? answers.join('\n') : '');
+      setMultipleResponse(multipleResponse);
+      setQuestionAndOptions(questionAndOptionsList);
       setQuestion(question);
       setSecretPoll(secretPoll);
       setType(
@@ -284,9 +301,14 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           ? pollTypes.Letter
           : pollType,
       );
-
+      setIsQuiz(isQuiz);
+      setCorrectAnswer({
+        text: correctAnswer ?? '',
+        index: answers.indexOf(correctAnswer) ?? -1,
+      });
       if (answers.length) {
-        setOptList(answers.map((answer) => ({ val: answer })));
+        // @ts-ignore
+        setOptList(answers.map((answer) => ({ key: pollTypesKeys[answer] ?? answer, val: answer })));
         return;
       }
 
@@ -296,6 +318,8 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           1: 'A', 2: 'B', 3: 'C', 4: 'D', 5: 'E',
         };
         const optList = Array.from({ length }).map((_, idx) => ({
+          // @ts-ignore
+          key: pollTypesKeys[optionChars[idx + 1]] ?? optionChars[idx + 1],
           val: optionChars[idx + 1],
         }));
         setOptList(optList);
@@ -305,23 +329,44 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
       switch (pollType) {
         case pollTypes.TrueFalse: {
           setOptList([
-            { val: intl.formatMessage(intlMessages.true) },
-            { val: intl.formatMessage(intlMessages.false) },
+            {
+              key: pollTypesKeys.true,
+              val: intl.formatMessage(intlMessages.true),
+            },
+            {
+              key: pollTypesKeys.false,
+              val: intl.formatMessage(intlMessages.false),
+            },
           ]);
           break;
         }
         case pollTypes.YesNo: {
           setOptList([
-            { val: intl.formatMessage(intlMessages.yes) },
-            { val: intl.formatMessage(intlMessages.no) },
+            {
+              key: pollTypesKeys.yes,
+              val: intl.formatMessage(intlMessages.yes),
+            },
+            {
+              key: pollTypesKeys.no,
+              val: intl.formatMessage(intlMessages.no),
+            },
           ]);
           break;
         }
         case pollTypes.YesNoAbstention: {
           setOptList([
-            { val: intl.formatMessage(intlMessages.yes) },
-            { val: intl.formatMessage(intlMessages.no) },
-            { val: intl.formatMessage(intlMessages.abstention) },
+            {
+              key: pollTypesKeys.yes,
+              val: intl.formatMessage(intlMessages.yes),
+            },
+            {
+              key: pollTypesKeys.no,
+              val: intl.formatMessage(intlMessages.no),
+            },
+            {
+              key: pollTypesKeys.abstention,
+              val: intl.formatMessage(intlMessages.abstention),
+            },
           ]);
           break;
         }
@@ -336,6 +381,76 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     Session.removeItem('quickPollVariables');
   }, []);
 
+  const getPollCurrentState = useCallback(() => {
+    return {
+      customInput,
+      question,
+      questionAndOptions,
+      optList,
+      error,
+      multipleResponse,
+      secretPoll,
+      warning,
+      type,
+      isQuiz,
+      correctAnswer,
+    };
+  }, [
+    customInput, question, questionAndOptions, optList,
+    multipleResponse, secretPoll, warning, type, error, isQuiz, correctAnswer,
+  ]);
+
+  useEffect(() => () => {
+    SessionStorage.setItem('pollSavedState', getPollCurrentState());
+  }, [getPollCurrentState]);
+
+  useEffect(() => {
+    const pollSavedState = SessionStorage.getItem('pollSavedState') as {
+      customInput: boolean;
+      question: string[] | string;
+      questionAndOptions: string[] | string;
+      optList: { key: string, val: string }[];
+      error: string;
+      multipleResponse: boolean;
+      secretPoll: boolean;
+      warning: string;
+      type: string;
+      isQuiz: boolean;
+      correctAnswer: {
+        text: string;
+        index: number;
+      };
+    };
+
+    if (pollSavedState) {
+      const {
+        customInput,
+        multipleResponse,
+        optList,
+        error,
+        question,
+        questionAndOptions,
+        secretPoll,
+        type,
+        warning,
+        isQuiz = false,
+        correctAnswer = { text: '', index: -1 },
+      } = pollSavedState;
+
+      setCustomInput(customInput);
+      setMultipleResponse(multipleResponse);
+      setOptList(optList);
+      setError(error);
+      setQuestion(question);
+      setQuestionAndOptions(questionAndOptions);
+      setSecretPoll(secretPoll);
+      setType(type);
+      setWarning(warning);
+      setIsQuiz(isQuiz);
+      setCorrectAnswer(correctAnswer);
+    }
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
@@ -348,7 +463,12 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     const caretStart = e.target.selectionStart ?? 0;
     const caretEnd = e.target.selectionEnd ?? 0;
     let questionAndOptionsList: string[] = [];
-    list[index] = { val: validatedVal };
+    const oldValue = list[index]?.val;
+    list[index] = {
+      // @ts-ignore
+      key: type !== pollTypes.Custom ? pollTypesKeys[validatedVal] ?? validatedVal : '',
+      val: validatedVal,
+    };
 
     if (questionAndOptions.length > 0) {
       const QnO = questionAndOptions as string;
@@ -359,6 +479,24 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     setQuestionAndOptions(questionAndOptionsList.length > 0
       ? questionAndOptionsList.join('\n') : '');
     setError(clearError ? null : error);
+
+    if (
+      // should be the same index to avoid duplicate answers
+      correctAnswer.index === index
+      // Validated value should not be empty
+      // and correct answer should match the old value
+      && (validatedVal && correctAnswer.text === oldValue)) {
+      setCorrectAnswer({
+        text: validatedVal,
+        index,
+      });
+      // if the correct answer is empty should be invalidated
+    } else if (correctAnswer.index === index && validatedVal === '') {
+      setCorrectAnswer({
+        text: '',
+        index: -1,
+      });
+    }
 
     input.focus();
     input.selectionStart = caretStart - charsRemovedCount;
@@ -419,11 +557,11 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
       ? questionAndOptionsList.join('\n') : '');
     setWarning(clearWarning ? null : warning);
     addAlert(`${intl.formatMessage(intlMessages.removePollOpt,
-      { 0: removed.val || intl.formatMessage(intlMessages.emptyPollOpt) })}`);
+      { option: removed.val || intl.formatMessage(intlMessages.emptyPollOpt) })}`);
   };
 
   const handleAddOption = () => {
-    setOptList([...optList, { val: '' }]);
+    setOptList([...optList, { key: '', val: '' }]);
   };
 
   const handleToggle = () => {
@@ -436,22 +574,29 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     if (optList.length === 0) {
       setType(pollTypes.Letter);
       setOptList([
-        { val: '' },
-        { val: '' },
-        { val: '' },
-        { val: '' },
+        { key: '', val: '' },
+        { key: '', val: '' },
+        { key: '', val: '' },
+        { key: '', val: '' },
       ]);
     }
   };
 
-  const toggleIsMultipleResponse = () => {
-    setIsMultipleResponse((prev) => !prev);
-    return !isMultipleResponse;
+  const toggleMultipleResponse = () => {
+    setMultipleResponse((prev) => !prev);
+    return !multipleResponse;
   };
 
   useEffect(() => {
+    const cps = Session.getItem('customPollShortcut');
+    if (cps) {
+      setType(pollTypes.Custom);
+      setCustomInput(!!cps);
+    }
+
     return () => {
       Session.setItem('secretPoll', false);
+      Session.setItem('customPollShortcut', false);
     };
   }, []);
 
@@ -459,12 +604,39 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
     if (textareaRef.current) {
       textareaRef.current?.focus();
     }
-  }, [textareaRef]);
+  }, [textareaRef, customInput]);
 
   const pollOptions = () => {
     if (hasPoll) return <LiveResultContainer />;
     return (
       <>
+        {
+          isQuizEnabled && (
+            <QuizAndPollTabSelector
+              isQuiz={isQuiz}
+              onTabChange={(isQuiz: boolean) => {
+                setIsQuiz(isQuiz);
+                if (isQuiz) {
+                  setMultipleResponse(false);
+                  setSecretPoll(false);
+                  if (type === pollTypes.Response) {
+                    setType(pollTypes.TrueFalse);
+                    setOptList([
+                      {
+                        key: pollTypesKeys.true,
+                        val: intl.formatMessage(intlMessages.true),
+                      },
+                      {
+                        key: pollTypesKeys.false,
+                        val: intl.formatMessage(intlMessages.false),
+                      },
+                    ]);
+                  }
+                }
+              }}
+            />
+          )
+        }
         {
           ALLOW_CUSTOM_INPUT && (
             <Styled.CustomInputRow>
@@ -521,11 +693,13 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           type={type}
           setOptList={setOptList}
           setType={setType}
+          isQuiz={isQuiz}
+          setCorrectAnswer={setCorrectAnswer}
         />
         <ResponseChoices
           type={type}
-          toggleIsMultipleResponse={toggleIsMultipleResponse}
-          isMultipleResponse={isMultipleResponse}
+          toggleMultipleResponse={toggleMultipleResponse}
+          multipleResponse={multipleResponse}
           optList={optList}
           handleAddOption={handleAddOption}
           secretPoll={secretPoll}
@@ -537,6 +711,11 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
             setOptList([]);
             setQuestion('');
             setQuestionAndOptions('');
+            setCorrectAnswer({ text: '', index: -1 });
+            setIsQuiz(false);
+            setCustomInput(false);
+            setSecretPoll(false);
+            setMultipleResponse(false);
           }}
           handleToggle={handleToggle}
           error={error}
@@ -544,6 +723,9 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
           handleRemoveOption={handleRemoveOption}
           customInput={customInput}
           questionAndOptions={questionAndOptions}
+          isQuiz={isQuiz}
+          correctAnswer={correctAnswer}
+          setCorrectAnswer={setCorrectAnswer}
         />
       </>
     );
@@ -554,22 +736,6 @@ const PollCreationPanel: React.FC<PollCreationPanelProps> = ({
       <Styled.HeaderContainer
         data-test="pollPaneTitle"
         title={intl.formatMessage(intlMessages.pollPaneTitle)}
-        leftButtonProps={{
-          'aria-label': intl.formatMessage(intlMessages.hidePollDesc),
-          'data-test': 'hidePollDesc',
-          label: intl.formatMessage(intlMessages.pollPaneTitle),
-          onClick: () => {
-            if (hasPoll) stopPoll();
-            layoutContextDispatch({
-              type: ACTIONS.SET_SIDEBAR_CONTENT_IS_OPEN,
-              value: false,
-            });
-            layoutContextDispatch({
-              type: ACTIONS.SET_SIDEBAR_CONTENT_PANEL,
-              value: PANELS.NONE,
-            });
-          },
-        }}
         rightButtonProps={{
           'aria-label': intl.formatMessage(intlMessages.minimize, { 0: intl.formatMessage(intlMessages.pollPaneTitle) }),
           'data-test': 'minimizePolling',

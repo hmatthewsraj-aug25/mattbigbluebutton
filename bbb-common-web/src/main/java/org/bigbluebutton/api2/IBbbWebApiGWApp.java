@@ -57,6 +57,7 @@ public interface IBbbWebApiGWApp {
                      Integer endWhenNoModeratorDelayInMinutes,
                      Boolean muteOnStart,
                      Boolean allowModsToUnmuteUsers,
+                     Boolean requireUserConsentBeforeUnmuting,
                      Boolean allowModsToEjectCameras,
                      Boolean keepEvents,
                      BreakoutRoomsParams breakoutParams,
@@ -73,6 +74,7 @@ public interface IBbbWebApiGWApp {
                      String presentationUploadExternalDescription,
                      String presentationUploadExternalUrl,
                      Map<String, Object> plugins,
+                     String html5PluginSdkVersion,
                      String overrideClientSettings);
 
   void registerUser(String meetingID, String internalUserId, String fullname, String firstName, String lastName, String role,

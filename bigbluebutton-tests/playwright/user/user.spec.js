@@ -217,7 +217,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
         await lockViewers.lockSeeOtherViewersUserList();
       });
 
-      test('Lock see other viewers annotations', { tag: '@flaky' }, async ({ browser, context, page }) => {
+      test('Lock see other viewers annotations', async ({ browser, context, page }) => {
         const lockViewers = new LockViewers(browser, context);
         await lockViewers.initPages(page);
         await lockViewers.lockSeeOtherViewersAnnotations();
@@ -250,6 +250,13 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
       await multiusers.initModPage2(false);
       await multiusers.initUserPage(false);
       await multiusers.muteAllUsersExceptPresenter();
+    });
+
+    test('Clear all status icon', async ({ browser, context, page }) => {
+      const multiusers = new MultiUsers(browser, context);
+      await multiusers.initModPage(page, true);
+      await multiusers.initModPage2(true);
+      await multiusers.clearAllStatusIcon();
     });
   });
 
