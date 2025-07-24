@@ -116,7 +116,7 @@ const PushLayoutEngine = (props) => {
     const enforcedLayout = LAYOUT_TYPE[enforceLayoutResult] || null;
 
     Settings.layout.selectedLayout = enforcedLayout || changeLayout || defaultLayout
-      || (pushLayoutMeeting ? (meetingLayout || currentLayout) : (currentLayout));
+      || meetingLayout || currentLayout;
 
     if (isMobile()) {
       currentLayout = currentLayout === 'custom' ? 'smart' : currentLayout;
@@ -422,8 +422,6 @@ const PushLayoutEngineContainer = (props) => {
     isModerator: user.isModerator,
     presenter: user.presenter,
   }));
-  const isModerator = currentUserData?.isModerator;
-  const isPresenter = currentUserData?.presenter;
 
   const presentationVideoRate = calculatePresentationVideoRate(cameraDockOutput);
 
@@ -435,6 +433,10 @@ const PushLayoutEngineContainer = (props) => {
     presentationInput,
     layoutSettings,
   );
+
+  if (!currentUserData || currentUserData === null) return null;
+  const isModerator = currentUserData?.isModerator;
+  const isPresenter = currentUserData?.presenter;
 
   const validateEnforceLayout = (currUser) => {
     const layoutTypes = Object.keys(LAYOUT_TYPE);
