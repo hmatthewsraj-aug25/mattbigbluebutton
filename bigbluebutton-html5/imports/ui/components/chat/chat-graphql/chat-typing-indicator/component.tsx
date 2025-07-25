@@ -219,8 +219,8 @@ const TypingIndicatorContainer: React.FC = () => {
   const typingUsers = privateTypingUsers.concat(publicTypingUsers);
 
   const typingUsersArray = typingUsers
-    .filter((user: { user: object; userId: string; }) => user?.user && user?.userId !== currentUser?.userId)
-    .map((user: { user: object; }) => user.user);
+    .filter((userTyping: { userId: string | null; }) => userTyping?.userId !== currentUser?.userId)
+    .map((user: { user: object | null; }) => user.user ?? { name: '' });
 
   if (locked || !TYPING_INDICATOR_ENABLED || !typingUsers) return null;
 

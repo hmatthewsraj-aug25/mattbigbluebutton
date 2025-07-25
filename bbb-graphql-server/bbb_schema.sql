@@ -1015,10 +1015,24 @@ CREATE UNLOGGED TABLE "chat" (
 	"chatId"  varchar(100),
 	"access" varchar(20),
 	"createdBy" varchar(25),
+	"typingIndicatorShowNames" boolean,
 	"totalMessages" integer,
 	CONSTRAINT "chat_pkey" PRIMARY KEY ("meetingId", "chatId")
 );
 CREATE INDEX "idx_chat_pk_reverse" ON "chat"("chatId","meetingId");
+
+--Populate typingIndicatorShowNames
+CREATE OR REPLACE FUNCTION "update_chat_typingIndicatorShowNames"() RETURNS TRIGGER AS $$
+BEGIN
+    SELECT coalesce(("clientSettingsJson"->'public'->'chat'->'typingIndicator'->'showNames')::boolean,true) INTO NEW."typingIndicatorShowNames"
+    from "meeting_clientSettings" mcs
+    where mcs."meetingId" = NEW."meetingId";
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "trigger_update_chat_typingIndicatorShowNames" BEFORE INSERT ON "chat"
+FOR EACH ROW EXECUTE FUNCTION "update_chat_typingIndicatorShowNames"();
 
 CREATE UNLOGGED TABLE "chat_user" (
 	"chatId" varchar(100),
@@ -1065,11 +1079,15 @@ CREATE INDEX "idx_chat_user_typing_private" ON "chat_user"("meetingId", "userId"
         AND "visible" is true;
 
 CREATE OR REPLACE VIEW "v_user_typing_public" AS
-SELECT "meetingId", "chatId", "userId", "lastTypingAt", "startedTypingAt",
+SELECT  chat_user."meetingId",
+        chat_user."chatId",
+        case when chat."typingIndicatorShowNames" then chat_user."userId" else null end "userId",
+        chat_user."lastTypingAt", chat_user."startedTypingAt",
 CASE WHEN "lastTypingAt" > current_timestamp - INTERVAL '5 seconds' THEN true ELSE false END AS "isCurrentlyTyping"
 FROM chat_user
-WHERE "chatId" = 'MAIN-PUBLIC-GROUP-CHAT'
-AND "lastTypingAt" is not null;
+join chat on chat."meetingId" = chat_user."meetingId" and chat."chatId" = chat_user."chatId"
+WHERE chat_user."chatId" = 'MAIN-PUBLIC-GROUP-CHAT'
+AND chat_user."lastTypingAt" is not null;
 
 CREATE OR REPLACE VIEW "v_user_typing_private" AS
 SELECT chat_user."meetingId", chat_user."chatId", chat_user."userId" as "queryUserId", chat_with."userId", chat_with."lastTypingAt", chat_with."startedTypingAt",
