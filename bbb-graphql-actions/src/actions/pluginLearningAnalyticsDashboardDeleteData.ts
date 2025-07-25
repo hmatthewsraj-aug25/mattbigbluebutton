@@ -5,17 +5,17 @@ export default function buildRedisMessage(sessionVariables: Record<string, unkno
   throwErrorIfInvalidInput(input,
     [
       {name: 'pluginName', type: 'string', required: true},
-      {name: 'genericDataForLearningAnalyticsDashboard', type: 'json', required: true},
+      {name: 'dataForLearningAnalyticsDashboard', type: 'json', required: true},
       {name: 'targetUserId', type: 'string', required: true},
     ]
   )
 
 
-  const genericDataForLearningAnalyticsDashboard = input[
-    'genericDataForLearningAnalyticsDashboard'
+  const dataForLearningAnalyticsDashboard = input[
+    'dataForLearningAnalyticsDashboard'
   ] as Record<string, unknown>;
-  if(genericDataForLearningAnalyticsDashboard) {
-    throwErrorIfInvalidInput(genericDataForLearningAnalyticsDashboard,
+  if(dataForLearningAnalyticsDashboard) {
+    throwErrorIfInvalidInput(dataForLearningAnalyticsDashboard,
         [
           {name: 'cardTitle', type: 'string', required: true},
           {name: 'columnTitle', type: 'string', required: true},
@@ -23,7 +23,7 @@ export default function buildRedisMessage(sessionVariables: Record<string, unkno
     )
   }
 
-  const eventName = `PluginLearningAnalyticsDashboardDeleteGenericDataMsg`;
+  const eventName = `PluginLearningAnalyticsDashboardDeleteDataMsg`;
 
   const routing = {
     meetingId: sessionVariables['x-hasura-meetingid'] as String,
@@ -38,7 +38,7 @@ export default function buildRedisMessage(sessionVariables: Record<string, unkno
 
   const body = {
     pluginName: input.pluginName,
-    genericDataForLearningAnalyticsDashboard: input.genericDataForLearningAnalyticsDashboard,
+    dataForLearningAnalyticsDashboard: input.dataForLearningAnalyticsDashboard,
     targetUserId: input.targetUserId,
   };
 

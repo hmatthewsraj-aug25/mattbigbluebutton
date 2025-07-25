@@ -23,7 +23,7 @@ case class Meeting(
   downloadSessionDataEnabled: Boolean,
   other: Map[String, String] = Map(),
   users: Map[String, User] = Map(),
-  genericDataTitles: Vector[String],
+  pluginDataTitles: Vector[String],
   polls: Map[String, Poll] = Map(),
   screenshares: Vector[Screenshare] = Vector(),
   presentationSlides: Vector[PresentationSlide] = Vector(),
@@ -41,7 +41,7 @@ case class User(
                  avatar:             String = null,
                  currentIntId:       String = null,
                  answers:            Map[String,Vector[String]] = Map(),
-                 genericData:        Map[String, Vector[GenericData]] = Map(),
+                 pluginData:        Map[String, Vector[PluginData]] = Map(),
                  talk:               Talk = Talk(),
                  reactions:          Vector[Reaction] = Vector(),
                  raiseHand:          Vector[Long] = Vector(),
@@ -75,7 +75,7 @@ case class Poll(
   createdOn:  Long = System.currentTimeMillis(),
 )
 
-case class GenericData(
+case class PluginData(
   columnTitle: String,
   value: String,
 )
@@ -177,10 +177,10 @@ class LearningDashboardActor(
       case m: UserTalkingVoiceEvtMsg                => handleUserTalkingVoiceEvtMsg(m)
 
       // Plugin
-      case m: PluginLearningAnalyticsDashboardSendGenericDataMsg =>
-        handlePluginLearningAnalyticsDashboardSendGenericDataMsg(m)
-      case m: PluginLearningAnalyticsDashboardDeleteGenericDataMsg =>
-        handlePluginLearningAnalyticsDashboardDeleteGenericDataMsg(m)
+      case m: PluginLearningAnalyticsDashboardSendDataMsg =>
+        handlePluginLearningAnalyticsDashboardSendPluginDataMsg(m)
+      case m: PluginLearningAnalyticsDashboardDeleteDataMsg =>
+        handlePluginLearningAnalyticsDashboardDeletePluginDataMsg(m)
 
       // Screenshare
       case m: ScreenshareRtmpBroadcastStartedEvtMsg => handleScreenshareRtmpBroadcastStartedEvtMsg(m)
@@ -658,80 +658,80 @@ class LearningDashboardActor(
     }
   }
 
-  private def handlePluginLearningAnalyticsDashboardSendGenericDataMsg(msg: PluginLearningAnalyticsDashboardSendGenericDataMsg): Unit = {
+  private def handlePluginLearningAnalyticsDashboardSendPluginDataMsg(msg: PluginLearningAnalyticsDashboardSendDataMsg): Unit = {
     val targetUserId: String = if (msg.body.targetUserId.isEmpty) msg.header.userId else msg.body.targetUserId
 
     for {
       meeting <- meetings.values.find(m => m.intId == msg.header.meetingId)
       fromUser <- findUserByIntId(meeting, msg.header.userId)
-      toUser <- findUserByIntId(meeting, targetUserId)
+      targetUser <- findUserByIntId(meeting, targetUserId)
     } yield {
 
       // Only moderators can alter learning-dashboard data from different user
       if (targetUserId != msg.header.userId && !fromUser.isModerator) {
         return
       }
-      val currentUserGenericData = toUser.genericData.getOrElse(msg.body.genericDataForLearningAnalyticsDashboard.cardTitle, Vector())
-      val newGenericDataEntry = GenericData(msg.body.genericDataForLearningAnalyticsDashboard.columnTitle, msg.body.genericDataForLearningAnalyticsDashboard.value)
-      val updatedUser = toUser.copy(genericData = toUser.genericData + (msg.body.genericDataForLearningAnalyticsDashboard.cardTitle -> (currentUserGenericData :+ newGenericDataEntry)))
+      val currentUserPluginData = targetUser.pluginData.getOrElse(msg.body.dataForLearningAnalyticsDashboard.cardTitle, Vector())
+      val newPluginDataEntry = PluginData(msg.body.dataForLearningAnalyticsDashboard.columnTitle, msg.body.dataForLearningAnalyticsDashboard.value)
+      val updatedUser = targetUser.copy(pluginData = targetUser.pluginData + (msg.body.dataForLearningAnalyticsDashboard.cardTitle -> (currentUserPluginData :+ newPluginDataEntry)))
 
-      val updatedGenericDataTitles = if(!meeting.genericDataTitles.contains(msg.body.genericDataForLearningAnalyticsDashboard.cardTitle)) {
-        meeting.genericDataTitles :+ msg.body.genericDataForLearningAnalyticsDashboard.cardTitle
+      val updatedPluginDataTitles = if(!meeting.pluginDataTitles.contains(msg.body.dataForLearningAnalyticsDashboard.cardTitle)) {
+        meeting.pluginDataTitles :+ msg.body.dataForLearningAnalyticsDashboard.cardTitle
       } else {
-        meeting.genericDataTitles
+        meeting.pluginDataTitles
       }
 
-      val updatedMeeting = meeting.copy(users = meeting.users + (updatedUser.userKey -> updatedUser), genericDataTitles = updatedGenericDataTitles)
+      val updatedMeeting = meeting.copy(users = meeting.users + (updatedUser.userKey -> updatedUser), pluginDataTitles = updatedPluginDataTitles)
 
       meetings += (updatedMeeting.intId -> updatedMeeting)
-      log.debug("New generic data received from a plugin '{}': {}", msg.body.pluginName,msg.body.genericDataForLearningAnalyticsDashboard)
+      log.debug("New generic data received from a plugin '{}': {}", msg.body.pluginName,msg.body.dataForLearningAnalyticsDashboard)
     }
   }
 
-  private def handlePluginLearningAnalyticsDashboardDeleteGenericDataMsg(msg: PluginLearningAnalyticsDashboardDeleteGenericDataMsg): Unit = {
+  private def handlePluginLearningAnalyticsDashboardDeletePluginDataMsg(msg: PluginLearningAnalyticsDashboardDeleteDataMsg): Unit = {
     val targetUserId: String = if (msg.body.targetUserId.isEmpty) msg.header.userId else msg.body.targetUserId
 
     for {
       meeting <- meetings.values.find(m => m.intId == msg.header.meetingId)
       fromUser <- findUserByIntId(meeting, msg.header.userId)
-      toUser <- findUserByIntId(meeting, targetUserId)
+      targetUser <- findUserByIntId(meeting, targetUserId)
     } yield {
       // Only moderators can alter learning-dashboard data from different user
       if (targetUserId != msg.header.userId && !fromUser.isModerator) {
         return
       }
 
-      val cardTitle = msg.body.genericDataForLearningAnalyticsDashboard.cardTitle
-      val columnTitle = msg.body.genericDataForLearningAnalyticsDashboard.columnTitle
+      val cardTitle = msg.body.dataForLearningAnalyticsDashboard.cardTitle
+      val columnTitle = msg.body.dataForLearningAnalyticsDashboard.columnTitle
 
-      val currentGenericData = toUser.genericData.getOrElse(cardTitle, Vector())
+      val currentPluginData = targetUser.pluginData.getOrElse(cardTitle, Vector())
 
       // Remove entry matching columnTitle
-      val filteredGenericData = currentGenericData.filterNot(_.columnTitle == columnTitle)
+      val filteredPluginData = currentPluginData.filterNot(_.columnTitle == columnTitle)
 
-      val updatedGenericData = if (filteredGenericData.nonEmpty) {
-        toUser.genericData + (cardTitle -> filteredGenericData)
+      val updatedPluginData = if (filteredPluginData.nonEmpty) {
+        targetUser.pluginData + (cardTitle -> filteredPluginData)
       } else {
         // remove the whole card if empty
-        toUser.genericData - cardTitle
+        targetUser.pluginData - cardTitle
       }
 
-      val updatedUser = toUser.copy(genericData = updatedGenericData)
+      val updatedUser = targetUser.copy(pluginData = updatedPluginData)
 
-      val updatedGenericDataTitles =
-        if (filteredGenericData.nonEmpty) {
-          meeting.genericDataTitles
+      val updatedPluginDataTitles =
+        if (filteredPluginData.nonEmpty) {
+          meeting.pluginDataTitles
         } else {
-          meeting.genericDataTitles.filterNot(_ == cardTitle) // remove title if card is gone
+          meeting.pluginDataTitles.filterNot(_ == cardTitle) // remove title if card is gone
         }
 
       val updatedMeeting = meeting.copy(
         users = meeting.users + (updatedUser.userKey -> updatedUser),
-        genericDataTitles = updatedGenericDataTitles
+        pluginDataTitles = updatedPluginDataTitles
       )
 
       meetings += (updatedMeeting.intId -> updatedMeeting)
-      log.debug("Generic data deleted from plugin '{}': {}", msg.body.pluginName, msg.body.genericDataForLearningAnalyticsDashboard)
+      log.debug("Generic data deleted for plugin [{}]: {}", msg.body.pluginName, msg.body.dataForLearningAnalyticsDashboard)
     }
 
   }
@@ -753,7 +753,7 @@ class LearningDashboardActor(
         msg.body.props.meetingProp.extId,
         msg.body.props.meetingProp.name,
         downloadSessionDataEnabled = !msg.body.props.meetingProp.disabledFeatures.contains("learningDashboardDownloadSessionData"),
-        genericDataTitles = Vector(),
+        pluginDataTitles = Vector(),
         other = Map(
           "learning-dashboard-learn-more-link"  -> msg.body.props.metadataProp.metadata.get("learning-dashboard-learn-more-link").getOrElse(""),
           "learning-dashboard-feedback-link" -> msg.body.props.metadataProp.metadata.get("learning-dashboard-feedback-link").getOrElse("")

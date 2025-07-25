@@ -354,17 +354,17 @@ type Mutation {
 }
 
 type Mutation {
-  pluginLearningAnalyticsDashboardSendGenericData(
+  pluginLearningAnalyticsDashboardSendData(
     targetUserId: String!
-    genericDataForLearningAnalyticsDashboard: json!
+    dataForLearningAnalyticsDashboard: json!
     pluginName: String!
   ): Boolean
 }
 
 type Mutation {
-  PluginLearningAnalyticsDashboardDeleteGenericData(
+  PluginLearningAnalyticsDashboardDeleteData(
     targetUserId: String!
-    genericDataForLearningAnalyticsDashboard: json!
+    dataForLearningAnalyticsDashboard: json!
     pluginName: String!
   ): Boolean
 }

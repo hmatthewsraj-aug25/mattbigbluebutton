@@ -1,20 +1,20 @@
 import { gql } from '@apollo/client';
 
-export const PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_GENERIC_DATA_MUTATION = gql`
-  mutation PluginLearningAnalyticsDashboardSendGenericData($pluginName: String!,
-    $genericDataForLearningAnalyticsDashboard: json!, $targetUserId: String!) {
-      pluginLearningAnalyticsDashboardSendGenericData(
-        genericDataForLearningAnalyticsDashboard: $genericDataForLearningAnalyticsDashboard,
+export const PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_DATA_MUTATION = gql`
+  mutation PluginLearningAnalyticsDashboardSendData($pluginName: String!,
+    $dataForLearningAnalyticsDashboard: json!, $targetUserId: String!) {
+      pluginLearningAnalyticsDashboardSendData(
+        dataForLearningAnalyticsDashboard: $dataForLearningAnalyticsDashboard,
         pluginName: $pluginName, targetUserId: $targetUserId
       )
     }
 `;
 
-export const PLUGIN_LEARNING_ANALYTICS_DASHBOARD_DELETE_GENERIC_DATA_MUTATION = gql`
-  mutation PluginLearningAnalyticsDashboardDeleteGenericData($pluginName: String!,
-    $genericDataForLearningAnalyticsDashboard: json!, $targetUserId: String!) {
-      pluginLearningAnalyticsDashboardDeleteGenericData(
-        genericDataForLearningAnalyticsDashboard: $genericDataForLearningAnalyticsDashboard,
+export const PLUGIN_LEARNING_ANALYTICS_DASHBOARD_DELETE_DATA_MUTATION = gql`
+  mutation PluginLearningAnalyticsDashboardDeleteData($pluginName: String!,
+    $dataForLearningAnalyticsDashboard: json!, $targetUserId: String!) {
+      pluginLearningAnalyticsDashboardDeleteData(
+        dataForLearningAnalyticsDashboard: $dataForLearningAnalyticsDashboard,
         pluginName: $pluginName, targetUserId: $targetUserId
       )
     }

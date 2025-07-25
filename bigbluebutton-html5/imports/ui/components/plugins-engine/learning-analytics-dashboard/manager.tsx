@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { DeleteGenericDataArguments, LearningAnalyticsDashboardEventDetails, UpsertGenericDataArguments } from 'bigbluebutton-html-plugin-sdk/dist/cjs/learning-analytics-dashboard/types';
+import { DeleteDataArguments, LearningAnalyticsDashboardEventDetails, UpsertDataArguments } from 'bigbluebutton-html-plugin-sdk/dist/cjs/learning-analytics-dashboard/types';
 import { LearningAnalyticsDashboardEvents } from 'bigbluebutton-html-plugin-sdk/dist/cjs/learning-analytics-dashboard/enums';
 import { useMutation } from '@apollo/client';
 import {
-  PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_GENERIC_DATA_MUTATION,
-  PLUGIN_LEARNING_ANALYTICS_DASHBOARD_DELETE_GENERIC_DATA_MUTATION,
+  PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_DATA_MUTATION,
+  PLUGIN_LEARNING_ANALYTICS_DASHBOARD_DELETE_DATA_MUTATION,
 } from './mutations';
 import { PluginLearningAnalyticsDashboardManagerProps } from './types';
 
@@ -14,54 +14,55 @@ const PluginLearningAnalyticsDashboardManager: React.ElementType<
   ) => {
     const { pluginName } = props;
 
-    const [sendGenericDataToLearningAnalyticsDashboard] = useMutation(
-      PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_GENERIC_DATA_MUTATION,
+    const [sendDataToLearningAnalyticsDashboard] = useMutation(
+      PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_DATA_MUTATION,
     );
 
-    const [deleteGenericDataFromLearningAnalyticsDashboard] = useMutation(
-      PLUGIN_LEARNING_ANALYTICS_DASHBOARD_DELETE_GENERIC_DATA_MUTATION,
+    const [deleteDataFromLearningAnalyticsDashboard] = useMutation(
+      PLUGIN_LEARNING_ANALYTICS_DASHBOARD_DELETE_DATA_MUTATION,
     );
 
-    const handleSendGenericDataForLearningAnalyticsDashboard: EventListener = (
+    // This flow will be deprecated
+    const handleSendDataForLearningAnalyticsDashboard: EventListener = (
     (event: CustomEvent<LearningAnalyticsDashboardEventDetails>) => {
       if (event.detail.pluginName === pluginName) {
         const eventDetails = event.detail as LearningAnalyticsDashboardEventDetails;
-        sendGenericDataToLearningAnalyticsDashboard({
+        sendDataToLearningAnalyticsDashboard({
           variables: {
             pluginName: eventDetails.pluginName,
-            genericDataForLearningAnalyticsDashboard: eventDetails.data,
+            dataForLearningAnalyticsDashboard: eventDetails.data,
             targetUserId: '',
           },
         });
       }
     }) as EventListener;
 
-    const handleUpsertGenericDataForLearningAnalyticsDashboard: EventListener = (
+    const handleUpsertDataForLearningAnalyticsDashboard: EventListener = (
     (event: CustomEvent<LearningAnalyticsDashboardEventDetails>) => {
       if (event.detail.pluginName === pluginName) {
         const eventDetails = event.detail as LearningAnalyticsDashboardEventDetails;
-        const dataToBeSent = eventDetails.data as UpsertGenericDataArguments;
+        const dataToBeSent = eventDetails.data as UpsertDataArguments;
         const targetUserId = eventDetails.targetUserId || '';
-        sendGenericDataToLearningAnalyticsDashboard({
+        sendDataToLearningAnalyticsDashboard({
           variables: {
             pluginName: eventDetails.pluginName,
-            genericDataForLearningAnalyticsDashboard: dataToBeSent,
+            dataForLearningAnalyticsDashboard: dataToBeSent,
             targetUserId,
           },
         });
       }
     }) as EventListener;
 
-    const handleDeleteGenericDataFromLearningAnalyticsDashboard: EventListener = (
+    const handleDeleteDataFromLearningAnalyticsDashboard: EventListener = (
     (event: CustomEvent<LearningAnalyticsDashboardEventDetails>) => {
       if (event.detail.pluginName === pluginName) {
         const eventDetails = event.detail as LearningAnalyticsDashboardEventDetails;
-        const dataToBeSent = eventDetails.data as DeleteGenericDataArguments;
+        const dataToBeSent = eventDetails.data as DeleteDataArguments;
         const targetUserId = eventDetails.targetUserId || '';
-        deleteGenericDataFromLearningAnalyticsDashboard({
+        deleteDataFromLearningAnalyticsDashboard({
           variables: {
             pluginName: eventDetails.pluginName,
-            genericDataForLearningAnalyticsDashboard: dataToBeSent,
+            dataForLearningAnalyticsDashboard: dataToBeSent,
             targetUserId,
           },
         });
@@ -70,26 +71,26 @@ const PluginLearningAnalyticsDashboardManager: React.ElementType<
 
     useEffect(() => {
       window.addEventListener(
-        LearningAnalyticsDashboardEvents.UPSERT_GENERIC_DATA_SENT, handleUpsertGenericDataForLearningAnalyticsDashboard,
+        LearningAnalyticsDashboardEvents.UPSERT_DATA_COMMAND_SENT, handleUpsertDataForLearningAnalyticsDashboard,
       );
       window.addEventListener(
-        LearningAnalyticsDashboardEvents.DELETE_GENERIC_DATA_SENT,
-        handleDeleteGenericDataFromLearningAnalyticsDashboard,
+        LearningAnalyticsDashboardEvents.DELETE_DATA_COMMAND_SENT,
+        handleDeleteDataFromLearningAnalyticsDashboard,
       );
       window.addEventListener(
-        LearningAnalyticsDashboardEvents.GENERIC_DATA_SENT, handleSendGenericDataForLearningAnalyticsDashboard,
+        LearningAnalyticsDashboardEvents.GENERIC_DATA_SENT, handleSendDataForLearningAnalyticsDashboard,
       );
       return () => {
         window.removeEventListener(
-          LearningAnalyticsDashboardEvents.UPSERT_GENERIC_DATA_SENT,
-          handleUpsertGenericDataForLearningAnalyticsDashboard,
+          LearningAnalyticsDashboardEvents.UPSERT_DATA_COMMAND_SENT,
+          handleUpsertDataForLearningAnalyticsDashboard,
         );
         window.removeEventListener(
-          LearningAnalyticsDashboardEvents.DELETE_GENERIC_DATA_SENT,
-          handleDeleteGenericDataFromLearningAnalyticsDashboard,
+          LearningAnalyticsDashboardEvents.DELETE_DATA_COMMAND_SENT,
+          handleDeleteDataFromLearningAnalyticsDashboard,
         );
         window.removeEventListener(
-          LearningAnalyticsDashboardEvents.GENERIC_DATA_SENT, handleSendGenericDataForLearningAnalyticsDashboard,
+          LearningAnalyticsDashboardEvents.GENERIC_DATA_SENT, handleSendDataForLearningAnalyticsDashboard,
         );
       };
     }, []);
