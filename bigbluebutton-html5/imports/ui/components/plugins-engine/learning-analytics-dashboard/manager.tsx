@@ -3,7 +3,7 @@ import { DeleteDataArguments, LearningAnalyticsDashboardEventDetails, UpsertData
 import { LearningAnalyticsDashboardEvents } from 'bigbluebutton-html-plugin-sdk/dist/cjs/learning-analytics-dashboard/enums';
 import { useMutation } from '@apollo/client';
 import {
-  PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_DATA_MUTATION,
+  PLUGIN_LEARNING_ANALYTICS_DASHBOARD_UPSERT_DATA_MUTATION,
   PLUGIN_LEARNING_ANALYTICS_DASHBOARD_DELETE_DATA_MUTATION,
 } from './mutations';
 import { PluginLearningAnalyticsDashboardManagerProps } from './types';
@@ -14,8 +14,8 @@ const PluginLearningAnalyticsDashboardManager: React.ElementType<
   ) => {
     const { pluginName } = props;
 
-    const [sendDataToLearningAnalyticsDashboard] = useMutation(
-      PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_DATA_MUTATION,
+    const [upsertDataToLearningAnalyticsDashboard] = useMutation(
+      PLUGIN_LEARNING_ANALYTICS_DASHBOARD_UPSERT_DATA_MUTATION,
     );
 
     const [deleteDataFromLearningAnalyticsDashboard] = useMutation(
@@ -27,7 +27,7 @@ const PluginLearningAnalyticsDashboardManager: React.ElementType<
     (event: CustomEvent<LearningAnalyticsDashboardEventDetails>) => {
       if (event.detail.pluginName === pluginName) {
         const eventDetails = event.detail as LearningAnalyticsDashboardEventDetails;
-        sendDataToLearningAnalyticsDashboard({
+        upsertDataToLearningAnalyticsDashboard({
           variables: {
             pluginName: eventDetails.pluginName,
             dataForLearningAnalyticsDashboard: eventDetails.data,
@@ -43,7 +43,7 @@ const PluginLearningAnalyticsDashboardManager: React.ElementType<
         const eventDetails = event.detail as LearningAnalyticsDashboardEventDetails;
         const dataToBeSent = eventDetails.data as UpsertDataArguments;
         const targetUserId = eventDetails.targetUserId || '';
-        sendDataToLearningAnalyticsDashboard({
+        upsertDataToLearningAnalyticsDashboard({
           variables: {
             pluginName: eventDetails.pluginName,
             dataForLearningAnalyticsDashboard: dataToBeSent,

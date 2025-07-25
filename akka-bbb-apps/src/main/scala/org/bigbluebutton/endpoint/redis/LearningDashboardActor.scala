@@ -177,7 +177,7 @@ class LearningDashboardActor(
       case m: UserTalkingVoiceEvtMsg                => handleUserTalkingVoiceEvtMsg(m)
 
       // Plugin
-      case m: PluginLearningAnalyticsDashboardSendDataMsg =>
+      case m: PluginLearningAnalyticsDashboardUpsertDataMsg =>
         handlePluginLearningAnalyticsDashboardSendPluginDataMsg(m)
       case m: PluginLearningAnalyticsDashboardDeleteDataMsg =>
         handlePluginLearningAnalyticsDashboardDeletePluginDataMsg(m)
@@ -658,7 +658,16 @@ class LearningDashboardActor(
     }
   }
 
-  private def handlePluginLearningAnalyticsDashboardSendPluginDataMsg(msg: PluginLearningAnalyticsDashboardSendDataMsg): Unit = {
+  private def updatePluginDataInLadHelper(meeting: Meeting, updatedUser: User, updatedPluginDataTitles: Vector[String]): Unit = {
+    val updatedMeeting = meeting.copy(
+      users = meeting.users + (updatedUser.userKey -> updatedUser),
+      pluginDataTitles = updatedPluginDataTitles
+    )
+
+    meetings += (updatedMeeting.intId -> updatedMeeting)
+  }
+
+  private def handlePluginLearningAnalyticsDashboardSendPluginDataMsg(msg: PluginLearningAnalyticsDashboardUpsertDataMsg): Unit = {
     val targetUserId: String = if (msg.body.targetUserId.isEmpty) msg.header.userId else msg.body.targetUserId
 
     for {
@@ -681,9 +690,7 @@ class LearningDashboardActor(
         meeting.pluginDataTitles
       }
 
-      val updatedMeeting = meeting.copy(users = meeting.users + (updatedUser.userKey -> updatedUser), pluginDataTitles = updatedPluginDataTitles)
-
-      meetings += (updatedMeeting.intId -> updatedMeeting)
+      updatePluginDataInLadHelper(meeting, updatedUser, updatedPluginDataTitles)
       log.debug("New generic data received from a plugin '{}': {}", msg.body.pluginName,msg.body.dataForLearningAnalyticsDashboard)
     }
   }
@@ -725,12 +732,7 @@ class LearningDashboardActor(
           meeting.pluginDataTitles.filterNot(_ == cardTitle) // remove title if card is gone
         }
 
-      val updatedMeeting = meeting.copy(
-        users = meeting.users + (updatedUser.userKey -> updatedUser),
-        pluginDataTitles = updatedPluginDataTitles
-      )
-
-      meetings += (updatedMeeting.intId -> updatedMeeting)
+      updatePluginDataInLadHelper(meeting, updatedUser, updatedPluginDataTitles)
       log.debug("Generic data deleted for plugin [{}]: {}", msg.body.pluginName, msg.body.dataForLearningAnalyticsDashboard)
     }
 

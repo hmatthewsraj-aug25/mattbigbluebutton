@@ -354,7 +354,7 @@ type Mutation {
 }
 
 type Mutation {
-  pluginLearningAnalyticsDashboardSendData(
+  pluginLearningAnalyticsDashboardUpsertData(
     targetUserId: String!
     dataForLearningAnalyticsDashboard: json!
     pluginName: String!

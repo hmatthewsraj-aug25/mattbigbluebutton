@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client';
 
-export const PLUGIN_LEARNING_ANALYTICS_DASHBOARD_SEND_DATA_MUTATION = gql`
-  mutation PluginLearningAnalyticsDashboardSendData($pluginName: String!,
+export const PLUGIN_LEARNING_ANALYTICS_DASHBOARD_UPSERT_DATA_MUTATION = gql`
+  mutation PluginLearningAnalyticsDashboardUpsertData($pluginName: String!,
     $dataForLearningAnalyticsDashboard: json!, $targetUserId: String!) {
-      pluginLearningAnalyticsDashboardSendData(
+      pluginLearningAnalyticsDashboardUpsertData(
         dataForLearningAnalyticsDashboard: $dataForLearningAnalyticsDashboard,
         pluginName: $pluginName, targetUserId: $targetUserId
       )
