@@ -15,7 +15,7 @@ chown bigbluebutton /var/bigbluebutton/learning-dashboard/
 ./deploy.sh
 ```
 
-## Devlopment instructions
+## Development instructions
 
 ```
 ./run-dev.sh
