@@ -42,4 +42,4 @@ tput sgr0
 sudo cp learning-dashboard-dev.nginx /usr/share/bigbluebutton/nginx/learning-dashboard.nginx
 sudo systemctl restart nginx
 
-npm start | cat
+PORT=3100 npm start | cat
