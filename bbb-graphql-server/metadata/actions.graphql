@@ -355,6 +355,15 @@ type Mutation {
 
 type Mutation {
   pluginLearningAnalyticsDashboardSendGenericData(
+    targetUserId: String!
+    genericDataForLearningAnalyticsDashboard: json!
+    pluginName: String!
+  ): Boolean
+}
+
+type Mutation {
+  PluginLearningAnalyticsDashboardDeleteGenericData(
+    targetUserId: String!
     genericDataForLearningAnalyticsDashboard: json!
     pluginName: String!
   ): Boolean

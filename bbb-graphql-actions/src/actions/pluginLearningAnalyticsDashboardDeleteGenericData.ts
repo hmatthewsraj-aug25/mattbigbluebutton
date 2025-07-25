@@ -19,12 +19,11 @@ export default function buildRedisMessage(sessionVariables: Record<string, unkno
         [
           {name: 'cardTitle', type: 'string', required: true},
           {name: 'columnTitle', type: 'string', required: true},
-          {name: 'value', type: 'string', required: true},
         ]
     )
   }
 
-  const eventName = `PluginLearningAnalyticsDashboardSendGenericDataMsg`;
+  const eventName = `PluginLearningAnalyticsDashboardDeleteGenericDataMsg`;
 
   const routing = {
     meetingId: sessionVariables['x-hasura-meetingid'] as String,

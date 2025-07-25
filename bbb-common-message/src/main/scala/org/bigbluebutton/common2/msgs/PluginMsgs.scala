@@ -1,6 +1,6 @@
 package org.bigbluebutton.common2.msgs
 
-import org.bigbluebutton.common2.domain.PluginLearningAnalyticsDashboardGenericData
+import org.bigbluebutton.common2.domain.{PluginLearningAnalyticsDashboardGenericData, PluginLearningAnalyticsDashboardGenericDataDelete}
 
 // In messages
 
@@ -58,7 +58,16 @@ object PluginLearningAnalyticsDashboardSendGenericDataMsg { val NAME = "PluginLe
 case class PluginLearningAnalyticsDashboardSendGenericDataMsg(header: BbbClientMsgHeader, body: PluginLearningAnalyticsDashboardSendGenericDataMsgBody) extends StandardMsg
 case class PluginLearningAnalyticsDashboardSendGenericDataMsgBody(
                                                             pluginName: String,
-                                                            genericDataForLearningAnalyticsDashboard: PluginLearningAnalyticsDashboardGenericData
+                                                            genericDataForLearningAnalyticsDashboard: PluginLearningAnalyticsDashboardGenericData,
+                                                            targetUserId: String
+                                        )
+
+object PluginLearningAnalyticsDashboardDeleteGenericDataMsg { val NAME = "PluginLearningAnalyticsDashboardDeleteGenericDataMsg" }
+case class PluginLearningAnalyticsDashboardDeleteGenericDataMsg(header: BbbClientMsgHeader, body: PluginLearningAnalyticsDashboardDeleteGenericDataMsgBody) extends StandardMsg
+case class PluginLearningAnalyticsDashboardDeleteGenericDataMsgBody(
+                                                            pluginName: String,
+                                                            genericDataForLearningAnalyticsDashboard: PluginLearningAnalyticsDashboardGenericDataDelete,
+                                                            targetUserId: String
                                         )
 object PluginPersistEventMsg { val NAME = "PluginPersistEventMsg" }
 case class PluginPersistEventMsg(header: BbbClientMsgHeader, body: PluginPersistEventMsgBody) extends StandardMsg

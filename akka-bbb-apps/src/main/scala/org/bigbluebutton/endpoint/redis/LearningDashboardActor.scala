@@ -179,6 +179,8 @@ class LearningDashboardActor(
       // Plugin
       case m: PluginLearningAnalyticsDashboardSendGenericDataMsg =>
         handlePluginLearningAnalyticsDashboardSendGenericDataMsg(m)
+      case m: PluginLearningAnalyticsDashboardDeleteGenericDataMsg =>
+        handlePluginLearningAnalyticsDashboardDeleteGenericDataMsg(m)
 
       // Screenshare
       case m: ScreenshareRtmpBroadcastStartedEvtMsg => handleScreenshareRtmpBroadcastStartedEvtMsg(m)
@@ -656,14 +658,22 @@ class LearningDashboardActor(
     }
   }
 
-  private def handlePluginLearningAnalyticsDashboardSendGenericDataMsg(msg: PluginLearningAnalyticsDashboardSendGenericDataMsg) = {
+  private def handlePluginLearningAnalyticsDashboardSendGenericDataMsg(msg: PluginLearningAnalyticsDashboardSendGenericDataMsg): Unit = {
+    val targetUserId: String = if (msg.body.targetUserId.isEmpty) msg.header.userId else msg.body.targetUserId
+
     for {
       meeting <- meetings.values.find(m => m.intId == msg.header.meetingId)
-      user <- findUserByIntId(meeting, msg.header.userId)
+      fromUser <- findUserByIntId(meeting, msg.header.userId)
+      toUser <- findUserByIntId(meeting, targetUserId)
     } yield {
-      val currentUserGenericData = user.genericData.getOrElse(msg.body.genericDataForLearningAnalyticsDashboard.cardTitle,Vector())
+
+      // Only moderators can alter learning-dashboard data from different user
+      if (targetUserId != msg.header.userId && !fromUser.isModerator) {
+        return
+      }
+      val currentUserGenericData = toUser.genericData.getOrElse(msg.body.genericDataForLearningAnalyticsDashboard.cardTitle, Vector())
       val newGenericDataEntry = GenericData(msg.body.genericDataForLearningAnalyticsDashboard.columnTitle, msg.body.genericDataForLearningAnalyticsDashboard.value)
-      val updatedUser = user.copy(genericData = user.genericData + (msg.body.genericDataForLearningAnalyticsDashboard.cardTitle -> (currentUserGenericData :+ newGenericDataEntry)))
+      val updatedUser = toUser.copy(genericData = toUser.genericData + (msg.body.genericDataForLearningAnalyticsDashboard.cardTitle -> (currentUserGenericData :+ newGenericDataEntry)))
 
       val updatedGenericDataTitles = if(!meeting.genericDataTitles.contains(msg.body.genericDataForLearningAnalyticsDashboard.cardTitle)) {
         meeting.genericDataTitles :+ msg.body.genericDataForLearningAnalyticsDashboard.cardTitle
@@ -676,6 +686,54 @@ class LearningDashboardActor(
       meetings += (updatedMeeting.intId -> updatedMeeting)
       log.debug("New generic data received from a plugin '{}': {}", msg.body.pluginName,msg.body.genericDataForLearningAnalyticsDashboard)
     }
+  }
+
+  private def handlePluginLearningAnalyticsDashboardDeleteGenericDataMsg(msg: PluginLearningAnalyticsDashboardDeleteGenericDataMsg): Unit = {
+    val targetUserId: String = if (msg.body.targetUserId.isEmpty) msg.header.userId else msg.body.targetUserId
+
+    for {
+      meeting <- meetings.values.find(m => m.intId == msg.header.meetingId)
+      fromUser <- findUserByIntId(meeting, msg.header.userId)
+      toUser <- findUserByIntId(meeting, targetUserId)
+    } yield {
+      // Only moderators can alter learning-dashboard data from different user
+      if (targetUserId != msg.header.userId && !fromUser.isModerator) {
+        return
+      }
+
+      val cardTitle = msg.body.genericDataForLearningAnalyticsDashboard.cardTitle
+      val columnTitle = msg.body.genericDataForLearningAnalyticsDashboard.columnTitle
+
+      val currentGenericData = toUser.genericData.getOrElse(cardTitle, Vector())
+
+      // Remove entry matching columnTitle
+      val filteredGenericData = currentGenericData.filterNot(_.columnTitle == columnTitle)
+
+      val updatedGenericData = if (filteredGenericData.nonEmpty) {
+        toUser.genericData + (cardTitle -> filteredGenericData)
+      } else {
+        // remove the whole card if empty
+        toUser.genericData - cardTitle
+      }
+
+      val updatedUser = toUser.copy(genericData = updatedGenericData)
+
+      val updatedGenericDataTitles =
+        if (filteredGenericData.nonEmpty) {
+          meeting.genericDataTitles
+        } else {
+          meeting.genericDataTitles.filterNot(_ == cardTitle) // remove title if card is gone
+        }
+
+      val updatedMeeting = meeting.copy(
+        users = meeting.users + (updatedUser.userKey -> updatedUser),
+        genericDataTitles = updatedGenericDataTitles
+      )
+
+      meetings += (updatedMeeting.intId -> updatedMeeting)
+      log.debug("Generic data deleted from plugin '{}': {}", msg.body.pluginName, msg.body.genericDataForLearningAnalyticsDashboard)
+    }
+
   }
 
   private def handleScreenshareRtmpBroadcastStoppedEvtMsg(msg: ScreenshareRtmpBroadcastStoppedEvtMsg) {

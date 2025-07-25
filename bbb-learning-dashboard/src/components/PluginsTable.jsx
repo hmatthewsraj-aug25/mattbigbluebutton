@@ -43,11 +43,12 @@ const PluginsTable = (props) => {
     },
   ];
 
+  // Creating a set out of the object's keys will remove duplicates from the array of keys
   gridCols.push({
     ...commonCountProps,
-    valueGetter: (params) => Object.keys(
+    valueGetter: (params) => [...(new Set(Object.keys(
       params?.row?.User?.genericData?.[genericDataCardTitle],
-    )?.length || 0,
+    )))].length || 0,
     renderCell: (params) => params?.value,
   });
 
