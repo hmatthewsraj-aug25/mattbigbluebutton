@@ -28,14 +28,14 @@ if [ -e public/test/test/learning_dashboard_data.json ]; then
 	echo ""
 	tput setaf 2;
 	echo "To test the Dashboard using the mock json:"
-	echo "${BBB_URL}/learning-analytics-dashboard?meeting=test&report=test"
+	echo "${BBB_URL}/learning-analytics-dashboard/?meeting=test&report=test"
 	echo ""
 	tput sgr0
 fi
 
 tput setaf 2;
 echo "Dashboard address:"
-echo "${BBB_URL}/learning-analytics-dashboard"
+echo "${BBB_URL}/learning-analytics-dashboard/"
 echo ""
 tput sgr0
 
