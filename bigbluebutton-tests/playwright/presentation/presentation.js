@@ -38,7 +38,7 @@ class Presentation extends MultiUsers {
     await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.shareCameraAsContent);
     await this.modPage.hasElement(e.webcamMirroredVideoPreview, 'should display the camera preview when sharing camera as content');
-    await this.modPage.waitAndClick(e.startSharingWebcam);
+    await this.modPage.waitAndClick(e.startCameraAsContent);
     await this.modPage.hasElement(e.screenShareVideo);
     await this.modPage.waitAndClick(e.closeIcon);
     await this.modPage.closeAllToastNotifications();
@@ -133,6 +133,7 @@ class Presentation extends MultiUsers {
     // Skip check for screenshot on ci, due to the ci and the local machine generating two different image sizes
     // also because the slide location is different and inconsistent (it initially shakes to stabilize and then set incorrect location)
     if (!CI) {
+      await sleep(1000);
       await expect(userWhiteboardLocator).toHaveScreenshot('viewer-new-presentation-screenshot.png', {
         maxDiffPixels: 1000,
       });
@@ -420,7 +421,7 @@ class Presentation extends MultiUsers {
     await this.modPage.wasRemoved(e.smallToastMsg);
     // enabled multi-users whiteboard and hide toolbar
     await this.modPage.waitAndClick(e.multiUsersWhiteboardOn);
-    await this.modPage.waitAndClick(e.whiteboardOptionsButton);
+    await this.modPage.waitAndClick(e.whiteboardOptionsButton, ELEMENT_WAIT_LONGER_TIME);
     await this.modPage.waitAndClick(e.toolVisibility);
     const screenshotOptions = {
       maxDiffPixels: 1000,

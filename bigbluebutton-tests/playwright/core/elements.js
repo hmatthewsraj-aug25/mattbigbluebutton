@@ -464,7 +464,8 @@ exports.locales = ['af', 'ar', 'az', 'bg-BG', 'bn', 'ca', 'cs-CZ', 'da', 'de',
 exports.joinVideo = 'button[data-test="joinVideo"]';
 exports.leaveVideo = 'button[data-test="leaveVideo"]';
 exports.videoPreview = 'video[data-test="videoPreview"]';
-exports.startSharingWebcam = 'button[data-test="StartCameraAsContent"]';
+exports.startSharingWebcam = 'button[data-test="startSharingWebcam"]';
+exports.startCameraAsContent = 'button[data-test="StartCameraAsContent"]';
 exports.closeIcon = 'svg[data-testid="CloseIcon"]';
 exports.webcamConnecting = 'div[data-test="webcamConnecting"]';
 exports.webcamContainer = 'video[data-test="videoContainer"]';
