@@ -10,11 +10,12 @@
     "tscheck": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:file": "eslint"
+    "lint:file": "eslint",
+    "tscheck:staged": "tsc --noEmit --incremental"
   },
   "lint-staged": {
-    "*.{js,jsx}": [
-      "eslint --fix"
+    "*.{js,jsx,ts,tsx}": [
+      "eslint"
     ]
   },
   "overrides": {
@@ -36,7 +37,7 @@
   "dependencies": {
     "@apollo/client": "^3.10.4",
     "@babel/runtime": "^7.26.10",
-    "@bigbluebutton/tldraw": "^2.0.0-alpha.29",
+    "@bigbluebutton/tldraw": "^2.0.0-alpha.30",
     "@browser-bunyan/console-formatted-stream": "^1.8.0",
     "@browser-bunyan/console-raw-stream": "^1.8.0",
     "@browser-bunyan/levels": "^1.8.0",
@@ -57,7 +58,7 @@
     "autoprefixer": "^10.4.4",
     "axios": "^1.8.3",
     "babel-runtime": "~6.26.0",
-    "bigbluebutton-html-plugin-sdk": "0.0.87",
+    "bigbluebutton-html-plugin-sdk": "0.0.88",
     "bowser": "^2.11.0",
     "browser-bunyan": "^1.8.0",
     "classnames": "^2.2.6",
@@ -125,6 +126,7 @@
     "@babel/preset-env": "7.24.8",
     "@babel/preset-react": "7.24.7",
     "@babel/preset-typescript": "7.24.7",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.6.1",
     "@types/emoji-mart": "^3.0.9",
     "@types/react": "18.3.3",
     "@types/react-dom": "^18.2.7",
@@ -155,6 +157,7 @@
     "prettier": "3.3.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-refresh": "^0.17.0",
     "sha1": "^1.1.1",
     "style-loader": "4.0.0",
     "terser-webpack-plugin": "^5.3.10",
@@ -172,7 +175,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && npm run tscheck:staged"
     }
   }
 }

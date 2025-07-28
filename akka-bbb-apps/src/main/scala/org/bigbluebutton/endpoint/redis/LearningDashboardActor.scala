@@ -62,17 +62,18 @@ case class UserSession(
 )
 
 case class Poll(
-  pollId:     String,
-  pollType:   String,
-  anonymous:  Boolean,
-  multiple:   Boolean,
-  quiz:       Boolean,
-  question:   String,
-  options:    Vector[String] = Vector(),
-  correctOption: String = "",
-  published: Boolean = false,
+  pollId:         String,
+  pollType:       String,
+  anonymous:      Boolean,
+  multiple:       Boolean,
+  quiz:           Boolean,
+  question:       String,
+  options:        Vector[String] = Vector(),
+  correctOption:  String = "",
+  ended:          Boolean = false,
+  published:      Boolean = false,
   anonymousAnswers: Vector[String] = Vector(),
-  createdOn:  Long = System.currentTimeMillis(),
+  createdOn:      Long = System.currentTimeMillis(),
 )
 
 case class GenericData(
@@ -136,7 +137,7 @@ class LearningDashboardActor(
   private var meetingPresentations : Map[String,Map[String,PresentationVO]] = Map()
   private var meetingExcludedUserIds : Map[String,Vector[String]] = Map()
 
-  system.scheduler.schedule(10.seconds, 10.seconds, self, SendPeriodicReport)
+  system.scheduler.scheduleWithFixedDelay(0.seconds, 5.seconds, self, SendPeriodicReport)
 
   def receive = {
     //=============================
@@ -192,7 +193,7 @@ class LearningDashboardActor(
       case m: PollStartedEvtMsg                     => handlePollStartedEvtMsg(m)
       case m: UserRespondedToPollRecordMsg          => handleUserRespondedToPollRecordMsg(m)
       case m: PollShowResultEvtMsg                  => handlePollShowResultEvtMsg(m)
-//      case m: PollStoppedEvtMsg                     => handlePollStoppedEvtMsg(m)
+      case m: PollStoppedEvtMsg                     => handlePollStoppedEvtMsg(m)
 
       case _                          => // message not to be handled.
     }
@@ -594,6 +595,7 @@ class LearningDashboardActor(
       } yield {
         val updatedPoll = poll._2.copy(
           published = true,
+          ended = true,
           correctOption = {
             if(poll._2.quiz && msg.body.showAnswer) {
               msg.body.poll.correctAnswer.getOrElse("")
@@ -615,11 +617,19 @@ class LearningDashboardActor(
       for {
         poll <- meeting.polls.find(p => p._1 == msg.body.pollId)
       } yield {
+        val updatedPoll = poll._2.copy(
+          published = false,
+          ended = true,
+        )
+        val updatedMeeting = meeting.copy(polls = meeting.polls + (poll._1 -> updatedPoll))
+        meetings += (updatedMeeting.intId -> updatedMeeting)
+
         // Remove if Poll was not published
-        if(!poll._2.published) {
-          val updatedMeeting = meeting.copy(polls = meeting.polls.-(poll._1))
-          meetings += (updatedMeeting.intId -> updatedMeeting)
-        }
+        // commented as it will be discussed
+//        if(!poll._2.published) {
+//          val updatedMeeting = meeting.copy(polls = meeting.polls.-(poll._1))
+//          meetings += (updatedMeeting.intId -> updatedMeeting)
+//        }
       }
     }
   }
@@ -822,7 +832,7 @@ class LearningDashboardActor(
   }
 
   private def sendPeriodicReport(): Unit = {
-    meetings.map(meeting => {
+    meetings.foreach(meeting => {
       sendReport(meeting._2)
     })
   }
@@ -840,7 +850,7 @@ class LearningDashboardActor(
         outGW.send(event)
         meetingsLastJsonHash += (meeting.intId -> activityJsonHash)
 
-        log.info("Learning Dashboard data sent for meeting {}", meeting.intId)
+        log.debug("Learning Dashboard data sent for meeting {}", meeting.intId)
       }
     }
   }
