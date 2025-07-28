@@ -38,12 +38,16 @@ class GrahqlSubscriptionStore {
     const subscriptionStored = this.graphqlSubscriptions[subscriptionHash];
     if (subscriptionStored) {
       const subStored = subscriptionStored();
-      subscriptionStored({
-        ...subStored,
-        count: (subStored.count || 1) + 1,
-      });
-      window.dispatchEvent(new CustomEvent('graphqlSubscription', { detail: { subscriptionHash, type: 'next', response: subscriptionStored() } }));
-      return subscriptionStored;
+
+      // timeout is used to prevent the 'cannot update a component while rendering a different component' error
+      setTimeout(() => {
+        subscriptionStored({
+          ...subStored,
+          count: (subStored.count || 1) + 1,
+        });
+        window.dispatchEvent(new CustomEvent('graphqlSubscription', { detail: { subscriptionHash, type: 'next', response: subscriptionStored() } }));
+        return subscriptionStored;
+      }, 0);
     }
 
     const newSubStructure = makeVar<SubscriptionStructure<T>>({
