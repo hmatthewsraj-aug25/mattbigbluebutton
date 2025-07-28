@@ -162,7 +162,7 @@ const PresentationFocusLayout = (props) => {
     throttledCalculatesLayout();
   };
 
-  const calculatesSidebarContentHeight = () => {
+  const calculatesSidebarContentHeight = (cameraDockHeight) => {
     const { isOpen, slidesLength } = presentationInput;
     const { hasExternalVideo } = externalVideoInput;
     const { genericContentId } = genericMainContentInput;
@@ -174,41 +174,29 @@ const PresentationFocusLayout = (props) => {
       && !hasScreenShare && !isSharedNotesPinned && !genericContentId;
 
     const { navBarHeight, sidebarContentMinHeight } = DEFAULT_VALUES;
-    let height = 0;
-    let minHeight = 0;
-    let maxHeight = 0;
+    let sidebarContentHeight = 0;
     if (sidebarContentInput.isOpen) {
       if (isMobile) {
-        height = windowHeight() - navBarHeight - bannerAreaHeight();
-        minHeight = height;
-        maxHeight = height;
-      } else if (cameraDockInput.numCameras > 0 && isOpen && !isGeneralMediaOff && !isTabletLandscape) {
-        if (sidebarContentInput.height === 0) {
-          height = windowHeight() * 0.75 - bannerAreaHeight();
-        } else {
-          height = min(max(sidebarContentInput.height, sidebarContentMinHeight), windowHeight());
-        }
-        minHeight = windowHeight() * 0.25 - bannerAreaHeight();
-        maxHeight = windowHeight() * 0.75 - bannerAreaHeight();
+        sidebarContentHeight = windowHeight() - navBarHeight - bannerAreaHeight();
+      } else if (cameraDockInput.numCameras > 0
+        && isOpen && !isGeneralMediaOff && !isTabletLandscape) {
+        sidebarContentHeight = windowHeight() - cameraDockHeight;
       } else {
-        height = windowHeight() - bannerAreaHeight();
-        minHeight = height;
-        maxHeight = height;
+        sidebarContentHeight = windowHeight() - bannerAreaHeight();
       }
     }
     return {
-      height,
-      minHeight,
-      maxHeight,
+      height: sidebarContentHeight,
+      minHeight: sidebarContentMinHeight,
+      maxHeight: sidebarContentHeight,
     };
   };
 
   const calculatesCameraDockBounds = (
-    mediaBounds,
-    mediaAreaBounds,
     sidebarNavWidth,
     sidebarContentWidth,
-    sidebarContentHeight,
+    mediaAreaBounds,
+    mediaBounds,
   ) => {
     const { baseCameraDockBounds } = props;
     const sidebarSize = sidebarNavWidth + sidebarContentWidth;
@@ -220,16 +208,11 @@ const PresentationFocusLayout = (props) => {
       return baseBounds;
     }
 
-    const { cameraDockMinHeight } = DEFAULT_VALUES;
+    const { cameraDockMinHeight, sidebarContentMinHeight } = DEFAULT_VALUES;
 
     const cameraDockBounds = {};
 
     let cameraDockHeight = 0;
-    const sidebarContentMediaMargin = windowWidth()
-      * SIDEBAR_CONTENT_MARGIN_TO_MEDIA_PERCENTAGE_WIDTH;
-    const sidebarContentVerticalMargin = windowHeight()
-      * SIDEBAR_CONTENT_VERTICAL_MARGIN_PERCENTAGE_HEIGHT;
-
     if (isMobile) {
       cameraDockBounds.top = mediaAreaBounds.top + mediaBounds.height;
       cameraDockBounds.left = 0;
@@ -255,22 +238,25 @@ const PresentationFocusLayout = (props) => {
       cameraDockBounds.minHeight = 0;
       cameraDockBounds.maxHeight = 0;
     } else {
+      let heightToBeSet = 0;
       if (cameraDockInput.height === 0) {
-        cameraDockHeight = min(
-          max(windowHeight() - sidebarContentHeight, cameraDockMinHeight),
-          windowHeight() - cameraDockMinHeight,
-        );
-        const bannerAreaDiff = windowHeight()
-          - sidebarContentHeight - cameraDockHeight - bannerAreaHeight();
-        cameraDockHeight += bannerAreaDiff;
+        heightToBeSet = windowHeight() * 0.2;
       } else {
-        cameraDockHeight = min(
-          max(cameraDockInput.height, cameraDockMinHeight),
-          windowHeight() - cameraDockMinHeight,
-        );
+        heightToBeSet = cameraDockInput.height;
       }
+
+      cameraDockHeight = min(
+        max(heightToBeSet, cameraDockMinHeight),
+        windowHeight() - sidebarContentMinHeight,
+      );
+
+      const sidebarContentVerticalMargin = windowHeight()
+        * SIDEBAR_CONTENT_VERTICAL_MARGIN_PERCENTAGE_HEIGHT;
+      const sidebarContentMarginToMedia = windowWidth()
+        * SIDEBAR_CONTENT_MARGIN_TO_MEDIA_PERCENTAGE_WIDTH;
+
       cameraDockBounds.top = windowHeight() - cameraDockHeight
-        - bannerAreaHeight() - sidebarContentVerticalMargin + sidebarContentMediaMargin;
+        - bannerAreaHeight() - sidebarContentVerticalMargin + sidebarContentMarginToMedia;
       cameraDockBounds.left = !isRTL ? sidebarNavWidth : 0;
       cameraDockBounds.right = isRTL ? sidebarNavWidth : 0;
       cameraDockBounds.minWidth = sidebarContentWidth;
@@ -278,7 +264,7 @@ const PresentationFocusLayout = (props) => {
       cameraDockBounds.maxWidth = sidebarContentWidth;
       cameraDockBounds.minHeight = cameraDockMinHeight;
       cameraDockBounds.height = cameraDockHeight;
-      cameraDockBounds.maxHeight = windowHeight() - sidebarContentHeight;
+      cameraDockBounds.maxHeight = windowHeight() - sidebarContentMinHeight;
       cameraDockBounds.zIndex = 1;
     }
     return cameraDockBounds;
@@ -346,14 +332,13 @@ const PresentationFocusLayout = (props) => {
     const actionbarBounds = calculatesActionbarBounds(mediaAreaBounds);
     const sidebarSize = sidebarContentWidth.width + sidebarNavWidth.horizontalSpaceOccupied;
     const mediaBounds = calculatesMediaBounds(mediaAreaBounds, sidebarSize);
-    const sidebarContentHeight = calculatesSidebarContentHeight();
     const cameraDockBounds = calculatesCameraDockBounds(
-      mediaBounds,
-      mediaAreaBounds,
       sidebarNavWidth.horizontalSpaceOccupied,
       sidebarContentWidth.width,
-      sidebarContentHeight.height,
+      mediaAreaBounds,
+      mediaBounds,
     );
+    const sidebarContentHeight = calculatesSidebarContentHeight(cameraDockBounds.height);
     const { isOpen } = presentationInput;
 
     layoutContextDispatch({
@@ -435,7 +420,7 @@ const PresentationFocusLayout = (props) => {
       value: {
         top: false,
         right: !isRTL,
-        bottom: cameraDockInput.numCameras > 0,
+        bottom: false,
         left: isRTL,
       },
     });
@@ -465,7 +450,7 @@ const PresentationFocusLayout = (props) => {
         tabOrder: 4,
         isDraggable: false,
         resizableEdge: {
-          top: false,
+          top: true,
           right: false,
           bottom: false,
           left: false,
