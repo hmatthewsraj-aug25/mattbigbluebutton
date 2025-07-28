@@ -44,6 +44,10 @@ class Switch extends Toggle {
       hasFocus,
     } = this.state;
 
+    const checkboxId = ariaLabel
+      ? `${ariaLabel}-checkbox`
+      : 'switch-checkbox';
+
     return (
       <Styled.Switch
         onClick={this.handleClick}
@@ -85,6 +89,7 @@ class Switch extends Toggle {
           disabled={disabled}
           aria-label={ariaLabel}
           aria-describedby={ariaDescribedBy}
+          id={checkboxId}
         />
         <div id={ariaDescribedBy} hidden>{ariaDesc}</div>
       </Styled.Switch>
