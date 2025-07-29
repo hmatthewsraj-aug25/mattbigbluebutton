@@ -4,10 +4,10 @@ const e = require('../core/elements');
 async function reopenChatSidebar(page) {
   await page.waitAndClick(e.messagesSidebarButton);
   try {
-    await page.hasElement(e.hideMessagesButton);
+    await page.hasElement(e.hidePublicChat);
   } catch {
     await page.waitAndClick(e.messagesSidebarButton);
-    await page.hasElement(e.hideMessagesButton);
+    await page.hasElement(e.hidePublicChat);
   }
 }
 

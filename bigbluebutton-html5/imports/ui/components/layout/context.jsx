@@ -1546,6 +1546,7 @@ const updatePresentationAreaContent = (
       default:
         break;
     }
+    if (typeof shouldOpenPresentation !== 'boolean') return;
     layoutContextDispatch({
       type: ACTIONS.SET_PRESENTATION_IS_OPEN,
       value: shouldOpenPresentation,
@@ -1572,13 +1573,18 @@ const LayoutContextProvider = (props) => {
   const previousLayoutType = usePrevious(layoutType);
 
   useEffect(() => {
-    updatePresentationAreaContent(
-      layoutContextState,
-      previousLayoutType,
-      previousPresentationAreaContentActions,
-      layoutContextDispatch,
-      isPresentationEnabled,
-    );
+    if (
+      layoutContextState.presentationAreaContentActions.length
+      !== previousPresentationAreaContentActions.current.length
+    ) {
+      updatePresentationAreaContent(
+        layoutContextState,
+        previousLayoutType,
+        previousPresentationAreaContentActions,
+        layoutContextDispatch,
+        isPresentationEnabled,
+      );
+    }
   }, [layoutContextState, isPresentationEnabled]);
   useEffect(() => {
     const isSharedNotesPinned = !!pinnedPadData

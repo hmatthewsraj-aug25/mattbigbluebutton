@@ -136,6 +136,7 @@ exports.publicChatButton = 'button[data-test="publicChatButton"]';
 exports.privateChatButton = 'button[data-test="privateChatButton"]';
 exports.privateChatItem = 'button[data-test="privateChatItem"]';
 exports.hidePublicChat = 'button[data-test="hidePublicChat"]';
+exports.hidePrivateChat = 'button[data-test="hidePrivateChat"]';
 exports.hideMessagesButton = 'button[data-test="hideMessagesButton"]';
 exports.privateChatBackButton = 'div[data-test="privateChatBackButton"]';
 exports.typingIndicator = 'span[data-test="typingIndicator"]';

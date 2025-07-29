@@ -68,6 +68,7 @@ const propTypes = {
   enforceLayoutResult: PropTypes.string,
   setLocalSettings: PropTypes.func.isRequired,
   hasMeetingLayout: PropTypes.bool,
+  meetingLayoutSetByUserId: PropTypes.string,
 };
 
 const PushLayoutEngine = (props) => {
@@ -104,6 +105,7 @@ const PushLayoutEngine = (props) => {
     hasMeetingLayout,
     isChatEnabled,
     deviceType,
+    meetingLayoutSetByUserId,
   } = props;
 
   useEffect(() => {
@@ -116,7 +118,7 @@ const PushLayoutEngine = (props) => {
     const enforcedLayout = LAYOUT_TYPE[enforceLayoutResult] || null;
 
     Settings.layout.selectedLayout = enforcedLayout || changeLayout || defaultLayout
-      || (pushLayoutMeeting ? (meetingLayout || currentLayout) : (currentLayout));
+      || meetingLayout || currentLayout;
 
     if (isMobile()) {
       currentLayout = currentLayout === 'custom' ? 'smart' : currentLayout;
@@ -309,11 +311,13 @@ const PushLayoutEngine = (props) => {
       }, null, setLocalSettings);
     }
 
+    const notInitialValues = meetingLayoutSetByUserId && meetingLayoutSetByUserId !== 'system';
+
     // REPLICATE LAYOUT
     if (shouldSwitchLayout && layoutReplicateElements.includes(LAYOUT_ELEMENTS.LAYOUT_TYPE)) {
       replicateLayoutType();
     }
-    if (!isPresenter) {
+    if (!isPresenter && notInitialValues) {
       if (layoutReplicateElements.includes(LAYOUT_ELEMENTS.PRESENTATION_STATE)) {
         replicatePresentationState();
       }
@@ -337,7 +341,9 @@ const PushLayoutEngine = (props) => {
       || enforceLayoutResult !== prevProps.enforceLayoutResult
       || !equalDouble(presentationVideoRate, prevProps.presentationVideoRate);
 
-    if (pushLayout !== prevProps.pushLayout) {
+    if (pushLayoutMeeting !== undefined
+      && pushLayout !== prevProps.pushLayout
+      && pushLayout !== pushLayoutMeeting) {
       if (isModerator) {
         setPushLayout(pushLayout);
       }
@@ -413,6 +419,7 @@ const PushLayoutEngineContainer = (props) => {
     cameraDockAspectRatio: meetingLayoutVideoRate,
     cameraWithFocus: meetingLayoutFocusedCamera,
     presentationMinimized: meetingPresentationMinimized,
+    setByUserId: meetingLayoutSetByUserId,
   } = (currentMeeting?.layout || {});
 
   const { isOpen: presentationIsOpen } = presentationInput;
@@ -422,8 +429,6 @@ const PushLayoutEngineContainer = (props) => {
     isModerator: user.isModerator,
     presenter: user.presenter,
   }));
-  const isModerator = currentUserData?.isModerator;
-  const isPresenter = currentUserData?.presenter;
 
   const presentationVideoRate = calculatePresentationVideoRate(cameraDockOutput);
 
@@ -435,6 +440,10 @@ const PushLayoutEngineContainer = (props) => {
     presentationInput,
     layoutSettings,
   );
+
+  if (!currentUserData || currentUserData === null) return null;
+  const isModerator = currentUserData?.isModerator;
+  const isPresenter = currentUserData?.presenter;
 
   const validateEnforceLayout = (currUser) => {
     const layoutTypes = Object.keys(LAYOUT_TYPE);
@@ -477,6 +486,7 @@ const PushLayoutEngineContainer = (props) => {
         setPushLayout,
         hasMeetingLayout: !!meetingLayout,
         deviceType,
+        meetingLayoutSetByUserId,
         ...props,
       }}
     />

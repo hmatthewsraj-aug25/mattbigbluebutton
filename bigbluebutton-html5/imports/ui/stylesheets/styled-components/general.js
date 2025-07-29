@@ -9,6 +9,7 @@ const borderSize = '2px';
 const borderSizeLarge = '3px';
 const borderRadius = '.2rem';
 const lgBorderRadius = '1rem';
+const borderRadiusRounded = '.5rem';
 const smPaddingX = '.75rem';
 const smPaddingY = '.3rem';
 const mdPaddingY = '.45rem';
@@ -242,4 +243,5 @@ export {
   appsModalPaddingBottom,
   settingsModalHeight,
   settingsModalWidth,
+  borderRadiusRounded,
 };

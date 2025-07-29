@@ -14,6 +14,7 @@ case class LayoutDbModel(
     cameraWithFocus:        String,
     propagateLayout:        Boolean,
     screenshareAsContent:   Boolean,
+    setByUserId:            String,
     updatedAt:              java.sql.Timestamp,
 )
 
@@ -27,10 +28,11 @@ class LayoutDbTableDef(tag: Tag) extends Table[LayoutDbModel](tag, None, "layout
   val cameraWithFocus = column[String]("cameraWithFocus")
   val propagateLayout = column[Boolean]("propagateLayout")
   val screenshareAsContent = column[Boolean]("screenshareAsContent")
+  val setByUserId = column[String]("setByUserId")
   val updatedAt = column[java.sql.Timestamp]("updatedAt")
   override def * = (
     meetingId, currentLayoutType, presentationMinimized, cameraDockIsResizing, cameraDockPlacement,
-    cameraDockAspectRatio, cameraWithFocus, propagateLayout, screenshareAsContent, updatedAt
+    cameraDockAspectRatio, cameraWithFocus, propagateLayout, screenshareAsContent, setByUserId, updatedAt
   ) <> (LayoutDbModel.tupled, LayoutDbModel.unapply)
 }
 
@@ -55,6 +57,7 @@ object LayoutDAO {
           cameraWithFocus = getFocusedCamera(layout),
           propagateLayout = getPushLayout(layout),
           screenshareAsContent = getScreenshareAsContent(layout),
+          setByUserId = Layouts.getLayoutSetter(layout),
           updatedAt = new java.sql.Timestamp(System.currentTimeMillis())
         )
       )

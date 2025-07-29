@@ -26,7 +26,7 @@ class Chat extends MultiUsers {
     await this.modPage.wasRemoved(e.publicChatButton, 'should not display the public chat button when there is no private messages');
     await this.modPage.wasRemoved(e.privateChatButton, 'should not display the private chat button when there is no private messages');
     await openPrivateChat(this.modPage);
-    await this.modPage.hasElement(e.hideMessagesButton, 'should display the hide private chat element when opening a private chat');
+    await this.modPage.hasElement(e.hidePrivateChat, 'should display the hide private chat element when opening a private chat');
     await sleep(500); // prevent a race condition when running on a deployed server
     // modPage send message
     await this.modPage.type(e.chatBox, e.message1);
@@ -34,7 +34,7 @@ class Chat extends MultiUsers {
     await this.userPage.waitAndClick(e.privateChatButton);
     await this.userPage.hasElement(e.privateChatItem, 'should display the private chat item when user receives a private message');
     await this.userPage.waitAndClick(e.privateChatItem);
-    await this.userPage.hasElement(e.hideMessagesButton, 'should display the hide private chat element when opening a private chat');
+    await this.userPage.hasElement(e.hidePrivateChat, 'should display the hide private chat element when opening a private chat');
     // check sent messages 
     await this.modPage.hasText(e.chatUserMessageText, e.message1, 'should display the message sent by the moderator');
     await this.userPage.hasText(e.chatUserMessageText, e.message1, 'should display the message sent by the moderator for the attendee');
@@ -185,7 +185,7 @@ class Chat extends MultiUsers {
     await openPublicChat(this.modPage);
     if (!emojiPickerEnabled) {
       await this.modPage.hasElement(e.chatBox, 'should display the chat box element on the public chat');
-      return this.modPage.wasRemoved(e.emojiPickerButton, 'should not display the emoji picker button on the public chat');t
+      return this.modPage.wasRemoved(e.emojiPickerButton, 'should not display the emoji picker button on the public chat'); t
     }
     await this.modPage.waitAndClick(e.emojiPickerButton);
     await this.modPage.getByLabelAndClick(e.thumbsUpEmoji);
@@ -204,7 +204,7 @@ class Chat extends MultiUsers {
     await this.modPage.hasElement(e.chatOptions, 'should display the chat options element');
     await this.modPage.hasElement(e.chatBox, 'should display the chat box element');
     await this.modPage.hasElement(e.sendButton, 'should display the send button element');
-    await this.modPage.waitAndClick(e.hideMessagesButton);
+    await this.modPage.waitAndClick(e.hidePublicChat);
     await this.modPage.wasRemoved(e.chatTitle, 'should not display the chat title element after hiding the messages');
     await this.modPage.wasRemoved(e.chatOptions, 'should not display the chat options element after hiding the messages');
     await this.modPage.wasRemoved(e.chatBox, 'should not display the chat box element after hiding the messages');
@@ -238,7 +238,7 @@ class Chat extends MultiUsers {
     const { emojiPickerEnabled } = this.modPage.settings;
 
     await openPrivateChat(this.modPage);
-    await this.modPage.hasElement(e.hideMessagesButton, 'should display the hide private chat element when a private chat is open');
+    await this.modPage.hasElement(e.hidePrivateChat, 'should display the hide private chat element when a private chat is open');
     await sleep(500); // prevent a race condition when running on a deployed server
     // modPage send message
     if (!emojiPickerEnabled) {
@@ -250,7 +250,7 @@ class Chat extends MultiUsers {
     await this.modPage.waitAndClick(e.sendButton);
     await this.userPage.waitAndClick(e.privateChatButton);
     await this.userPage.waitAndClick(e.privateChatItem);
-    await this.userPage.hasElement(e.hideMessagesButton, 'should display the hide messages button when the attendee opens a private chat');
+    await this.userPage.hasElement(e.hidePrivateChat, 'should display the hide messages button when the attendee opens a private chat');
     // check sent messages 
     await this.modPage.hasText(e.chatUserMessageText, e.thumbsUpEmoji, 'should display the emoji sent by the moderator on the private chat');
     await this.userPage.hasText(e.chatUserMessageText, e.thumbsUpEmoji, 'should display for the user the emoji sent by the moderator on the private chat');
@@ -333,7 +333,7 @@ class Chat extends MultiUsers {
     const { autoConvertEmojiEnabled, emojiPickerEnabled } = this.modPage.settings;
 
     await openPrivateChat(this.modPage);
-    await this.modPage.hasElement(e.hideMessagesButton, 'should display the hide private chat element when the moderator has the private chat opened');
+    await this.modPage.hasElement(e.hidePrivateChat, 'should display the hide private chat element when the moderator has the private chat opened');
     await sleep(500); // prevent a race condition when running on a deployed server
     // modPage send message
     await this.modPage.type(e.chatBox, e.autoConvertEmojiMessage);
