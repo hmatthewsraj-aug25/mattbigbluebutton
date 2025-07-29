@@ -11,7 +11,7 @@ buildscript {
     maven { url "https://repo.grails.org/grails/core" }
   }
   dependencies {
-    classpath ("org.grails:grails-gradle-plugin:${grailsGradlePluginVersion}") {
+    classpath ("org.grails:grails-gradle-plugin:${grailsVersion}") {
       exclude group: 'org.grails.plugins', module: 'views-gradle'
     }
 
