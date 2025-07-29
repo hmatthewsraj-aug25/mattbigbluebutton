@@ -135,10 +135,11 @@ public class PluginUtils {
     }
 
 
-    static public Map<String, Object> createEmptyPluginObjectWithError(String errorMessage) {
+    static public Map<String, Object> createEmptyPluginObjectWithError(String errorMessage, String pluginManifestUrl) {
         HashMap<String, Object> manifestObject = new HashMap<>();
         Map<String, Object> mappedManifestContent = new HashMap<>();
         manifestObject.put("content", mappedManifestContent);
+        manifestObject.put("url", pluginManifestUrl);
 
         Map<String, Object> manifestWrapper = new HashMap<>();
         manifestWrapper.put("manifest", manifestObject);

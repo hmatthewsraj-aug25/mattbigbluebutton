@@ -38,6 +38,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.bigbluebutton.api.domain.*;
 import org.bigbluebutton.api.exception.PluginMalformedParametersException;
 import org.bigbluebutton.api.exception.PluginMetadataException;
+import org.bigbluebutton.api.exception.PluginMissingNameException;
 import org.bigbluebutton.api.messaging.MessageListener;
 import org.bigbluebutton.api.messaging.converters.messages.DestroyMeetingMessage;
 import org.bigbluebutton.api.messaging.converters.messages.EndMeetingMessage;
@@ -394,12 +395,13 @@ public class MeetingService implements MessageListener {
           if (!StringUtils.isEmpty(paramChecksum)) {
             String hash = DigestUtils.sha256Hex(content);
             if (!paramChecksum.equals(hash)) {
-              String errorMessage = String.format(
-                      "Plugin's manifest.json checksum mismatch with that of the URL parameter for %s.",
+              String clientErrorMessage = "Plugin's manifest.json checksum mismatch with that of the URL parameter. For more information, see bbb-web";
+              pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(
+                      clientErrorMessage,
                       pluginManifestUrlString
-              );
-              pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
-              log.info(errorMessage);
+              ));
+              log.info("Plugin's manifest.json checksum mismatch with that of the URL parameter for [{}].",
+                      pluginManifestUrlString);
               log.info("Plugin {} is not going to be loaded", pluginManifestUrlString);
               return;
             }
@@ -410,8 +412,12 @@ public class MeetingService implements MessageListener {
           if (jsonNode.has("name")) {
             pluginName = jsonNode.get("name").asText();
           } else {
-            throw new NoSuchFieldException("For url " + pluginManifestUrlString + " there is no name field configured.");
+            throw new PluginMissingNameException(
+                    "For url " + pluginManifestUrlString + " there is no name field configured.",
+                    pluginManifestUrlString
+            );
           }
+
 
           String pluginKey = pluginName;
           HashMap<String, Object> manifestObject = new HashMap<>();
@@ -426,42 +432,62 @@ public class MeetingService implements MessageListener {
           manifestWrapper.put("manifest", manifestObject);
           pluginsResult.put(pluginKey, manifestWrapper);
         } catch (MalformedURLException e) {
-          String errorMessage = String.format("Invalid URL for plugin %s", pluginManifestUrlString);
-          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
-          log.error(errorMessage, e);
+          String clientErrorMessage = "Invalid URL/Malformed URl when processing a plugin. For more information, see bbb-web";
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(
+                  clientErrorMessage, pluginManifestUrlString));
+          log.error("Invalid URL/Malformed URL for plugin [{}]", pluginManifestUrlString, e);
         } catch (JsonProcessingException e) {
-          String errorMessage = String.format("Failed to parse JSON from URL: %s", pluginManifestUrlString);
-          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
-          log.error(errorMessage, e);
+          String clientErrorMessage = "Failed to parse manifest JSON from a plugin URL. For more information, see bbb-web";
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(
+                  clientErrorMessage, pluginManifestUrlString));
+          log.error("Failed to parse manifest JSON from URL [{}]", pluginManifestUrlString, e);
         } catch (IOException e) {
-          String errorMessage = String.format("I/O error when fetching URL: %s", pluginManifestUrlString);
-          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
-          log.error(errorMessage, e);
+          String clientErrorMessage = "I/O error when fetching a plugin URL. For more information, see bbb-web";
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(
+                  clientErrorMessage, pluginManifestUrlString));
+          log.error("I/O error when fetching URL [{}]", pluginManifestUrlString, e);
         } catch (PluginMetadataException e) {
-          String errorMessage = String.format(
-                  "Missing required metadata (meta_ or plugin_ parameter) in plugin manifest URL [%s]. Plugin not loaded.",
-                  pluginManifestUrlString
+          String pluginName = e.getPluginName();
+          String clientErrorMessage = String.format(
+            "Missing required metadata (meta_ or plugin_ parameter) for plugin [%s]. Plugin not loaded. For more information, see bbb-web",
+            pluginName
           );
-          pluginsResult.put(e.getPluginName(), PluginUtils.createEmptyPluginObjectWithError(errorMessage));
-          log.error(errorMessage, e);
+          pluginsResult.put(pluginName, PluginUtils.createEmptyPluginObjectWithError(
+                  clientErrorMessage, pluginManifestUrlString));
+          log.error(
+            "Missing required metadata (meta_ or plugin_ parameter) in plugin manifest URL [{}] (Plugin name: [{}]). Plugin not loaded.",
+            pluginManifestUrlString, pluginName, e);
         } catch (PluginMalformedParametersException e) {
-          String errorMessage = String.format(
-                  "Malformed metadata parameter for plugin manifest URL [%s]. Plugin not loaded.",
-                  pluginManifestUrlString
+          String pluginName = e.getPluginName();
+          String clientErrorMessage = String.format(
+            "Malformed metadata parameter for plugin [%s]. Plugin not loaded. For more information, see bbb-web",
+            pluginName
           );
-          pluginsResult.put(e.getPluginName(), PluginUtils.createEmptyPluginObjectWithError(errorMessage));
-          log.error(errorMessage, e);
+          pluginsResult.put(pluginName, PluginUtils.createEmptyPluginObjectWithError(
+                  clientErrorMessage, pluginManifestUrlString));
+          log.error(
+            "Malformed metadata parameter for plugin manifest URL [{}] (Plugin name: [{}]). Plugin not loaded.",
+            pluginManifestUrlString, e);
+        } catch (PluginMissingNameException e) {
+          String clientErrorMessage = "Plugin Manifest without a plugin name, ignoring. For more information, see bbb-web";
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(
+                  clientErrorMessage, pluginManifestUrlString));
+          log.error(
+            "Plugin Manifest [{}] without a plugin name, ignoring...",
+            pluginManifestUrlString, e);
         } catch (Exception e) {
-          String errorMessage = String.format("Unexpected error processing plugin manifest from URL: %s", pluginManifestUrlString);
-          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
-          log.error(errorMessage, e);
+          String clientErrorMessage = "Unexpected error while processing plugin manifest. For more information, see bbb-web";
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(
+                  clientErrorMessage, pluginManifestUrlString));
+          log.error("Unexpected error while processing plugin manifest from URL: [{}]", pluginManifestUrlString, e);
         }
       }, executorService).orTimeout(pluginManifestFetchTimeout, TimeUnit.SECONDS)
       .exceptionally(ex -> {
         if (ex instanceof TimeoutException) {
-          String errorMessage = String.format("Timeout occurred when fetching URL: %s", pluginManifestUrlString);
-          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(errorMessage));
-          log.warn(errorMessage);
+          String clientErrorMessage = "Timeout occurred when fetching plugin manifest URL. For more information, see bbb-web";
+          pluginsResult.put(pluginManifestUrlString, PluginUtils.createEmptyPluginObjectWithError(
+                  clientErrorMessage, pluginManifestUrlString));
+          log.warn("Timeout occurred when fetching plugin manifest URL [{}]", pluginManifestUrlString);
         } else {
           log.error("Unexpected error for plugin {}: {}", pluginManifestUrlString, ex);
         }

@@ -62,7 +62,7 @@ const PluginsEngineManager = (props: PluginsEngineManagerProps) => {
   useEffect(() => {
     if (totalNumberOfPlugins) {
       logger.info({
-        logCode: 'PLUGINS_LOADED_STATUS',
+        logCode: 'plugin_loading_status',
         extraInfo: {
           numberOfLoadedPlugins,
           totalNumberOfPlugins,
@@ -75,7 +75,7 @@ const PluginsEngineManager = (props: PluginsEngineManagerProps) => {
   useEffect(() => {
     if (failedPlugins && failedPlugins.length > 0) {
       failedPlugins.forEach((p) => {
-        logger.error({
+        logger.debug({
           logCode: 'plugin_loading_failure',
           extraInfo: {
             pluginName: p.name,
