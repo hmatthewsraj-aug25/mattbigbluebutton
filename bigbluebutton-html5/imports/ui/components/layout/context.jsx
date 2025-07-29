@@ -1573,13 +1573,18 @@ const LayoutContextProvider = (props) => {
   const previousLayoutType = usePrevious(layoutType);
 
   useEffect(() => {
-    updatePresentationAreaContent(
-      layoutContextState,
-      previousLayoutType,
-      previousPresentationAreaContentActions,
-      layoutContextDispatch,
-      isPresentationEnabled,
-    );
+    if (
+      layoutContextState.presentationAreaContentActions.length
+      !== previousPresentationAreaContentActions.current.length
+    ) {
+      updatePresentationAreaContent(
+        layoutContextState,
+        previousLayoutType,
+        previousPresentationAreaContentActions,
+        layoutContextDispatch,
+        isPresentationEnabled,
+      );
+    }
   }, [layoutContextState, isPresentationEnabled]);
   useEffect(() => {
     const isSharedNotesPinned = !!pinnedPadData

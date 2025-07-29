@@ -81,6 +81,7 @@ const MEETING_SUBSCRIPTION = gql`
           currentLayoutType
           presentationMinimized
           propagateLayout
+          setByUserId
           updatedAt
         }
         isBreakout

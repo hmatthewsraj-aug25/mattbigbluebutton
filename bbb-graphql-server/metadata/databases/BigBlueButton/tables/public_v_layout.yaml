@@ -18,6 +18,7 @@ select_permissions:
         - presentationMinimized
         - propagateLayout
         - screenshareAsContent
+        - setByUserId
         - updatedAt
       filter:
         meetingId:
