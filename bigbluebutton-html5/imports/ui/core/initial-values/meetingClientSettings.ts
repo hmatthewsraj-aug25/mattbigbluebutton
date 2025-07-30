@@ -100,6 +100,7 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
         captureWhiteboardByDefault: false,
         captureSharedNotesByDefault: false,
         sendInvitationToAssignedModeratorsByDefault: false,
+        breakoutRoomMinimum: 2,
         breakoutRoomLimit: 16,
         allowPresentationManagementInBreakouts: true,
       },
