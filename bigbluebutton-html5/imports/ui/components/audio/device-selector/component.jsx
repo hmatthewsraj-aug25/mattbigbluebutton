@@ -76,7 +76,7 @@ class DeviceSelector extends Component {
     const { intl, kind } = this.props;
     const label = kind === 'audioinput' ? intlMessages.fallbackInputLabel : intlMessages.fallbackOutputLabel;
 
-    return intl.formatMessage(label, { 0: index });
+    return intl.formatMessage(label, { index });
   }
 
   render() {
