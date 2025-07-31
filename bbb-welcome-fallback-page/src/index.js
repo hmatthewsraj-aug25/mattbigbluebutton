@@ -45,8 +45,11 @@ class Dashboard extends React.Component {
       intlLocale: getLanguage(),
     };
 
-    this.setMessages();
     this.setRtl();
+  }
+
+  componentDidMount() {
+    this.setMessages();
   }
 
   setMessages() {

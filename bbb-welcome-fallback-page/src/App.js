@@ -22,6 +22,9 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const { intl } = this.props;
+    document.title = `${intl.formatMessage({ id: 'api.welcome.welcomeMessage', defaultMessage: 'Welcome to BigBlueButton!' })}`;
+
     const errors = parseErrors();
     if (errors.length > 0) {
       this.setState({
@@ -34,8 +37,6 @@ class App extends React.Component {
   render() {
     const { errorMessage, errorKey, detailsVisible } = this.state;
     const { intl } = this.props;
-
-    document.title = `${intl.formatMessage({ id: 'api.welcome.welcomeMessage', defaultMessage: 'Welcome to BigBlueButton!' })}`;
 
     let errorId = `api.errors.${errorKey}`;
     const intlMessageExists = Object.prototype.hasOwnProperty.call(intl.messages, errorId);
