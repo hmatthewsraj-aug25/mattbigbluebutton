@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 cd "$(dirname "$0")"
 
+#set -e
+
 for var in "$@"
 do
     if [[ $var == --reset ]] ; then
