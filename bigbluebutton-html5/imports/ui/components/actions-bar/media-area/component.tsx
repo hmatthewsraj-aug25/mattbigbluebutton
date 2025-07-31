@@ -4,12 +4,6 @@ import { MediaAreaProps } from './types';
 import Styled from './styles';
 import MediaSharingModal from '/imports/ui/components/actions-bar/media-area/media-sharing/component';
 
-const defaultProps = {
-  isPresentationManagementDisabled: false,
-  amIPresenter: false,
-  amIModerator: false,
-};
-
 const intlMessages = defineMessages({
   mediaLabel: {
     id: 'app.actionsBar.actionsDropdown.actionsLabel',
@@ -20,15 +14,15 @@ const intlMessages = defineMessages({
 const MediaArea = (props: MediaAreaProps) => {
   const {
     intl,
-    amIPresenter,
-    amIModerator,
+    amIPresenter = false,
+    amIModerator = false,
     isMeteorConnected,
     mediaAreaItems,
     isCameraAsContentEnabled,
     hasCameraAsContent,
     hasPresentation,
     handleTakePresenter,
-    isPresentationManagementDisabled,
+    isPresentationManagementDisabled = false,
     isPresentationEnabled,
     isSharingVideo,
     allowExternalVideo,
@@ -85,7 +79,5 @@ const MediaArea = (props: MediaAreaProps) => {
     </>
   );
 };
-
-MediaArea.defaultProps = defaultProps;
 
 export default React.memo(MediaArea);
