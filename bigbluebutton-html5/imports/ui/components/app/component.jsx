@@ -124,10 +124,10 @@ class App extends Component {
       isAudioModalOpen: false,
       isVideoPreviewModalOpen: false,
       presentationFitToWidth: false,
-      isJoinLogged: false,
     };
 
     this.timeOffsetInterval = null;
+    this.isJoinLogged = false;
 
     this.setPresentationFitToWidth = this.setPresentationFitToWidth.bind(this);
     this.setAudioModalIsOpen = this.setAudioModalIsOpen.bind(this);
@@ -139,7 +139,6 @@ class App extends Component {
   componentDidMount() {
     const { browserName } = browserInfo;
     const { osName } = deviceInfo;
-    const { isJoinLogged } = this.state;
     const { isPollingEnabled } = this.props;
 
     Session.setItem('videoPreviewFirstOpen', true);
@@ -161,7 +160,7 @@ class App extends Component {
       window.addEventListener('keydown', this.customPollShortcutHandler);
     }
 
-    if (!isJoinLogged) {
+    if (!this.isJoinLogged) {
       this.logJoin();
     }
 
@@ -175,8 +174,6 @@ class App extends Component {
       intl,
       fitToWidth,
     } = this.props;
-
-    const { isJoinLogged } = this.state;
 
     this.renderDarkMode();
 
@@ -198,10 +195,6 @@ class App extends Component {
 
     if (prevProps.fitToWidth !== fitToWidth) {
       this.setState({ presentationFitToWidth: fitToWidth });
-    }
-
-    if (!isJoinLogged) {
-      this.logJoin();
     }
   }
 
@@ -259,12 +252,11 @@ class App extends Component {
   }
 
   logJoin() {
-    const { isJoinLogged } = this.state;
     const { meetingId, meetingName, isBreakout } = this.props;
 
     const logMessage = isBreakout ? 'User joined breakout room' : 'User joined main room';
 
-    if (!isJoinLogged && meetingId) {
+    if (!this.isJoinLogged && meetingId) {
       logger.info({
         logCode: 'app_component_componentdidmount',
         extraInfo: {
@@ -272,7 +264,7 @@ class App extends Component {
           meetingName,
         },
       }, logMessage);
-      this.setState({ isJoinLogged: true });
+      this.isJoinLogged = true;
     }
   }
 
