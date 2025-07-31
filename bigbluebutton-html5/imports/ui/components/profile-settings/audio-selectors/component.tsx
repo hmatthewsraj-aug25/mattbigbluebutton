@@ -220,7 +220,7 @@ const AudioSelectors: React.FC<AudioSelectorsProps> = ({
     const baseLabel = device?.kind === AUDIO_OUTPUT
       ? intlMessages.fallbackOutputLabel
       : intlMessages.fallbackInputLabel;
-    let label = intl.formatMessage(baseLabel, { 0: index });
+    let label = intl.formatMessage(baseLabel, { index });
 
     if (!device?.deviceId) {
       label = `${label} ${intl.formatMessage(intlMessages.fallbackNoPermissionLabel)}`;
