@@ -29,8 +29,12 @@ import { SETTINGS } from '/imports/ui/services/settings/enums';
 
 const fetchedpresentation = {};
 
-const PresentationContainer = (props) => {
-  const { presentationIsOpen } = props;
+const PresentationContainer = ({
+  presentationIsOpen = true,
+  setPresentationFitToWidth,
+  fitToWidth,
+  darkTheme,
+}) => {
   const layoutContextDispatch = layoutDispatch();
   const { selectedLayout } = useSettings(SETTINGS.LAYOUT);
 
@@ -235,7 +239,10 @@ const PresentationContainer = (props) => {
         ...{
           layoutContextDispatch,
           numCameras,
-          ...props,
+          presentationIsOpen,
+          setPresentationFitToWidth,
+          fitToWidth,
+          darkTheme,
           userIsPresenter,
           isRTL,
           presentationBounds: presentation,
@@ -281,7 +288,7 @@ export default PresentationContainer;
 
 PresentationContainer.propTypes = {
   presentationIsOpen: PropTypes.bool,
-};
-PresentationContainer.defaultProps = {
-  presentationIsOpen: true,
+  setPresentationFitToWidth: PropTypes.func.isRequired,
+  fitToWidth: PropTypes.bool.isRequired,
+  darkTheme: PropTypes.bool.isRequired,
 };
