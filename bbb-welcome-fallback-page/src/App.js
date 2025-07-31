@@ -62,7 +62,7 @@ class App extends React.Component {
           />
         </h1>
         <br />
-        <p className="errorMessage bg-red-100 text-red-700 px-6 py-4 rounded-xl text-lg max-w-xl mx-auto">
+        <p className="error-message bg-red-100 text-red-700 px-6 py-4 rounded-xl text-lg max-w-xl mx-auto">
           <FormattedMessage
             id="api.errors.errorPrefix"
             defaultMessage="Error"
