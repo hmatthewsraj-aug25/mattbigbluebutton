@@ -5,7 +5,7 @@ import Styled from './styles';
 import browserInfo from '/imports/utils/browserInfo';
 
 const propTypes = {
-  children: React.ReactNode,
+  children: PropTypes.node,
   moderator: PropTypes.bool,
   presenter: PropTypes.bool,
   you: PropTypes.bool,
@@ -21,7 +21,7 @@ const propTypes = {
 const { isChrome, isFirefox, isEdge } = browserInfo;
 
 const UserAvatar = ({
-  children = <></>,
+  children = null,
   moderator = false,
   presenter = false,
   you = false,
