@@ -32,6 +32,35 @@ export interface CursorSubscriptionResponse {
   pres_page_cursor: Array<userCursorResponse>;
 }
 
+export interface PresentationPage {
+  height: number;
+  isCurrentPage: boolean;
+  num: number;
+  pageId: string;
+  scaledHeight: number;
+  scaledViewBoxHeight: number;
+  scaledViewBoxWidth: number;
+  scaledWidth: number;
+  svgUrl: string;
+  width: number;
+  xOffset: number;
+  yOffset: number;
+  presentationId: string;
+  content: string;
+  downloadFileUri: string;
+  totalPages: number;
+  downloadable: boolean;
+  presentationName: string;
+  isDefaultPresentation: boolean;
+  infiniteWhiteboard: boolean;
+  nextPagesSvg: string;
+  fitToWidth: boolean;
+}
+
+export interface CurrentPresentationPageSubscriptionResponse {
+  pres_page_curr: PresentationPage[];
+}
+
 export const CURRENT_PRESENTATION_PAGE_SUBSCRIPTION = gql`subscription CurrentPresentationPagesSubscription {
   pres_page_curr {
     height
