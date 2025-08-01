@@ -36,6 +36,7 @@ const UserItemToolbar: React.FC<UserItemToolbarProps> = ({
       dataTest,
       label,
       icon,
+      disabled,
     } = pinnedToolbarOption;
 
     return (
@@ -43,6 +44,7 @@ const UserItemToolbar: React.FC<UserItemToolbarProps> = ({
         key={key}
         onClick={onClick}
         data-test={dataTest}
+        disabled={disabled}
       >
         <Tooltip
           title={label}
