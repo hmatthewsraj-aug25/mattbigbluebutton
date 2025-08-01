@@ -19,6 +19,7 @@ import {
 import logger from '/imports/startup/client/logger';
 import { setPendingChat } from '/imports/ui/core/local-states/usePendingChat';
 import { notify } from '/imports/ui/services/notification';
+import { useMemo } from 'react';
 
 const intlMessages = defineMessages({
   presenter: {
@@ -372,7 +373,7 @@ export const createToolbarOptions = (
     && lockSettings?.hasActiveLockSetting
     && !user.isModerator;
 
-  const audioStateOption = (() => {
+  const audioStateOption = useMemo(() => {
     if (!subjectUserInAudio) return null;
 
     const isListenOnly = user.voice?.listenOnly;
@@ -402,7 +403,7 @@ export const createToolbarOptions = (
           ? () => toggleVoice(user.userId, false)
           : () => {},
         disabled: !hasPermissionToUnmute,
-        dataTest: 'audioState',
+        dataTest: hasPermissionToUnmute ? 'unmuteUser' : 'audioStateMuted ',
       };
     }
 
@@ -416,9 +417,9 @@ export const createToolbarOptions = (
         ? () => toggleVoice(user.userId, true)
         : () => {},
       disabled: !hasPermissionToMute,
-      dataTest: 'audioState',
+      dataTest: hasPermissionToMute ? 'muteUser' : 'audioStateUnmuted',
     };
-  })();
+  }, [subjectUserInAudio, user, isMuted, allowedToMuteAudio, allowedToUnmuteAudio, intl, toggleVoice]);
 
   return {
     pinnedToolbarOptions: [
