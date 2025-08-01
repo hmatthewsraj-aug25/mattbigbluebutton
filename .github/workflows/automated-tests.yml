@@ -369,6 +369,26 @@ jobs:
           npm ci
           npx playwright install-deps
           npx playwright install
+      - name: Prepare flaky test exclusions
+        working-directory: ./bigbluebutton-tests/bigbluebutton-html-plugin-sdk
+        run: |
+          # Read flaky tests from core repo and build grep-invert parameter
+          FLAKY_TESTS_FILE="../playwright/sdk-flaky-tests.txt"
+          if [ -f "$FLAKY_TESTS_FILE" ]; then
+            echo "Reading flaky tests from $FLAKY_TESTS_FILE"
+            # Read non-empty, non-comment lines and process them
+            FLAKY_TESTS=$(grep -v '^#' "$FLAKY_TESTS_FILE" | grep -v '^[[:space:]]*$' | sed 's/ › /.*/' | tr '\n' '|' | sed 's/|$//')
+            if [ -n "$FLAKY_TESTS" ]; then
+              echo "GREP_INVERT_PARAM=$FLAKY_TESTS" >> $GITHUB_ENV
+              echo "Will skip flaky tests: $FLAKY_TESTS"
+            else
+              echo "GREP_INVERT_PARAM=" >> $GITHUB_ENV
+              echo "No flaky tests to skip"
+            fi
+          else
+            echo "GREP_INVERT_PARAM=" >> $GITHUB_ENV
+            echo "Flaky tests file not found, running all tests"
+          fi
       - name: Run tests
         working-directory: ./bigbluebutton-tests/bigbluebutton-html-plugin-sdk
         timeout-minutes: 25
@@ -377,7 +397,7 @@ jobs:
           ACTIONS_RUNNER_DEBUG: true
           BBB_URL: https://bbb-ci.test/bigbluebutton/
           BBB_SECRET: bbbci
-        run: npm run test-chromium-ci
+        run: npm run test-chromium-ci -- --grep-invert "$GREP_INVERT_PARAM"
       - if: always()
         name: Upload blob report to GitHub Actions Artifacts
         uses: actions/upload-artifact@v4
