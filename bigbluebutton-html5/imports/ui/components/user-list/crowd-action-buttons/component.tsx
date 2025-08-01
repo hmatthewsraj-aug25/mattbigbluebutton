@@ -68,7 +68,8 @@ const CrowdActionButtons: React.FC<CrowdActionButtonsProps> = () => {
           </Styled.ActionButtonLabel>
           {/* @ts-ignore - button is js component */}
           <Styled.ActionButton
-            aria-label={intl.formatMessage(intlMessages.muteAllExceptPresenterDesc)}
+            hideLabel
+            label={intl.formatMessage(intlMessages.muteAllExceptPresenterDesc)}
             tooltipLabel={intl.formatMessage(intlMessages.muteAllExceptPresenterDesc)}
             icon="mute"
             size="lg"
@@ -82,7 +83,8 @@ const CrowdActionButtons: React.FC<CrowdActionButtonsProps> = () => {
           </Styled.ActionButtonLabel>
           {/* @ts-ignore - button is js component */}
           <Styled.ActionButton
-            aria-label={intl.formatMessage(intlMessages.lockSettingsButtonDescription)}
+            hideLabel
+            label={intl.formatMessage(intlMessages.lockSettingsButtonDescription)}
             tooltipLabel={intl.formatMessage(intlMessages.lockSettingsButtonDescription)}
             icon="lock"
             size="lg"
