@@ -20,7 +20,7 @@ const intlMessages = defineMessages({
   },
 });
 
-const NavBarContainer = ({ children, ...props }) => {
+const NavBarContainer = ({ ...props }) => {
   const { pluginsExtensibleAreasAggregatedState } = useContext(PluginsContext);
   const unread = useHasUnreadNotes();
   const intl = useIntl();
@@ -123,9 +123,7 @@ const NavBarContainer = ({ children, ...props }) => {
         ...props,
       }}
       style={{ ...navBar }}
-    >
-      {children}
-    </NavBar>
+    />
   );
 };
 
