@@ -312,6 +312,12 @@ public:
   #     url: https://<your-Host>/plugins/SamplePresentationToolbarPlugin.js
   externalVideoPlayer:
     enabled: true
+    allowedFiles:
+      - mp4
+      - webm
+      - mp3
+      - wav
+      - m4a
   kurento:
     wsUrl: HOST
     cameraWsOptions:

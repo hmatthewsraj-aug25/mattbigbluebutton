@@ -4,6 +4,17 @@ const YOUTUBE_SHORTS_REGEX = /^(?:https?:\/\/)?(?:www\.)?(youtube\.com\/shorts)\
 const PANOPTO_MATCH_URL = /https?:\/\/([^/]+\/Panopto)(\/Pages\/Viewer\.aspx\?id=)([-a-zA-Z0-9]+)/;
 const DAILYMOTION_MATCH_URL = /https?:\/\/(?:www\.)?dailymotion\.com\/video\/[a-zA-Z0-9]+(?:\?[^\s]*)?/g;
 
+const getAllowedExtensions = (): string[] => {
+  return (
+    window?.meetingClientSettings?.public?.externalVideoPlayer?.allowedFiles || []
+  );
+};
+
+const getFileExtension = (pathname: string): string => {
+  const match = pathname.match(/\.([a-z0-9]+)$/i);
+  return match ? match[1].toLowerCase() : '';
+};
+
 export const isUrlValid = (url: string) => {
   let parsed: URL;
   try {
@@ -11,10 +22,13 @@ export const isUrlValid = (url: string) => {
   } catch (e) {
     return false; // Invalid URL
   }
-  const pathname = parsed.pathname.toLowerCase();
 
-  // Block .mov video files - https://github.com/cookpete/react-player/issues/1760
-  if (pathname.endsWith('.mov')) {
+  const pathname = parsed.pathname.toLowerCase();
+  const extension = getFileExtension(pathname);
+  const allowedExtensions = getAllowedExtensions();
+
+  // Check if the extension is in the allowed list
+  if (extension && !allowedExtensions.includes(extension)) {
     return false;
   }
 
