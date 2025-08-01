@@ -312,7 +312,8 @@ public:
   #     url: https://<your-Host>/plugins/SamplePresentationToolbarPlugin.js
   externalVideoPlayer:
     enabled: true
-    allowedFiles:
+    # A list of formats supported. Note that adding a new format here does not result in adding support for it in the system
+    allowedFileFormats:
       - mp4
       - webm
       - mp3
