@@ -327,7 +327,7 @@ exports.presentationPPTX = 'BBB.pptx';
 exports.presentationTXT = 'helloWorld.txt';
 exports.startScreenSharing = 'button[data-test="startScreenShare"]';
 exports.stopScreenSharing = 'button[data-test="stopScreenShare"]';
-exports.managePresentations = 'button[data-test="managePresentations"]';
+exports.managePresentations = 'div[data-test="managePresentations"]';
 exports.presentationFileUpload = 'div#upload-modal input[type="file"]';
 exports.presentationToolbarWrapper = 'div[id="presentationToolbarWrapper"]';
 exports.nextSlide = 'button[data-test="nextSlide"]';
