@@ -281,7 +281,7 @@ const ChatContainer: React.FC = () => {
     && chat.totalUnread > 0
   ));
   const filteredPrivateChats = (chats || [] as ChatType[]).filter(
-    (chat) => !chat.public && chat.totalMessages !== 0,
+    (chat) => !chat.public && chat.totalMessages && chat.totalMessages !== 0,
   );
 
   let participantName = '';
@@ -311,7 +311,12 @@ const ChatContainer: React.FC = () => {
   }
 
   if (sidebarContent.sidebarContentPanel !== PANELS.CHAT) return null;
-  if (!idChatOpen && !isLocked) return <ChatLoading isRTL={isRTL} />;
+  if (!idChatOpen && !isLocked) {
+    if (sidebarContent.sidebarContentIsOpen) {
+      return <ChatLoading isRTL={isRTL} />;
+    }
+    return null;
+  }
 
   return (
     <Chat

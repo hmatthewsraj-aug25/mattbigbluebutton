@@ -337,6 +337,7 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
         isMobile={isMobile}
         isRTL={isRTL}
         actionsBarHeight={actionsBarStyle.height}
+        reducedWidth={!amIPresenter && amIModerator}
       >
         {!amIPresenter && amIModerator
           ? renderTakePresenterView()

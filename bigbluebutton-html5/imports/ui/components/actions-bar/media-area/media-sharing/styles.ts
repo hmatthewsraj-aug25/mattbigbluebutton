@@ -8,6 +8,9 @@ import { lgBorderRadius } from '/imports/ui/stylesheets/styled-components/genera
 import { fontSizeLarge, titlesFontWeight } from '/imports/ui/stylesheets/styled-components/typography';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 
+const MODAL_WIDTH = '420px';
+const MODAL_WIDTH_REDUCED = '250px';
+
 // This overlay covers the entire viewport and is used to catch outside clicks.
 const Overlay = styled.div`
   position: fixed;
@@ -46,7 +49,12 @@ const ConfirmationButton = styled(Button)`
 `;
 
 // Modal container positioned in the bottom right corner.
-const ModalContainer = styled.div<{ isMobile: boolean, isRTL: boolean, actionsBarHeight: number }>`
+const ModalContainer = styled.div<{
+  isMobile: boolean,
+  isRTL: boolean,
+  actionsBarHeight: number,
+  reducedWidth?: boolean,
+}>`
   position: fixed;
   background: ${colorWhite};
   box-shadow: -4px 4px 8px 0px rgba(0, 0, 0, 0.25);
@@ -56,12 +64,14 @@ const ModalContainer = styled.div<{ isMobile: boolean, isRTL: boolean, actionsBa
   bottom: ${({ actionsBarHeight }) => actionsBarHeight}px;
   border-radius: ${lgBorderRadius};
 
-  ${({ isMobile, isRTL }) => (isMobile ? `
+  ${({
+    isMobile, isRTL, reducedWidth,
+  }) => (isMobile ? `
     left: 0;
     right: 0;
     width: 100%;
   ` : `
-    width: 420px;
+    width: ${reducedWidth ? MODAL_WIDTH_REDUCED : MODAL_WIDTH};
     ${isRTL ? `
       left: 24px;
       right: auto;
@@ -180,11 +190,17 @@ const BecomePresenterViewContainer = styled.div`
   padding: 1rem;
   flex-direction: column;
   gap: 1rem;
+
+  ${ConfirmationButton} {
+    height: 2.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    min-width: 8.5rem;
+  }
 `;
 
-const BecomePresenterText = styled.p`
+const BecomePresenterText = styled.div`
   color: ${colorText};
-  font-size: ${fontSizeLarge};
 `;
 
 export default {
