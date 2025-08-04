@@ -256,6 +256,11 @@ class Presentation extends PureComponent {
       );
     }
 
+    if (presentationBounds !== prevPresentationBounds
+      || (!presentationWidth && !presentationHeight)) {
+      this.onResize();
+    }
+
     if (prevProps?.slidePosition && slidePosition) {
       const { width: prevWidth, height: prevHeight } = prevProps.slidePosition;
       const { width: currWidth, height: currHeight } = slidePosition;
@@ -298,11 +303,6 @@ class Presentation extends PureComponent {
           hadPresentation: true,
         });
       }
-
-      if (
-        presentationBounds !== prevPresentationBounds
-        || (!presentationWidth && !presentationHeight)
-      ) this.onResize();
     } else if (slidePosition) {
       const { width: currWidth, height: currHeight } = slidePosition;
 
