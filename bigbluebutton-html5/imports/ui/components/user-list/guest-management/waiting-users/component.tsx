@@ -32,7 +32,6 @@ interface WaitingUserSectionProps {
   authedGuestUsers: GuestWaitingUser[];
   unauthedGuestUsers: GuestWaitingUser[];
   guestLobbyMessage: string | null;
-  guestLobbyEnabled: boolean;
   guestPolicy: string;
 }
 
@@ -89,13 +88,9 @@ const intlMessages = defineMessages({
 const WaitingUserSection: React.FC<WaitingUserSectionProps> = ({
   authedGuestUsers,
   unauthedGuestUsers,
-  guestLobbyEnabled,
   guestLobbyMessage,
   guestPolicy,
 }) => {
-  if (!guestLobbyEnabled) {
-    return null;
-  }
   const isGuestLobbyMessageEnabled = window.meetingClientSettings.public.app.enableGuestLobbyMessage;
   const intl = useIntl();
   const { isChrome } = browserInfo;
@@ -302,6 +297,13 @@ const WaitingUserSectionContainer: React.FC = () => {
       </div>
     );
   }
+  const guestPolicy = currentMeeting?.usersPolicies?.guestPolicy;
+  const guestLobbyEnabled = (guestPolicy === ASK_MODERATOR)
+        || !!(guestWaitingUsersData?.user_guest?.length);
+
+  if (!guestLobbyEnabled) {
+    return null;
+  }
 
   const separateGuestUsersByAuthed = guestWaitingUsersData
     ?.user_guest
@@ -314,15 +316,11 @@ const WaitingUserSectionContainer: React.FC = () => {
       return acc;
     }, { authed: [], unauthed: [] }) ?? { authed: [], unauthed: [] };
 
-  const guestPolicy = currentMeeting?.usersPolicies?.guestPolicy;
-
   return (
     <WaitingUserSection
       authedGuestUsers={separateGuestUsersByAuthed.authed}
       unauthedGuestUsers={separateGuestUsersByAuthed.unauthed}
       guestLobbyMessage={currentMeeting?.usersPolicies?.guestLobbyMessage ?? null}
-      guestLobbyEnabled={(guestPolicy === ASK_MODERATOR)
-        || !!(guestWaitingUsersData?.user_guest?.length)}
       guestPolicy={guestPolicy || ''}
     />
   );
