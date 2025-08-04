@@ -182,7 +182,7 @@
     "app.userList.menu.unmuteUserAudio.label": "Eemalda kasutaja vaigistus",
     "app.userList.menu.listenOnly": "Kuulav kasutaja",
     "app.userList.menu.microphoneOpen": "Kasutaja mikrofon avatud",
-    "app.userList.menu.microphoneClosed": "Kasutaja mikrofon välja lülitatud",
+    "app.userList.menu.microphoneClosed": "Kasutaja mikrofon suletud",
     "app.userList.menu.webcamPin.label": "Kinnita kasutaja veebikaamera",
     "app.userList.menu.webcamUnpin.label": "Vabasta kasutaja veebikaamera",
     "app.userList.menu.giveWhiteboardAccess.label": "Anna juurdepääs tahvlile",
