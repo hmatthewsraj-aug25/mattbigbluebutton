@@ -33,6 +33,7 @@ import { SET_PRESENTATION_FIT_TO_WIDTH } from '/imports/ui/components/app/app-gr
 import App from '/imports/ui/components/app/component';
 import AudioCaptionsLiveContainer from '/imports/ui/components/audio/audio-graphql/audio-captions/live/component';
 import { PluginConfigFromGraphql } from '/imports/ui/components/plugins-engine/types';
+import getFromUserSettings from '/imports/ui/services/users-settings';
 
 interface AppContainerProps {
   pluginConfig: PluginConfigFromGraphql[] | undefined;
@@ -66,13 +67,11 @@ const AppContainer: React.FC<AppContainerProps> = ({ pluginConfig }) => {
     partialUtterances: boolean; minUtteranceLength: number };
   const {
     darkTheme,
-    forceRestorePresentationOnNewEvents: presentationRestoreOnUpdate,
     hideActionsBar: settingsHideActionsBar,
     hideControls,
     hideNotifications,
   } = useSettings(SETTINGS.APPLICATION) as {
     darkTheme: boolean;
-    forceRestorePresentationOnNewEvents: boolean;
     hideActionsBar: boolean;
     hideControls: boolean;
     hideNotifications: boolean;
@@ -94,6 +93,11 @@ const AppContainer: React.FC<AppContainerProps> = ({ pluginConfig }) => {
   const [showScreenshare] = usePresentationSwap();
   const [setPresentationFitToWidth] = useMutation(SET_PRESENTATION_FIT_TO_WIDTH);
   const setSpeechOptions = useSetSpeechOptions();
+
+  const presentationRestoreOnUpdate = getFromUserSettings(
+    'bbb_force_restore_presentation_on_new_events',
+    window.meetingClientSettings.public.presentation.restoreOnUpdate,
+  );
 
   const NOTES_CONFIG = window.meetingClientSettings.public.notes;
   const {
