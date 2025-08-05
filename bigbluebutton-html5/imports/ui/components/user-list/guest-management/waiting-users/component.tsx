@@ -1,6 +1,7 @@
 import React, {
   useCallback,
   useState,
+  useEffect,
 } from 'react';
 import { useMutation } from '@apollo/client';
 import { defineMessages, useIntl } from 'react-intl';
@@ -9,6 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Avatar from '@mui/material/Avatar';
 import { CheckCircle } from '@mui/icons-material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import Tooltip from '/imports/ui/components/common/tooltip/component';
 import {
   GET_GUEST_WAITING_USERS_SUBSCRIPTION,
@@ -23,13 +25,14 @@ import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedS
 import {
   SET_LOBBY_MESSAGE_PRIVATE,
   SUBMIT_APPROVAL_STATUS,
+  SET_POLICY,
 } from './mutations';
 
 interface WaitingUserSectionProps {
   authedGuestUsers: GuestWaitingUser[];
   unauthedGuestUsers: GuestWaitingUser[];
   guestLobbyMessage: string | null;
-  guestLobbyEnabled: boolean;
+  guestPolicy: string;
 }
 
 type SeparatedUsers = {
@@ -39,6 +42,9 @@ type SeparatedUsers = {
 
 const ALLOW_STATUS = 'ALLOW';
 const DENY_STATUS = 'DENY';
+const ASK_MODERATOR = 'ASK_MODERATOR';
+const ALWAYS_ACCEPT = 'ALWAYS_ACCEPT';
+const ALWAYS_DENY = 'ALWAYS_DENY';
 
 const intlMessages = defineMessages({
   title: {
@@ -73,24 +79,35 @@ const intlMessages = defineMessages({
     id: 'app.textInput.sendLabel',
     description: 'Text input send button label',
   },
+  rememberChoice: {
+    id: 'app.userList.guest.rememberChoice',
+    description: 'Label for the remember choice checkbox',
+  },
 });
 
 const WaitingUserSection: React.FC<WaitingUserSectionProps> = ({
   authedGuestUsers,
   unauthedGuestUsers,
-  guestLobbyEnabled,
   guestLobbyMessage,
+  guestPolicy,
 }) => {
-  if (!guestLobbyEnabled) {
-    return null;
-  }
   const isGuestLobbyMessageEnabled = window.meetingClientSettings.public.app.enableGuestLobbyMessage;
   const intl = useIntl();
   const { isChrome } = browserInfo;
   const [waitingAuthedUsersVisible, setWaitingAuthedUsersVisible] = useState(false);
   const [waitingUnauthedUsersVisible, setWaitingUnauthedUsersVisible] = useState(false);
+
+  const [rememberChoice, setRememberChoice] = useState(false);
+
   const [submitApprovalStatus] = useMutation(SUBMIT_APPROVAL_STATUS);
   const [setLobbyMessagePrivate] = useMutation(SET_LOBBY_MESSAGE_PRIVATE);
+  const [setPolicy] = useMutation(SET_POLICY);
+
+  useEffect(() => {
+    if (guestPolicy === ASK_MODERATOR) {
+      setRememberChoice(false);
+    }
+  }, [guestPolicy]);
 
   const guestUsersCall = useCallback((users: GuestWaitingUser[], status: string) => {
     const guests = users.map((user) => ({
@@ -103,7 +120,21 @@ const WaitingUserSection: React.FC<WaitingUserSectionProps> = ({
         guests,
       },
     });
-  }, []);
+
+    if (rememberChoice) {
+      let newPolicy = '';
+      if (status === ALLOW_STATUS) newPolicy = ALWAYS_ACCEPT;
+      if (status === DENY_STATUS) newPolicy = ALWAYS_DENY;
+
+      if (newPolicy) {
+        setPolicy({
+          variables: {
+            guestPolicy: newPolicy,
+          },
+        });
+      }
+    }
+  }, [rememberChoice, setPolicy, submitApprovalStatus]);
 
   const setPrivateGuestLobbyMessage = useCallback((message: string, guestId: string) => {
     setLobbyMessagePrivate({
@@ -112,7 +143,7 @@ const WaitingUserSection: React.FC<WaitingUserSectionProps> = ({
         message,
       },
     });
-  }, []);
+  }, [setLobbyMessagePrivate]);
 
   const getPrivateGuestLobbyMessage = useCallback((userId: string) => {
     const user = authedGuestUsers
@@ -120,7 +151,46 @@ const WaitingUserSection: React.FC<WaitingUserSectionProps> = ({
       .find((u: GuestWaitingUser) => u.user.userId === userId);
     if (!user) return '';
     return user.guestLobbyMessage === guestLobbyMessage ? '' : user.guestLobbyMessage;
-  }, [authedGuestUsers, unauthedGuestUsers]);
+  }, [authedGuestUsers, unauthedGuestUsers, guestLobbyMessage]);
+
+  const renderActionButtons = (users: GuestWaitingUser[]) => (
+    <Styled.AcceptDenyButtonsContainer>
+      <Styled.RememberChoiceContainer>
+        <FormControlLabel
+          control={(
+            <Checkbox
+              checked={rememberChoice}
+              onChange={(e) => setRememberChoice(e.target.checked)}
+              size="small"
+              data-test="rememberChoice"
+            />
+          )}
+          label={intl.formatMessage(intlMessages.rememberChoice)}
+        />
+      </Styled.RememberChoiceContainer>
+
+      <Styled.ActionButtonsWrapper>
+        <Styled.AcceptAllButton
+          onClick={() => guestUsersCall(users, ALLOW_STATUS)}
+          data-test="allowAllGuests"
+        >
+          <CheckCircle sx={{ width: '1rem', height: '1rem' }} />
+          <Styled.AcceptDenyButtonText>
+            {intl.formatMessage(intlMessages.allowAllGuests)}
+          </Styled.AcceptDenyButtonText>
+        </Styled.AcceptAllButton>
+        <Styled.DenyAllButton
+          onClick={() => guestUsersCall(users, DENY_STATUS)}
+          data-test="denyEveryone"
+        >
+          <CancelIcon sx={{ width: '1rem', height: '1rem' }} />
+          <Styled.AcceptDenyButtonText>
+            {intl.formatMessage(intlMessages.denyEveryone)}
+          </Styled.AcceptDenyButtonText>
+        </Styled.DenyAllButton>
+      </Styled.ActionButtonsWrapper>
+    </Styled.AcceptDenyButtonsContainer>
+  );
 
   return (
     <Styled.Panel isChrome={isChrome}>
@@ -159,28 +229,7 @@ const WaitingUserSection: React.FC<WaitingUserSectionProps> = ({
               intl,
             )
           )}
-          {waitingAuthedUsersVisible && (
-            <Styled.AcceptDenyButtonsContainer>
-              <Styled.AcceptAllButton
-                onClick={() => guestUsersCall(authedGuestUsers, ALLOW_STATUS)}
-                data-test="allowAllGuests"
-              >
-                <CheckCircle sx={{ width: '1rem', height: '1rem' }} />
-                <Styled.AcceptDenyButtonText>
-                  {intl.formatMessage(intlMessages.allowAllGuests)}
-                </Styled.AcceptDenyButtonText>
-              </Styled.AcceptAllButton>
-              <Styled.DenyAllButton
-                onClick={() => guestUsersCall(authedGuestUsers, DENY_STATUS)}
-                data-test="denyEveryone"
-              >
-                <CancelIcon sx={{ width: '1rem', height: '1rem' }} />
-                <Styled.AcceptDenyButtonText>
-                  {intl.formatMessage(intlMessages.denyEveryone)}
-                </Styled.AcceptDenyButtonText>
-              </Styled.DenyAllButton>
-            </Styled.AcceptDenyButtonsContainer>
-          )}
+          {waitingAuthedUsersVisible && renderActionButtons(authedGuestUsers)}
         </>
       )}
       {unauthedGuestUsers.length > 0 && (
@@ -218,28 +267,7 @@ const WaitingUserSection: React.FC<WaitingUserSectionProps> = ({
               intl,
             )
           )}
-          {waitingUnauthedUsersVisible && (
-            <Styled.AcceptDenyButtonsContainer>
-              <Styled.AcceptAllButton
-                onClick={() => guestUsersCall(unauthedGuestUsers, ALLOW_STATUS)}
-                data-test="allowAllGuests"
-              >
-                <CheckCircle sx={{ width: '1rem', height: '1rem' }} />
-                <Styled.AcceptDenyButtonText>
-                  {intl.formatMessage(intlMessages.allowAllGuests)}
-                </Styled.AcceptDenyButtonText>
-              </Styled.AcceptAllButton>
-              <Styled.DenyAllButton
-                onClick={() => guestUsersCall(unauthedGuestUsers, DENY_STATUS)}
-                data-test="denyEveryone"
-              >
-                <CancelIcon sx={{ width: '1rem', height: '1rem' }} />
-                <Styled.AcceptDenyButtonText>
-                  {intl.formatMessage(intlMessages.denyEveryone)}
-                </Styled.AcceptDenyButtonText>
-              </Styled.DenyAllButton>
-            </Styled.AcceptDenyButtonsContainer>
-          )}
+          {waitingUnauthedUsersVisible && renderActionButtons(unauthedGuestUsers)}
         </>
       )}
     </Styled.Panel>
@@ -253,13 +281,9 @@ const WaitingUserSectionContainer: React.FC = () => {
     error: guestWaitingUsersError,
   } = useDeduplicatedSubscription<GuestWaitingUsers>(GET_GUEST_WAITING_USERS_SUBSCRIPTION);
 
-  const { data: currentMeeting } = useMeeting((meeting) => {
-    const a = {
-      usersPolicies: meeting.usersPolicies,
-    };
-
-    return a;
-  });
+  const { data: currentMeeting } = useMeeting((meeting) => ({
+    usersPolicies: meeting.usersPolicies,
+  }));
 
   if (guestWaitingUsersLoading || !currentMeeting) {
     return null;
@@ -272,6 +296,13 @@ const WaitingUserSectionContainer: React.FC = () => {
         {guestWaitingUsersError && <p>{JSON.stringify(guestWaitingUsersError)}</p>}
       </div>
     );
+  }
+  const guestPolicy = currentMeeting?.usersPolicies?.guestPolicy;
+  const guestLobbyEnabled = (guestPolicy === ASK_MODERATOR)
+        || !!(guestWaitingUsersData?.user_guest?.length);
+
+  if (!guestLobbyEnabled) {
+    return null;
   }
 
   const separateGuestUsersByAuthed = guestWaitingUsersData
@@ -290,8 +321,7 @@ const WaitingUserSectionContainer: React.FC = () => {
       authedGuestUsers={separateGuestUsersByAuthed.authed}
       unauthedGuestUsers={separateGuestUsersByAuthed.unauthed}
       guestLobbyMessage={currentMeeting?.usersPolicies?.guestLobbyMessage ?? null}
-      guestLobbyEnabled={(currentMeeting?.usersPolicies?.guestPolicy === 'ASK_MODERATOR')
-        || !!(guestWaitingUsersData?.user_guest?.length)}
+      guestPolicy={guestPolicy || ''}
     />
   );
 };
