@@ -1,5 +1,5 @@
-# Allow CORS for all JSON files under the /plugins/ URL path (including subdirectories)
-location ~ ^/plugins/.+\.json$ {
+# Allow CORS for all assets under the /plugins/ URL path (including subdirectories)
+location ^~ /plugins/ {
   root /var/www/bigbluebutton-default/assets;
   try_files $uri =404;
 
