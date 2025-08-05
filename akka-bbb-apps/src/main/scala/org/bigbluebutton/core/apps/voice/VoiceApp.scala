@@ -412,8 +412,10 @@ object VoiceApp extends SystemConfiguration {
     if (!isListenOnly) {
       enforceMuteOnStartThreshold(liveMeeting, outGW)
 
-      // if the meeting is muted tell freeswitch to mute the new person
-      if (MeetingStatus2x.isMeetingMuted(liveMeeting.status)) {
+      // If the meeting is muted tell freeswitch to mute the new person
+      // Dial-in users may skip this if dialInEnforceMuteOnStart=false (akka-apps config)
+      if (MeetingStatus2x.isMeetingMuted(liveMeeting.status)
+        && (dialInEnforceMuteOnStart || !intId.startsWith(IntIdPrefixType.DIAL_IN))) {
         val event = MsgBuilder.buildMuteUserInVoiceConfSysMsg(
           liveMeeting.props.meetingProp.intId,
           voiceConf,
