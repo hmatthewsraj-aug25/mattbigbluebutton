@@ -17,11 +17,6 @@ interface MappedMenuItems {
   [key: string]: PluginSdk.GenericContentSidekickArea[]
 }
 
-interface PendingRenameObject {
-  menuId: string;
-  newName: string;
-}
-
 interface RenamedSectionObject {
   [oldName: string]: string;
 }
@@ -32,7 +27,6 @@ const GenericSidekickContentNavButton = ({
   const { pluginsExtensibleAreasAggregatedState } = useContext(PluginsContext);
   let genericSidekickContentExtensibleArea = [] as PluginSdk.GenericContentSidekickArea[];
 
-  const [pendingRenameCommand, setPendingRenameCommand] = useState<PendingRenameObject | null>(null);
   const [renamedSection, setRenamedSection] = useState<RenamedSectionObject>({});
 
   if (pluginsExtensibleAreasAggregatedState.genericContentItems) {
@@ -56,36 +50,22 @@ const GenericSidekickContentNavButton = ({
     groupBySidekickMenuSection[section] = alreadySetArray;
   });
 
-  useEffect(() => {
-    if (pendingRenameCommand) {
-      setRenamedSection((prev) => {
-        const newObj = prev;
-        const {
-          menuId: genericContentId,
-          newName,
-        } = pendingRenameCommand;
-        Object.entries(groupBySidekickMenuSection).forEach(([section, listOfMenu]) => {
-          const isSectionIdInside = listOfMenu.some(
-            (menu) => menu.id === genericContentId,
-          );
-          if (isSectionIdInside) {
-            newObj[section] = newName;
-          }
-        });
-        return newObj;
-      });
-      setPendingRenameCommand(null);
-    }
-  }, [pendingRenameCommand]);
-
   const handleGenericContentRename = ((ev: CustomEvent<RenameGenericContentSidekickAreaCommandArguments>) => {
     const {
-      id: menuId,
+      id: genericContentId,
       newName,
     } = ev.detail;
-    setPendingRenameCommand({
-      menuId,
-      newName,
+    setRenamedSection((prev) => {
+      const newObj = { ...prev };
+      Object.entries(groupBySidekickMenuSection).forEach(([section, listOfMenu]) => {
+        const isSectionIdInside = listOfMenu.some(
+          (menu) => menu.id === genericContentId,
+        );
+        if (isSectionIdInside) {
+          newObj[section] = newName;
+        }
+      });
+      return newObj;
     });
   }) as EventListener;
 
@@ -101,7 +81,7 @@ const GenericSidekickContentNavButton = ({
         handleGenericContentRename,
       );
     };
-  }, []);
+  }, [handleGenericContentRename]);
 
   if (Object.keys(groupBySidekickMenuSection).length !== 0) {
     return Object.keys(groupBySidekickMenuSection).map((section) => (
