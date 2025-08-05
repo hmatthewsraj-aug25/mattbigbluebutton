@@ -304,7 +304,7 @@ object PluginModel {
 
   def persistPluginsForClient(meetingId: String, instance: PluginModel): Unit = {
     instance.plugins.foreach { case (pluginNameRaw, plugin) =>
-      val pluginName = if (plugin.manifest.url == pluginNameRaw) "NOT-USED" else pluginNameRaw
+      val pluginName = if (plugin.manifest.url == pluginNameRaw) "unidentified-plugin" else pluginNameRaw
       plugin.manifest.content match {
         case Some(pluginManifestContent) =>
           PluginDAO.insert(meetingId, pluginName, pluginManifestContent.javascriptEntrypointUrl,
