@@ -194,6 +194,7 @@ const UserListItem: React.FC<UserListItemProps> = ({
         avatar={userAvatarFiltered}
         you={user.userId === Auth.userID}
       >
+        {/* @ts-ignore */}
         <AvatarContent
           user={user}
         />

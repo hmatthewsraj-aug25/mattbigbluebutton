@@ -828,6 +828,7 @@ const ChatMessage = React.forwardRef<ChatMessageRef, ChatMessageProps>(({
                 moderator={messageContent.isModerator}
                 you={message.user?.userId === Auth.userID}
               >
+                {/* @ts-ignore */}
                 {typeof avatarDisplay === 'string' ? <span>{avatarDisplay}</span> : avatarDisplay}
               </ChatAvatar>
             )}

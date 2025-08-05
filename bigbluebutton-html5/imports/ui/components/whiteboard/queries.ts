@@ -61,6 +61,34 @@ export interface CurrentPresentationPageSubscriptionResponse {
   pres_page_curr: PresentationPage[];
 }
 
+export interface Presentation {
+  uploadTemporaryId: string | null;
+  uploadInProgress: boolean;
+  current: boolean;
+  downloadFileUri: string | null;
+  downloadable: boolean;
+  uploadErrorDetailsJson: string;
+  uploadErrorMsgKey: string | null;
+  filenameConverted: string;
+  isDefault: boolean;
+  name: string;
+  totalPages: number;
+  totalPagesUploaded: number;
+  presentationId: string;
+  removable: boolean;
+  uploadCompleted: boolean;
+  firstPageThumbnailUrl: string | null;
+  createdAt: string;
+}
+
+export interface PresentationsSubscriptionResponse {
+  pres_presentation: Presentation[];
+}
+
+export interface ProcessedPresentationResponse {
+  pres_presentation: Partial<Presentation>[];
+}
+
 export const CURRENT_PRESENTATION_PAGE_SUBSCRIPTION = gql`subscription CurrentPresentationPagesSubscription {
   pres_page_curr {
     height

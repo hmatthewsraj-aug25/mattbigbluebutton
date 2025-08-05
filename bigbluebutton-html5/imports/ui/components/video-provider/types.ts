@@ -75,3 +75,11 @@ export type StreamItem = Stream | ConnectingStream;
 export type GridItem = GridUser & { type: typeof VIDEO_TYPES.GRID };
 export type VideoItem = StreamItem | GridItem;
 export type StreamSubscriptionData = VideoStreamsResponse['user_camera'][number];
+
+export interface ViewersInWebcamCountSubscriptionResponse {
+  user_camera_aggregate: {
+    aggregate: {
+      count: number;
+    };
+  };
+}

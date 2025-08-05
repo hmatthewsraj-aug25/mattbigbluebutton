@@ -98,6 +98,7 @@ const GuestUserItem: React.FC<GuestUserItemProps> = ({
               avatar={avatar}
               color={color}
             >
+              {/* @ts-ignore */}
               <span>{getNameInitials(name)}</span>
             </Styled.Avatar>
           </Styled.UserAvatarContainer>

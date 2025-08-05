@@ -49,6 +49,7 @@ const UserAvatarVideo: React.FC<UserAvatarVideoProps> = (props) => {
       talking={talking}
       whiteboardAccess={false}
     >
+      {/* @ts-ignore */}
       {handleUserIcon()}
     </Styled.UserAvatarStyled>
   );

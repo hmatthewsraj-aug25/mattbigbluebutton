@@ -14,6 +14,7 @@ import { ACTIONS, PANELS } from '/imports/ui/components/layout/enums';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
 import { Meeting } from '/imports/ui/Types/meeting';
 import CreateBreakoutRoomContainer from '../create-breakout-room/component';
+import { UserIsInvitedSubscriptionResponse } from '/imports/ui/components/breakout-room/breakout-rooms-list-item/types';
 
 const BreakoutRoomsAppObserver = () => {
   const [breakoutsCreationIsOpen, setBreakoutsCreationIsOpen] = useState(false);
@@ -27,7 +28,8 @@ const BreakoutRoomsAppObserver = () => {
 
   const {
     data: userIsInvitedData,
-  } = useDeduplicatedSubscription(userIsInvited);
+  } = useDeduplicatedSubscription<
+  UserIsInvitedSubscriptionResponse>(userIsInvited);
 
   const {
     data: currentMeeting,
@@ -37,7 +39,7 @@ const BreakoutRoomsAppObserver = () => {
   }));
 
   const hasBreakoutRoom = currentMeeting?.componentsFlags?.hasBreakoutRoom ?? false;
-  const isUserInvited = userIsInvitedData?.breakoutRoom.length > 0;
+  const isUserInvited = userIsInvitedData?.breakoutRoom && userIsInvitedData?.breakoutRoom.length > 0;
   const isBreakoutMeeting = currentMeeting?.isBreakout;
 
   const intl = useIntl();

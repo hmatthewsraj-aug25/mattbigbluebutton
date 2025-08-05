@@ -12,7 +12,7 @@ import {
   USER_AGGREGATE_COUNT_SUBSCRIPTION,
 } from './queries';
 import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedSubscription';
-import { UserListComponentProps } from './types';
+import { UserAggregateCountSubscriptionResponse, UserListComponentProps } from './types';
 import Styled from './styles';
 import { onSaveUserNames } from './service';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
@@ -52,7 +52,8 @@ const UserList: React.FC<UserListComponentProps> = () => {
   }));
   const {
     data: countData,
-  } = useDeduplicatedSubscription(USER_AGGREGATE_COUNT_SUBSCRIPTION);
+  } = useDeduplicatedSubscription<
+    UserAggregateCountSubscriptionResponse>(USER_AGGREGATE_COUNT_SUBSCRIPTION);
   const count: number = countData?.user_aggregate?.aggregate?.count || 0;
   const { data: meetingInfo } = useMeeting((meeting: Partial<Meeting>) => ({
     name: meeting?.name,

@@ -1,14 +1,14 @@
 import React from 'react';
 import {
-  IS_TYPING_PUBLIC_SUBSCRIPTION,
-  IS_TYPING_PRIVATE_SUBSCRIPTION,
-} from './queries';
-import {
   defineMessages,
   FormattedMessage,
   useIntl,
   IntlShape,
 } from 'react-intl';
+import {
+  IS_TYPING_PUBLIC_SUBSCRIPTION,
+  IS_TYPING_PRIVATE_SUBSCRIPTION,
+} from './queries';
 import { User } from '/imports/ui/Types/user';
 import Styled from './styles';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
@@ -21,6 +21,7 @@ import { GraphqlDataHookSubscriptionResponse } from '/imports/ui/Types/hook';
 import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedSubscription';
 import logger from '/imports/startup/client/logger';
 import connectionStatus from '/imports/ui/core/graphql/singletons/connectionStatus';
+import { TypingData, PublicTypingData, PrivateTypingData } from './types';
 
 const DEBUG_CONSOLE = false;
 
@@ -184,14 +185,16 @@ const TypingIndicatorContainer: React.FC = () => {
   const TYPING_INDICATOR_ENABLED = CHAT_CONFIG.typingIndicator.enabled;
   const TYPING_SHOW_NAMES = CHAT_CONFIG.typingIndicator.showNames;
 
+  const isPublicChatOpen = idChatOpen === PUBLIC_GROUP_CHAT_KEY;
+
   // eslint-disable-next-line no-unused-expressions, no-console
   DEBUG_CONSOLE && console.log('TypingIndicatorContainer:chat', chat);
-  const typingQuery = idChatOpen === PUBLIC_GROUP_CHAT_KEY ? IS_TYPING_PUBLIC_SUBSCRIPTION
+  const typingQuery = isPublicChatOpen ? IS_TYPING_PUBLIC_SUBSCRIPTION
     : IS_TYPING_PRIVATE_SUBSCRIPTION;
   const {
     data: typingUsersData,
     error: typingUsersError,
-  } = useDeduplicatedSubscription(typingQuery, {
+  } = useDeduplicatedSubscription<TypingData>(typingQuery, {
     variables: {
       chatId: idChatOpen,
     },
@@ -213,14 +216,14 @@ const TypingIndicatorContainer: React.FC = () => {
     return null;
   }
 
-  const publicTypingUsers = typingUsersData?.user_typing_public || [];
-  const privateTypingUsers = typingUsersData?.user_typing_private || [];
+  const publicTypingUsers = (typingUsersData as PublicTypingData)?.user_typing_public || [];
+  const privateTypingUsers = (typingUsersData as PrivateTypingData)?.user_typing_private || [];
 
   const typingUsers = privateTypingUsers.concat(publicTypingUsers);
 
   const typingUsersArray = typingUsers
-    .filter((user: { user: object; userId: string; }) => user?.user && user?.userId !== currentUser?.userId)
-    .map((user: { user: object; }) => user.user);
+    .filter((user: { user: User; userId: string; }) => user?.user && user?.userId !== currentUser?.userId)
+    .map((user: { user: User; }) => user.user);
 
   if (locked || !TYPING_INDICATOR_ENABLED || !typingUsers) return null;
 

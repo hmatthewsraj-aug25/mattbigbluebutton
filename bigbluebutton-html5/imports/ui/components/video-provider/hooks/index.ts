@@ -39,6 +39,7 @@ import {
   GridUsersResponse,
   OwnVideoStreamsResponse,
   StreamSubscriptionData,
+  ViewersInWebcamCountSubscriptionResponse,
 } from '/imports/ui/components/video-provider/types';
 import { DesktopPageSizes, MobilePageSizes } from '/imports/ui/Types/meetingClientSettings';
 import logger from '/imports/startup/client/logger';
@@ -50,6 +51,7 @@ import { useStorageKey } from '/imports/ui/services/storage/hooks';
 import ConnectionStatus from '/imports/ui/core/graphql/singletons/connectionStatus';
 import { VIDEO_TYPES } from '/imports/ui/components/video-provider/enums';
 import createUseSubscription from '/imports/ui/core/hooks/createUseSubscription';
+import { UserAggregateCountSubscriptionResponse } from '/imports/ui/components/user-list/types';
 
 const useVideoStreamsSubscription = createUseSubscription(
   VIDEO_STREAMS_SUBSCRIPTION,
@@ -202,7 +204,8 @@ export const useDisableCam = () => {
 };
 
 const getCountData = () => {
-  const { data: countData } = useDeduplicatedSubscription(
+  const { data: countData } = useDeduplicatedSubscription<
+  UserAggregateCountSubscriptionResponse>(
     USER_AGGREGATE_COUNT_SUBSCRIPTION,
   );
   return countData?.user_aggregate?.aggregate?.count || 0;
@@ -506,7 +509,8 @@ export const useExitVideo = (forceExit = false) => {
 };
 
 export const useViewersInWebcamCount = (): number => {
-  const { data } = useDeduplicatedSubscription(VIEWERS_IN_WEBCAM_COUNT_SUBSCRIPTION);
+  const { data } = useDeduplicatedSubscription<
+  ViewersInWebcamCountSubscriptionResponse>(VIEWERS_IN_WEBCAM_COUNT_SUBSCRIPTION);
   return data?.user_camera_aggregate?.aggregate?.count || 0;
 };
 
