@@ -39,7 +39,7 @@ class MultiUsers {
     this.modPage2 = new Page(this.browser, page);
     await this.modPage2.init(true, shouldCloseAudioModal, options);
   }
-    
+
   async initUserPage(shouldCloseAudioModal = true, context = this.context, { fullName = 'Attendee', useModMeetingId = true, ...restOptions } = {}) {
     const options = {
       ...restOptions,
@@ -251,7 +251,7 @@ class MultiUsers {
     await this.userPage2.hasElement(e.isTalking, 'should display the talking indicator for the second user');
   }
 
-  async muteAllUsersExceptPresenter(){
+  async muteAllUsersExceptPresenter() {
     // join audio
     await this.modPage.joinMicrophone();
     await this.modPage2.joinMicrophone();
@@ -354,7 +354,7 @@ class MultiUsers {
   async clearAllStatusIcon() {
     await this.modPage.waitForSelector(e.whiteboard);
     await this.modPage2.waitForSelector(e.whiteboard);
-    
+
     await this.modPage.waitAndClick(e.reactionsButton);
     await this.modPage.waitAndClick(`${e.singleReactionButton}:nth-child(1)`);
     await this.modPage.hasText(e.moderatorAvatar, '😃', 'should display the smiling emoji in the moderator avatar for the moderator');
@@ -370,6 +370,24 @@ class MultiUsers {
 
     await this.modPage.hasText(e.moderatorAvatar, 'mo', 'should not display the emoji after clearing all icons');
     await this.modPage2.hasText(e.moderatorAvatar, 'mo', 'should not display the emoji after clearing all icons');
+  }
+
+  async leaveMeeting() {
+    await this.modPage.waitAndClick(e.leaveMeetingDropdown);
+    await this.modPage.waitAndClick(e.directLogoutButton);
+
+    await this.modPage.hasElement(e.meetingEndedModal, 'should display the meeting ended modal for the moderator');
+    await this.modPage.hasElement(e.redirectButton, 'should display the redirect button in the meeting ended modal');
+
+    // await this.modPage.waitAndClick(e.redirectButton);
+
+    if (this.userPage) {
+      await this.userPage.waitAndClick(e.leaveMeetingDropdown);
+      await this.userPage.waitAndClick(e.directLogoutButton);
+
+      await this.userPage.hasElement(e.meetingEndedModal, 'should display the meeting ended modal for the attendee');
+      await this.userPage.hasElement(e.redirectButton, 'should display the redirect button in the meeting ended modal');
+    }
   }
 }
 
