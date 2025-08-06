@@ -379,8 +379,6 @@ class MultiUsers {
     await this.modPage.hasElement(e.meetingEndedModal, 'should display the meeting ended modal for the moderator');
     await this.modPage.hasElement(e.redirectButton, 'should display the redirect button in the meeting ended modal');
 
-    // await this.modPage.waitAndClick(e.redirectButton);
-
     if (this.userPage) {
       await this.userPage.waitAndClick(e.leaveMeetingDropdown);
       await this.userPage.waitAndClick(e.directLogoutButton);
