@@ -792,7 +792,7 @@ object VoiceApp extends SystemConfiguration {
       )
       outGW.send(event)
 
-      VoiceUsers.userUpdatedListenOnlyInputDevice(liveMeeting.voiceUsers, voiceUserId, listenOnlyInputDevice)
+      VoiceUsers.userUpdatedListenOnlyInputDevice(liveMeeting.voiceUsers, u.voiceUserId, listenOnlyInputDevice)
     }
   }
 

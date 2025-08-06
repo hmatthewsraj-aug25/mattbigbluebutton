@@ -49,7 +49,7 @@ object TestDataGen {
       "9b3f4504-275d-4315-9922-21174262d88c")
   }
 
-  def createFakeVoiceOnlyUser(meetingId: String, callingWith: String, muted: Boolean, listenOnlyInputDevice: boolean, deafened: Boolean, talking: Boolean,
+  def createFakeVoiceOnlyUser(meetingId: String, callingWith: String, muted: Boolean, listenOnlyInputDevice: Boolean, deafened: Boolean, talking: Boolean,
                               listenOnly: Boolean, name: String): VoiceUserState = {
     val voiceUserId = RandomStringGenerator.randomAlphanumericString(8)
     val intId = "v_" + RandomStringGenerator.randomAlphanumericString(16)
