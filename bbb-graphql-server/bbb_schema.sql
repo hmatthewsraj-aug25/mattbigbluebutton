@@ -675,6 +675,7 @@ CREATE UNLOGGED TABLE "user_voice" (
 	"callingWith" varchar(100),
 	"joined" boolean,
 	"listenOnly" boolean,
+	"listenOnlyInputDevice" boolean,
 	"muted" boolean,
 	"deafened" boolean,
 	"spoke" boolean,
