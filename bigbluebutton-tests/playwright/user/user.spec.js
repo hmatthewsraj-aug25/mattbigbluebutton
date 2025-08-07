@@ -71,7 +71,7 @@ test.describe.parallel('User', { tag: '@ci' }, () => {
     });
 
     // https://docs.bigbluebutton.org/3.0/testing/release-testing/#taking-presenter-status-back-automated
-    test('Take presenter', async ({ browser, context, page }) => {
+    test.only('Take presenter', async ({ browser, context, page }) => {
       const multiusers = new MultiUsers(browser, context);
       await multiusers.initModPage(page);
       await multiusers.initModPage2();

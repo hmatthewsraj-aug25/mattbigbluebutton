@@ -342,7 +342,7 @@ exports.presentationPlaceholder = 'div[data-test="presentationPlaceholder"]';
 exports.presentationContainer = 'div[data-test="presentationContainer"]';
 exports.minimizePresentation = 'button[data-test="minimizePresentation"]';
 exports.restorePresentation = 'button[data-test="restorePresentation"]';
-exports.shareExternalVideoBtn = 'li[data-test="shareExternalVideo"]';
+exports.shareExternalVideoBtn = 'div[data-test="shareExternalVideo"]';
 exports.videoModalInput = 'input[id="video-modal-input"]';
 exports.startShareVideoBtn = 'button[data-test="startNewVideo"]';
 exports.videoPlayer = 'div[data-test="videoPlayer"]';
