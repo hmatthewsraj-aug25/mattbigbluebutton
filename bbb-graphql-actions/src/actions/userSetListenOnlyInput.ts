@@ -22,7 +22,6 @@ export default function buildRedisMessage(sessionVariables: Record<string, unkno
   };
 
   const body = {
-    userId: routing.userId,
     listenOnlyInputDevice: input.listenOnlyInputDevice
   };
 

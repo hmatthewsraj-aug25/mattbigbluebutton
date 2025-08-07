@@ -18,7 +18,7 @@ trait SetUserListenOnlyInputCmdMsgHdlr extends RightsManagementTrait {
     val voiceConf = liveMeeting.props.voiceProp.voiceConf
 
     log.info("Received listen only input device change for user request. meetingId=" + meetingId + " userId="
-      + msg.body.userId + " listenOnlyInputDevice=" + msg.body.listenOnlyInputDevice)
+      + msg.header.userId + " listenOnlyInputDevice=" + msg.body.listenOnlyInputDevice)
 
     for {
       requester <- Users2x.findWithIntId(
@@ -27,7 +27,7 @@ trait SetUserListenOnlyInputCmdMsgHdlr extends RightsManagementTrait {
       )
       u <- VoiceUsers.findWithIntId(
         liveMeeting.voiceUsers,
-        msg.body.userId
+        msg.header.userId
       )
     } yield {
       if (u.listenOnlyInputDevice != msg.body.listenOnlyInputDevice) {
