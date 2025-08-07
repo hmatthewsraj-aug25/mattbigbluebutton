@@ -172,7 +172,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
       });
     });
 
-    test.describe.parallel.only('Lock viewers', () => {
+    test.describe.parallel('Lock viewers', () => {
       // https://docs.bigbluebutton.org/3.0/testing/release-testing/#webcam
       test('Lock Share webcam', async ({ browser, context, page }) => {
         const lockViewers = new LockViewers(browser, context);
@@ -210,7 +210,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
       });
 
       // https://docs.bigbluebutton.org/3.0/testing/release-testing/#shared-notes-1
-      test.only('Lock Edit Shared Notes', async ({ browser, context, page }) => {
+      test('Lock Edit Shared Notes', async ({ browser, context, page }) => {
         const lockViewers = new LockViewers(browser, context);
         await lockViewers.initPages(page);
         await lockViewers.lockEditSharedNotes();
