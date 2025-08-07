@@ -5,10 +5,10 @@ import {
   colorText, colorGrayIcons, appsPanelTextColor,
 } from '/imports/ui/stylesheets/styled-components/palette';
 import { lgBorderRadius } from '/imports/ui/stylesheets/styled-components/general';
-import { fontSizeLarge, titlesFontWeight } from '/imports/ui/stylesheets/styled-components/typography';
+import { fontSizeBase, headingsFontWeight } from '/imports/ui/stylesheets/styled-components/typography';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 
-const MODAL_WIDTH = '420px';
+const MODAL_WIDTH = '26.25rem';
 const MODAL_WIDTH_REDUCED = '250px';
 
 // This overlay covers the entire viewport and is used to catch outside clicks.
@@ -87,13 +87,13 @@ const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
+  padding: 1rem;
   border-bottom: 1px solid ${appsGalleryOutlineColor};
 
   h2 {
     margin: 0;
-    font-size: ${fontSizeLarge};
-    font-weight: ${titlesFontWeight};
+    font-size: ${fontSizeBase};
+    font-weight: ${headingsFontWeight};
     text-transform: uppercase;
   }
 `;
@@ -108,17 +108,16 @@ const ContentContainer = styled.div`
 
 // Grid layout for displaying media options.
 const MediaGrid = styled.div`
-  padding: 1.5rem;
+  padding: 1rem;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, 1fr);
   text-align: center;
   justify-items: center;
 `;
 
 // Footer container for the start/stop sharing button.
 const FooterContainer = styled.div`
-  padding: 1.5rem;
+  padding: 1rem;
   border-top: 1px solid ${appsGalleryOutlineColor};
   display: flex;
   justify-content: center;

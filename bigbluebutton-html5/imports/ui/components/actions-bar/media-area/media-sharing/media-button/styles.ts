@@ -10,7 +10,7 @@ const btnBorder = 'var(--btn-default-border, #B0BDC9)';
 
 // Outer container for the media button.
 const MediaButtonContainer = styled.div`
-  width: 108px;
+  width: 5rem;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -23,8 +23,8 @@ interface ButtonFrameProps {
 }
 
 const ButtonFrame = styled(ButtonBase)<ButtonFrameProps>`
-  width: 100%;
-  height: 6.75rem;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 16px !important;
   border: 1px solid ${btnBorder} !important;
   padding: 0.5rem !important;
@@ -114,7 +114,7 @@ const IconWrapper = styled.div`
   flex: 1;
 
   > i {
-    font-size: 340%;
+    font-size: 200%;
   }
 `;
 
