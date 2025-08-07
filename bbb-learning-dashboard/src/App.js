@@ -243,7 +243,7 @@ class App extends React.Component {
     } = this.state;
     const { intl } = this.props;
 
-    const pluginUserDataCardTitle = activitiesJson?.pluginUserDataTitles?.[0];
+    const pluginUserDataCardTitle = activitiesJson?.pluginUserDataCardTitles?.[0];
     // This line generates an array of all the plugin entries of all users,
     // this might have duplicate entries:
     const pluginUserDataColumnTitleWithDuplicates = Object.values(

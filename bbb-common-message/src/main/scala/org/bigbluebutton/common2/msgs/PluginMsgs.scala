@@ -69,6 +69,12 @@ case class PluginLearningAnalyticsDashboardDeleteUserDataMsgBody(
                                                               userDataForLearningAnalyticsDashboard: PluginLearningAnalyticsDashboardUserDataDelete,
                                                               targetUserId: String
                                         )
+object PluginLearningAnalyticsDashboardClearAllUsersDataMsg { val NAME = "PluginLearningAnalyticsDashboardClearAllUsersDataMsg" }
+case class PluginLearningAnalyticsDashboardClearAllUsersDataMsg(header: BbbClientMsgHeader, body: PluginLearningAnalyticsDashboardClearAllUsersDataMsgBody) extends StandardMsg
+case class PluginLearningAnalyticsDashboardClearAllUsersDataMsgBody(
+                                                              pluginName: String,
+                                                              cardTitle: String,
+                                        )
 object PluginPersistEventMsg { val NAME = "PluginPersistEventMsg" }
 case class PluginPersistEventMsg(header: BbbClientMsgHeader, body: PluginPersistEventMsgBody) extends StandardMsg
 case class PluginPersistEventMsgBody(

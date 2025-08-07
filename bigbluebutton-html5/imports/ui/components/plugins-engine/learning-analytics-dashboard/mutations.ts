@@ -19,3 +19,12 @@ export const PLUGIN_LEARNING_ANALYTICS_DASHBOARD_DELETE_USER_DATA_MUTATION = gql
       )
     }
 `;
+
+export const PLUGIN_LEARNING_ANALYTICS_DASHBOARD_CLEAR_ALL_USER_DATA_MUTATION = gql`
+  mutation PluginLearningAnalyticsDashboardClearAllUsersData($pluginName: String!,
+    $cardTitle: String!) {
+      pluginLearningAnalyticsDashboardClearAllUsersData(
+        cardTitle: $cardTitle, pluginName: $pluginName
+      )
+    }
+`;
