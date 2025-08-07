@@ -172,7 +172,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
       });
     });
 
-    test.describe.parallel('Lock viewers', () => {
+    test.describe.parallel('Lock viewers', { tag: '@ci' }, () => {
       // https://docs.bigbluebutton.org/3.0/testing/release-testing/#webcam
       test('Lock Share webcam', async ({ browser, context, page }) => {
         const lockViewers = new LockViewers(browser, context);
