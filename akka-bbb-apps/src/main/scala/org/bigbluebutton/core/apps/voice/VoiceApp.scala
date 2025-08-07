@@ -776,7 +776,7 @@ object VoiceApp extends SystemConfiguration {
     outGW:                    OutMsgRouter,
     userId:                   String,
     listenOnlyInputDevice:    Boolean
-  )(implicit context: ActorContext): Unit = {
+  ): Unit = {
     for {
       u <- VoiceUsers.findWithIntId(
         liveMeeting.voiceUsers,
