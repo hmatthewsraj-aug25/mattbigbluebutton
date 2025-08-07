@@ -1033,6 +1033,7 @@ It's an object available in the `pluginApi` that wraps those 2 functions:
 
 - `pluginApi.learningAnalyticsDashboard.upsertUserData`
 - `pluginApi.learningAnalyticsDashboard.deleteUserData`
+- `pluginApi.learningAnalyticsDashboard.clearAllUsersData`
 
 For the `upsert` function, the argument's data object structure must be:
 
@@ -1053,7 +1054,9 @@ interface LearningAnalyticsDashboardDeleteUserData {
 }
 ```
 
-And if the user is a moderator, there is the possibility to publish data on behalf of other users by using the second **optional** parameter named `targetUserId`
+For the `clearAllUsersData` function, the argument is the cardTitle (optionally), and when it's not sent, all the entries for a specific plugin will be deleted. (And if the card ends up empty, it will be removed) 
+
+If the user is a moderator, there is the possibility to publish data on behalf of other users by using the second **optional** parameter named `targetUserId`
 
 So that the data will appear in the following form:
 
@@ -1082,6 +1085,10 @@ pluginApi.learningAnalyticsDashboard.deleteUserData(
   },
   targetUserId,
 );
+
+pluginApi.learningAnalyticsDashboard.clearAllUsersData(columnTitle);
+
+pluginApi.learningAnalyticsDashboard.clearAllUsersData(); // Or without the Column Title
 ```
 
 Note 1: the `value` field (in the upsert function's argument) supports markdown, so feel free to use it as you wish.
