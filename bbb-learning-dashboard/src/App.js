@@ -243,21 +243,21 @@ class App extends React.Component {
     } = this.state;
     const { intl } = this.props;
 
-    const pluginDataCardTitle = activitiesJson?.pluginDataTitles?.[0];
+    const pluginUserDataCardTitle = activitiesJson?.pluginUserDataTitles?.[0];
     // This line generates an array of all the plugin entries of all users,
     // this might have duplicate entries:
-    const pluginDataColumnTitleWithDuplicates = Object.values(
+    const pluginUserDataColumnTitleWithDuplicates = Object.values(
       activitiesJson.users || {}, // Hardcoded for now, we will add cards relative to this key.
     ).flatMap((
       user,
-    ) => user.pluginData?.[pluginDataCardTitle]).filter((
-      pluginDataListForSpecificUser,
+    ) => user.pluginUserData?.[pluginUserDataCardTitle]).filter((
+      pluginUserDataListForSpecificUser,
     ) => !!(
-      pluginDataListForSpecificUser?.columnTitle)).map((
-      pluginDataListForSpecificUser,
-    ) => pluginDataListForSpecificUser?.columnTitle);
+      pluginUserDataListForSpecificUser?.columnTitle)).map((
+      pluginUserDataListForSpecificUser,
+    ) => pluginUserDataListForSpecificUser?.columnTitle);
     // This line will eliminate duplicates.
-    const pluginDataColumnTitleList = [...new Set(pluginDataColumnTitleWithDuplicates)];
+    const pluginUserDataColumnTitleList = [...new Set(pluginUserDataColumnTitleWithDuplicates)];
 
     document.title = `${intl.formatMessage({ id: 'app.learningDashboard.bigbluebuttonTitle', defaultMessage: 'BigBlueButton' })} - ${intl.formatMessage({ id: 'app.learningDashboard.dashboardTitle', defaultMessage: 'Learning Analytics Dashboard' })} - ${activitiesJson.name}`;
 
@@ -581,13 +581,13 @@ class App extends React.Component {
                 </CardContent>
               </Card>
             </TabUnstyled>
-            {pluginDataColumnTitleList.length && (
+            {pluginUserDataColumnTitleList.length && (
               <TabUnstyled className="rounded focus:outline-none focus:ring focus:ring-red-500 ring-offset-2" data-test="pluginsPanelDashboard">
                 <Card>
                   <CardContent classes={{ root: '!p-0' }}>
                     <CardBody
-                      name={pluginDataCardTitle}
-                      number={pluginDataColumnTitleList.length}
+                      name={pluginUserDataCardTitle}
+                      number={pluginUserDataColumnTitleList.length}
                       cardClass={tab === TABS.POLLING ? 'border-red-500' : 'hover:border-red-500 border-white'}
                       iconClass="bg-red-100 text-red-500"
                     >
@@ -683,13 +683,13 @@ class App extends React.Component {
           </TabPanelUnstyled>
           <TabPanelUnstyled value={5}>
             <h2 className="block my-2 pr-2 text-xl font-semibold">
-              {pluginDataCardTitle}
+              {pluginUserDataCardTitle}
             </h2>
             <div className="w-full overflow-hidden rounded-md shadow-xs border-2 border-gray-100">
               <div className="w-full overflow-x-auto">
                 <PluginsTable
-                  pluginDataCardTitle={pluginDataCardTitle}
-                  pluginDataColumnTitleList={pluginDataColumnTitleList}
+                  pluginUserDataCardTitle={pluginUserDataCardTitle}
+                  pluginUserDataColumnTitleList={pluginUserDataColumnTitleList}
                   allUsers={activitiesJson.users}
                 />
               </div>

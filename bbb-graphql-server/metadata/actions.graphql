@@ -352,17 +352,17 @@ type Mutation {
 }
 
 type Mutation {
-  pluginLearningAnalyticsDashboardUpsertData(
+  pluginLearningAnalyticsDashboardUpsertUserData(
     targetUserId: String!
-    dataForLearningAnalyticsDashboard: json!
+    userDataForLearningAnalyticsDashboard: json!
     pluginName: String!
   ): Boolean
 }
 
 type Mutation {
-  PluginLearningAnalyticsDashboardDeleteData(
+  PluginLearningAnalyticsDashboardDeleteUserData(
     targetUserId: String!
-    dataForLearningAnalyticsDashboard: json!
+    userDataForLearningAnalyticsDashboard: json!
     pluginName: String!
   ): Boolean
 }

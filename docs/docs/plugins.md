@@ -1027,27 +1027,27 @@ So the idea is that we have a `uiCommands` object and at a point, there will be 
 
 ### Learning Analytics Dashboard integration
 
-This integration allow you to insert/update entry in LAD (Learning Analytics Dashboard) via `upsert` function and also delete entries via `delete` function.
+This integration allow you to insert/update entry in LAD (Learning Analytics Dashboard) via `upsertUserData` function and also delete entries via `deleteUserData` function.
 
 It's an object available in the `pluginApi` that wraps those 2 functions:
 
-- `pluginApi.learningAnalyticsDashboard.upsert`
-- `pluginApi.learningAnalyticsDashboard.delete`
+- `pluginApi.learningAnalyticsDashboard.upsertUserData`
+- `pluginApi.learningAnalyticsDashboard.deleteUserData`
 
 For the `upsert` function, the argument's data object structure must be:
 
 ```ts
-interface UpsertDataArguments {
+interface LearningAnalyticsDashboardUserData {
   cardTitle: string;
   columnTitle: string;
   value: string;
 }
 ```
 
-For the `delete` function, the argument's data object structure must be:
+For the `deleteUserData` function, the argument's data object structure must be:
 
 ```ts
-interface DeleteDataArguments {
+interface LearningAnalyticsDashboardDeleteUserData {
   cardTitle: string;
   columnTitle: string;
 }
@@ -1066,7 +1066,7 @@ See example of use ahead:
 
 ```ts
 const targetUserId = 'abcd-efg';
-pluginApi.learningAnalyticsDashboard.upsertData(
+pluginApi.learningAnalyticsDashboard.upsertUserData(
   {
     cardTitle: 'Example Title',
     columnTitle: 'link sent by user',
@@ -1075,7 +1075,7 @@ pluginApi.learningAnalyticsDashboard.upsertData(
   targetUserId,
 );
 
-pluginApi.learningAnalyticsDashboard.deleteData(
+pluginApi.learningAnalyticsDashboard.deleteUserData(
   {
     cardTitle: 'Example Title',
     columnTitle: 'link sent by user',

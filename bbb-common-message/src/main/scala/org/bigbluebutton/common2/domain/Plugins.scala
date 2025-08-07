@@ -1,12 +1,12 @@
 package org.bigbluebutton.common2.domain
 
-case class PluginLearningAnalyticsDashboardData (
+case class PluginLearningAnalyticsDashboardUserData(
                                                       columnTitle: String,
                                                       cardTitle: String,
                                                       value: String,
                                                       )
 
-case class PluginLearningAnalyticsDashboardDataDelete(
+case class PluginLearningAnalyticsDashboardUserDataDelete(
                                                       columnTitle: String,
                                                       cardTitle: String,
                                                       )
