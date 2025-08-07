@@ -438,9 +438,9 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
                   )
                   : (
                     <ProfileStyled.VideoPreview
-                      mirroredVideo={VideoService.mirrorOwnWebcam()}
+                      mirroredVideo={false}
                       id="preview"
-                      data-test={VideoService.mirrorOwnWebcam() ? 'mirroredVideoPreview' : 'videoPreview'}
+                      data-test="videoPreview"
                       ref={videoRef}
                       autoPlay
                       playsInline
