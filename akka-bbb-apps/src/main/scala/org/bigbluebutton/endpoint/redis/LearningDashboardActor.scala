@@ -757,7 +757,41 @@ class LearningDashboardActor(
       updatePluginUserDataInLadHelper(meeting, updatedUser, updatedPluginUserDataTitles)
       log.debug("Generic data deleted for plugin [{}]: {}", msg.body.pluginName, msg.body.userDataForLearningAnalyticsDashboard)
     }
+  }
 
+  private def clearAllDataFromUsers(cardTitleOpt: Option[String], pluginName: String, meeting: Meeting) = {
+    meeting.users.values.map { user =>
+      val updatedPluginUserData = cardTitleOpt match {
+
+        // Case 1: cardTitle is provided – remove the entire card
+        case Some(cardTitle) =>
+          user.pluginUserData - cardTitle
+
+        // Case 2: no cardTitle – remove all entries for the plugin within all cards
+        case None =>
+          user.pluginUserData.flatMap { case (cardTitle, pluginUserDataVector) =>
+            val filteredPluginUserDataVector = pluginUserDataVector.filterNot(_.pluginName == pluginName)
+
+            if (filteredPluginUserDataVector.nonEmpty) {
+              Some(cardTitle -> filteredPluginUserDataVector)
+            } else {
+              None // remove card entirely if no entries remain
+            }
+          }
+      }
+      user.copy(pluginUserData = updatedPluginUserData)
+    }
+  }
+
+  private def removeEmptyCardTitles(cardTitleOpt: Option[String], meeting: Meeting, updatedUsers: Iterable[User]) = {
+    cardTitleOpt match {
+      case Some(cardTitle) =>
+        meeting.pluginUserDataCardTitles.filterNot(_ == cardTitle)
+      case None =>
+        // Remove any cardTitle from pluginUserDataCardTitles if it no longer exists for any user
+        val remainingCardTitles = updatedUsers.flatMap(_.pluginUserData.keySet).toSet
+        meeting.pluginUserDataCardTitles.filter(remainingCardTitles.contains)
+    }
   }
 
   private def handlePluginLearningAnalyticsDashboardClearAllUsersDataMsg(msg: PluginLearningAnalyticsDashboardClearAllUsersDataMsg): Unit = {
@@ -773,37 +807,10 @@ class LearningDashboardActor(
         return
       }
 
-      val updatedUsers = meeting.users.values.map { user =>
-        val updatedPluginUserData = cardTitleOpt match {
+      val updatedUsers = clearAllDataFromUsers(cardTitleOpt, pluginName, meeting)
 
-          // Case 1: cardTitle is provided – remove the entire card
-          case Some(cardTitle) =>
-            user.pluginUserData - cardTitle
-
-          // Case 2: no cardTitle – remove all entries for the plugin within all cards
-          case None =>
-            user.pluginUserData.flatMap { case (cardTitle, pluginUserDataVector) =>
-              val filteredPluginUserDataVector = pluginUserDataVector.filterNot(_.pluginName == pluginName)
-
-              if (filteredPluginUserDataVector.nonEmpty) {
-                Some(cardTitle -> filteredPluginUserDataVector)
-              } else {
-                None // remove card entirely if no entries remain
-              }
-            }
-        }
-        user.copy(pluginUserData = updatedPluginUserData)
-      }
-
-      // Update pluginUserDataCardTitles if any cards were completely removed
-      val updatedPluginUserDataCardTitles: Vector[String] = cardTitleOpt match {
-        case Some(cardTitle) =>
-          meeting.pluginUserDataCardTitles.filterNot(_ == cardTitle)
-        case None =>
-          // Remove any cardTitle from pluginUserDataCardTitles if it no longer exists for any user
-          val remainingCardTitles = updatedUsers.flatMap(_.pluginUserData.keySet).toSet
-          meeting.pluginUserDataCardTitles.filter(remainingCardTitles.contains)
-      }
+      // Update pluginUserDataCardTitles in meeting if any cards were completely removed
+      val updatedPluginUserDataCardTitles: Vector[String] = removeEmptyCardTitles(cardTitleOpt, meeting, updatedUsers)
 
       updatedUsers.foreach { updatedUser =>
         updatePluginUserDataInLadHelper(meeting, updatedUser, updatedPluginUserDataCardTitles)
