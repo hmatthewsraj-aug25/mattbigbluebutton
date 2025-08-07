@@ -198,7 +198,7 @@ case class SetUserListenOnlyInputCmdMsg(
     header: BbbClientMsgHeader,
     body:   SetUserListenOnlyInputCmdMsgBody
 ) extends StandardMsg
-case class SetUserListenOnlyInputCmdMsgBody(userId: String, listenOnlyInputDevice: Boolean)
+case class SetUserListenOnlyInputCmdMsgBody(listenOnlyInputDevice: Boolean)
 
 /**
  * Sent to FS to get the users in the voice conference.
