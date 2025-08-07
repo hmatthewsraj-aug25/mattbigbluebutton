@@ -16,6 +16,7 @@ import MediaStreamUtils from '/imports/utils/media-stream-utils';
 import ProfileStyled from '/imports/ui/components/profile-settings/styles';
 import ModalStyled from '../styles';
 import * as ScreenShareService from '/imports/ui/components/screenshare/service';
+import { useHasVideoStream, useStopVideo, useStreams } from '/imports/ui/components/video-provider/hooks';
 
 interface CameraAsContentViewProps {
   intl: IntlShape;
@@ -130,6 +131,12 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
   const isMounted = useRef<boolean>(true);
   const currentVideoStream = useRef<BBBVideoStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const hasVideoStream = useHasVideoStream();
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const allStreams = useStreams();
+  const stopVideo = useStopVideo();
 
   const initializeCameras = async () => {
     isMounted.current = true;
@@ -447,11 +454,20 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
     }
   }
 
-  const handleStartCameraAsContent = () => {
-    if (!PreviewService.storeStream(webcamDeviceId, currentVideoStream.current)) {
-      currentVideoStream.current?.stop();
+  const startCameraAsContent = () => {
+    const videoStream = currentVideoStream.current;
+
+    if (!videoStream || !videoStream.mediaStream) {
+      logger.error({
+        logCode: 'camera_as_content_missing_stream',
+        extraInfo: { deviceId: webcamDeviceId },
+      }, 'Camera as content failed: preview stream is not available at sharing time.');
+      initializeCameras();
+      return;
     }
-    cleanupStreamAndVideo();
+
+    PreviewService.storeStream(webcamDeviceId, videoStream);
+
     const handleFailure = (error: unknown) => {
       const {
         // @ts-ignore - jsx code
@@ -471,9 +487,43 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
       hasCameraAsContent,
       stopExternalVideoShare,
       // eslint-disable-next-line no-underscore-dangle
-      true, handleFailure, { stream: PreviewService.getStream(webcamDeviceId)._mediaStream },
+      true,
+      handleFailure,
+      { stream: videoStream.mediaStream },
     );
+
     ScreenShareService.setCameraAsContentDeviceId(webcamDeviceId);
+
+    cleanupStreamAndVideo();
+
+    onActionCompleted();
+  };
+
+  useEffect(() => {
+    if (!isTransitioning) return;
+
+    if (!hasVideoStream) {
+      logger.info({
+        logCode: 'camera_as_content_transition_safe',
+      }, 'Video stream is confirmed stopped. Proceeding to share as content.');
+
+      startCameraAsContent();
+      setIsTransitioning(false);
+    }
+  }, [isTransitioning, hasVideoStream]);
+
+  /** Clones the preview stream for a smooth transition */
+  const clonePreviewStream = () => {
+    if (!currentVideoStream.current || !currentVideoStream.current.originalStream) {
+      logger.error({
+        logCode: 'camera_as_content_clone_failed',
+      }, 'Failed to clone preview stream: stream is missing.');
+      return;
+    }
+
+    const cloned = currentVideoStream.current.originalStream.clone();
+    const newStream = new BBBVideoStream(cloned);
+    setCurrentVideoStream(newStream);
   };
 
   return (
@@ -502,15 +552,33 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
             ? formatMessage(intlMessages.shareLabel) : formatMessage(intlMessages.stopSharingLabel)}
           color={!hasCameraAsContent ? 'primary' : 'danger'}
           onClick={async () => {
-            if (!hasCameraAsContent) {
-              handleStartCameraAsContent();
-              onActionCompleted();
-            } else {
+            if (hasCameraAsContent) {
               ScreenShareService.screenshareHasEnded();
               initializeCameras();
+              return;
+            }
+
+            if (isTransitioning) return;
+
+            const myActiveStreams = allStreams.filter((s) => VideoService.isLocalStream(s.stream));
+            const targetStream = myActiveStreams.find((s) => s.deviceId === webcamDeviceId);
+
+            if (targetStream) {
+              clonePreviewStream();
+
+              logger.info({
+                logCode: 'camera_as_content_transition_start',
+                extraInfo: { streamToStop: targetStream.stream },
+              }, 'Matching camera stream found. Transitioning to content share.');
+
+              setIsTransitioning(true);
+              await stopVideo(targetStream.stream);
+            } else {
+              logger.info({ logCode: 'camera_as_content_no_video' }, 'No active video matching preview. Sharing as content directly.');
+              startCameraAsContent();
             }
           }}
-          disabled={isCameraLoading || !availableWebcams || availableWebcams.length === 0}
+          disabled={isCameraLoading || !availableWebcams || availableWebcams.length === 0 || isTransitioning}
           icon={hasCameraAsContent ? 'video_off' : undefined}
         />
       </ModalStyled.FooterContainer>
