@@ -63,6 +63,10 @@ class App extends React.Component {
   }
 
   handleOpenModal() {
+    if (process.env.REACT_APP_EXTERNAL_HELP_PAGE_URL) {
+      window.open(process.env.REACT_APP_EXTERNAL_HELP_PAGE_URL, '_blank');
+      return;
+    }
     this.setState({ modalOpen: true });
   }
 
@@ -367,7 +371,7 @@ class App extends React.Component {
         return intl.formatMessage({ id: 'app.learningDashboard.errors.invalidToken', defaultMessage: 'Invalid session token' });
       }
 
-      if (activitiesJson === {} || typeof activitiesJson.name === 'undefined') {
+      if (Object.keys(activitiesJson).length === 0 || typeof activitiesJson.name === 'undefined') {
         return intl.formatMessage({ id: 'app.learningDashboard.errors.dataUnavailable', defaultMessage: 'Data is no longer available' });
       }
 
@@ -791,9 +795,15 @@ class App extends React.Component {
               className="border-2 text-gray-700 border-gray-200 rounded-md px-4 py-2 bg-white focus:outline-none focus:ring ring-offset-2 focus:ring-gray-500 focus:ring-opacity-50 flex items-center"
               onClick={this.handleOpenModal}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
-              </svg>
+              {process.env.REACT_APP_EXTERNAL_HELP_PAGE_URL ? (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                </svg>
+              )}
               &nbsp;
               <FormattedMessage
                 id="app.learningDashboard.helpButtonLabel"
