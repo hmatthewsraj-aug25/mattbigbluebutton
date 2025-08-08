@@ -81,6 +81,12 @@ const ButtonsWrapper = styled.div`
   justifyContent: space-between;
 `;
 
+const LoadingWrapper = styled.div`
+  justify-content: center;
+  display: flex;
+  flex-grow: 1;
+`;
+
 const CircularProgressContainer = styled(CircularProgress)`
   align-self: center;
 `;
@@ -98,6 +104,7 @@ export default {
   ChatMessages,
   Separator,
   ButtonsWrapper,
+  LoadingWrapper,
   CircularProgressContainer,
   ContentWrapper,
 };
