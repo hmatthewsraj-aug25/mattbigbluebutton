@@ -15,7 +15,7 @@ const ActivityScoreHelp = () => {
       <p>
         <FormattedMessage
           id="app.learningDashboard.help.activityScore.desc"
-          defaultMessage="The user's activity score is calculated based on their participation in a meeting. The score is a sum of 5 normalized metrics, each contributing up to 2 points. Each metric is normalized so that the highest performer in each category gets the full 2 points, and others get proportionally less."
+          defaultMessage="The user's activity score is calculated based on their participation in a session. The score is a sum of 5 normalized metrics, each contributing up to 2 points. Each metric is normalized so that the highest performer in each category gets the full 2 points, and others get proportionally less."
         />
       </p>
       <table className="w-full table-auto border-collapse text-left">
