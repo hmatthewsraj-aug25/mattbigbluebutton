@@ -1567,7 +1567,7 @@
     "app.learningDashboard.helpButtonLabel": "Help",
     "app.learningDashboard.help.title": "Learning Dashboard Help",
     "app.learningDashboard.help.activityScore.title": "How The Activity Score is Computed",
-    "app.learningDashboard.help.activityScore.desc": "The user's activity score is calculated based on their participation in a meeting. The score is a sum of 5 normalized metrics, each contributing up to 2 points. Each metric is normalized so that the highest performer in each category gets the full 2 points, and others get proportionally less.",
+    "app.learningDashboard.help.activityScore.desc": "The user's activity score is calculated based on their participation in a session. The score is a sum of 5 normalized metrics, each contributing up to 2 points. Each metric is normalized so that the highest performer in each category gets the full 2 points, and others get proportionally less.",
     "app.learningDashboard.help.activityScore.metric": "Metric",
     "app.learningDashboard.help.activityScore.formula": "Formula",
     "app.learningDashboard.help.activityScore.maxValue": "Maximum Value",
