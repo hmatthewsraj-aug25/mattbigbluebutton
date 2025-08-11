@@ -1,5 +1,4 @@
 import { Geo } from './Geo.js';
-import fs from 'fs';
 
 /**
  * Creates an SVG poll shape from Tldraw v2 JSON data.
@@ -171,8 +170,6 @@ export class Poll extends Geo {
   }
 
   draw() {
-    let pollText = '';
-
     const caseInsensitiveReducer = (acc, item) => {
       const index = acc.findIndex((ans) => ans.key.toLowerCase() === item.key.toLowerCase())
       if (index !== -1) {
@@ -190,14 +187,12 @@ export class Poll extends Geo {
 
     const answers = this.props?.answers.reduce(caseInsensitiveReducer, []);
 
-    pollText = pollText.concat(answers.map((ans) => `${ans.key}: ${ans.numVotes}`).join('<br/>'));
-
     const rectGroup = this.shapeGroup;
 
     let pollQuestion = '';
 
     if (this.props?.questionText.trim() !== '') {
-      pollQuestion = this.props.questionText.split('<br#>').join(' ');
+      pollQuestion = this.props.questionText.split('<br/>').join(' ');
     }
 
     const svg = this.generatePollSvg(answers, this.w, this.h + this.growY, pollQuestion);
