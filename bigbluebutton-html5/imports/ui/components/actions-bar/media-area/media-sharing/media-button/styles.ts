@@ -10,7 +10,7 @@ const btnBorder = 'var(--btn-default-border, #B0BDC9)';
 
 // Outer container for the media button.
 const MediaButtonContainer = styled.div`
-  width: 108px;
+  width: 5rem;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -23,8 +23,8 @@ interface ButtonFrameProps {
 }
 
 const ButtonFrame = styled(ButtonBase)<ButtonFrameProps>`
-  width: 100%;
-  height: 6.75rem;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 16px !important;
   border: 1px solid ${btnBorder} !important;
   padding: 0.5rem !important;
@@ -35,6 +35,7 @@ const ButtonFrame = styled(ButtonBase)<ButtonFrameProps>`
   align-items: center;
   text-transform: none;
   position: relative;
+  transition: opacity 0.2s ease-in-out;
 
   ${({ color }) => color === 'default' && `
     color: ${btnDefaultColor} !important;
@@ -49,8 +50,8 @@ const ButtonFrame = styled(ButtonBase)<ButtonFrameProps>`
       box-shadow: 0 0 0 ${borderSize} ${btnPrimaryBg};
     }
 
-    &:hover & {
-      color: ${colorGrayUserListToolbar} !important;
+    &:hover {
+      opacity: 0.8;
     }
   `}
 
@@ -66,14 +67,13 @@ const ButtonFrame = styled(ButtonBase)<ButtonFrameProps>`
       background-clip: padding-box;
       box-shadow: 0 0 0 ${borderSize} ${btnPrimaryBg};
     }
-    &:hover,
-    .buttonWrapper:hover & {
-      color: ${btnPrimaryColor} !important;
+
+    &:hover {
+      opacity: 0.8;
     }
   `}
 
   ${({ color }) => color === 'active' && `
-    //color: ${colorBlueAux} !important;
     background-color: ${colorBlueAux} !important;
     border: 0 !important;
 
@@ -84,9 +84,9 @@ const ButtonFrame = styled(ButtonBase)<ButtonFrameProps>`
       background-clip: padding-box;
       box-shadow: 0 0 0 ${borderSize} ${btnPrimaryBg};
     }
-    &:hover,
-    .buttonWrapper:hover & {
-      color: ${btnPrimaryColor} !important;
+
+    &:hover {
+      opacity: 0.8;
     }
   `}
 `;
@@ -114,7 +114,7 @@ const IconWrapper = styled.div`
   flex: 1;
 
   > i {
-    font-size: 340%;
+    font-size: 200%;
   }
 `;
 
@@ -123,7 +123,6 @@ const ButtonText = styled.div`
   color: ${colorText};
   width: 100%;
   text-align: center;
-  //font-size: 0.75rem;
   line-height: 1;
   overflow: hidden;
   text-overflow: ellipsis;
