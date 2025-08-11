@@ -10,11 +10,12 @@
     "tscheck": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:file": "eslint"
+    "lint:file": "eslint",
+    "tscheck:staged": "tsc --noEmit --incremental"
   },
   "lint-staged": {
-    "*.{js,jsx}": [
-      "eslint --fix"
+    "*.{js,jsx,ts,tsx}": [
+      "eslint"
     ]
   },
   "overrides": {
@@ -57,7 +58,7 @@
     "autoprefixer": "^10.4.4",
     "axios": "^1.8.3",
     "babel-runtime": "~6.26.0",
-    "bigbluebutton-html-plugin-sdk": "https://codeload.github.com/bigbluebutton/bigbluebutton-html-plugin-sdk/tar.gz/785276792b928602b2c03a66acfad0b93f0eebb3",
+    "bigbluebutton-html-plugin-sdk": "0.0.90",
     "bowser": "^2.11.0",
     "browser-bunyan": "^1.8.0",
     "classnames": "^2.2.6",
@@ -125,6 +126,7 @@
     "@babel/preset-env": "7.24.8",
     "@babel/preset-react": "7.24.7",
     "@babel/preset-typescript": "7.24.7",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.6.1",
     "@types/emoji-mart": "^3.0.9",
     "@types/react": "18.3.3",
     "@types/react-dom": "^18.2.7",
@@ -155,6 +157,7 @@
     "prettier": "3.3.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-refresh": "^0.17.0",
     "sha1": "^1.1.1",
     "style-loader": "4.0.0",
     "terser-webpack-plugin": "^5.3.10",
@@ -172,7 +175,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && npm run tscheck:staged"
     }
   }
 }
