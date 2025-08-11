@@ -87,22 +87,24 @@ const AudioControls: React.FC<AudioControlsProps> = ({
     const joinAudioLabel = away ? intlMessages.joinAudioAndSetActive : intlMessages.joinAudio;
 
     return (
-      // eslint-disable-next-line jsx-a11y/no-access-key
-      <Button
-        onClick={() => handleJoinAudio(isConnected)}
-        disabled={disabled}
-        hideLabel
-        aria-label={intl.formatMessage(joinAudioLabel)}
-        label={intl.formatMessage(joinAudioLabel)}
-        data-test="joinAudio"
-        color="default"
-        icon="no_audio"
-        size="lg"
-        circle
-        accessKey={joinAudioShortcut}
-        loading={isConnecting}
-        hoverColor={listItemBgHover}
-      />
+      <Styled.Container>
+        {/* eslint-disable-next-line jsx-a11y/no-access-key */}
+        <Button
+          onClick={() => handleJoinAudio(isConnected)}
+          disabled={disabled}
+          hideLabel
+          aria-label={intl.formatMessage(joinAudioLabel)}
+          label={intl.formatMessage(joinAudioLabel)}
+          data-test="joinAudio"
+          color="default"
+          icon="no_audio"
+          size="lg"
+          circle
+          accessKey={joinAudioShortcut}
+          loading={isConnecting}
+          hoverColor={listItemBgHover}
+        />
+      </Styled.Container>
     );
   }, [isConnected, disabled, joinAudioShortcut, away, intl.locale]);
 
@@ -123,18 +125,21 @@ const AudioControls: React.FC<AudioControlsProps> = ({
   }, []);
 
   return (
-    <Styled.Container>
+    <>
       {!inAudio ? joinButton : <InputStreamLiveSelectorContainer openAudioSettings={openAudioSettings} />}
-      {isAudioModalOpen && (
-        <AudioModalContainer
-          priority="low"
-          setIsOpen={setIsOpen}
-          isOpen={isAudioModalOpen}
-          content={audioModalContent}
-          unmuteOnExit={audioModalProps?.unmuteOnExit}
-        />
-      )}
-    </Styled.Container>
+      {/* Below wrapper is to prevent the modal's anchor from affecting actions bar buttons spacing */}
+      <div style={{ position: 'absolute' }}>
+        {isAudioModalOpen && (
+          <AudioModalContainer
+            priority="low"
+            setIsOpen={setIsOpen}
+            isOpen={isAudioModalOpen}
+            content={audioModalContent}
+            unmuteOnExit={audioModalProps?.unmuteOnExit}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

@@ -70,14 +70,8 @@ const MuteToggleButton = styled(Button)`
     `}
 `;
 
-const Container = styled.span`
-  display: flex;
-  flex-flow: row;
+const Container = styled.div`
   position: relative;
-
-  & > div {
-    position: relative;
-  }
 `;
 
 export default {

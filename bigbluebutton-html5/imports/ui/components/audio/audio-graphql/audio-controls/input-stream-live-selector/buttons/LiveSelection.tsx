@@ -97,6 +97,10 @@ interface LiveSelectionProps extends MuteToggleProps {
   away: boolean;
   openAudioSettings: (props?: { unmuteOnExit?: boolean }) => void;
   supportsTransparentListenOnly: boolean;
+  showMutedAlert: boolean;
+  inputStream: string;
+  isModerator: boolean;
+  isPresenter: boolean;
 }
 
 export const LiveSelection: React.FC<LiveSelectionProps> = ({
@@ -114,6 +118,10 @@ export const LiveSelection: React.FC<LiveSelectionProps> = ({
   away,
   openAudioSettings,
   supportsTransparentListenOnly,
+  showMutedAlert,
+  inputStream,
+  isModerator,
+  isPresenter,
 }) => {
   const intl = useIntl();
 
@@ -352,12 +360,16 @@ export const LiveSelection: React.FC<LiveSelectionProps> = ({
           away={away}
           noInputDevice={noInputDevice}
           openAudioSettings={openAudioSettings}
+          showMutedAlert={showMutedAlert}
+          inputStream={inputStream}
+          isModerator={isModerator}
+          isPresenter={isPresenter}
         />
       )}
       <BBBMenu
         customStyles={!isMobile ? customStyles : null}
         trigger={(
-          <>
+          <Styled.RelativePositioningContainer>
             {shouldTreatAsMicrophone() && !isMobile
               ? (
                 <MuteToggle
@@ -369,6 +381,10 @@ export const LiveSelection: React.FC<LiveSelectionProps> = ({
                   away={away}
                   noInputDevice={noInputDevice}
                   openAudioSettings={openAudioSettings}
+                  showMutedAlert={showMutedAlert}
+                  inputStream={inputStream}
+                  isModerator={isModerator}
+                  isPresenter={isPresenter}
                 />
               )
               : (
@@ -386,7 +402,7 @@ export const LiveSelection: React.FC<LiveSelectionProps> = ({
               hideLabel
               tabIndex={0}
             />
-          </>
+          </Styled.RelativePositioningContainer>
         )}
         actions={!isAudioLocked ? dropdownListComplete : [leaveAudioOption]}
         opts={{
