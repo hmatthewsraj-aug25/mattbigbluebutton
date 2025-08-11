@@ -1,7 +1,7 @@
 import React, {
   useState, useEffect, useCallback,
 } from 'react';
-import { useIntl } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import PollingContainer from '/imports/ui/components/polling/container';
 import ActivityCheckContainer from '/imports/ui/components/activity-check/container';
 import RequestUnmuteContainer from '/imports/ui/components/request-unmute-modal/container';
@@ -80,6 +80,12 @@ interface AppProps {
   layoutContextDispatch: DispatcherFunction;
   handlePresentationFitToWidth: (fitToWidth: boolean) => void;
 }
+const messages = defineMessages({
+  captions: {
+    id: 'app.audio.captions.live.captions',
+    description: 'Accessible label for the audio captions region',
+  },
+});
 
 const App: React.FC<AppProps> = ({
   darkTheme,
@@ -148,7 +154,8 @@ const App: React.FC<AppProps> = ({
 
     return (
       <Styled.CaptionsWrapper
-        role="region"
+        as="section"
+        aria-label={intl.formatMessage(messages.captions)}
         style={{
           position: 'absolute',
           left: captionsStyle.left,
