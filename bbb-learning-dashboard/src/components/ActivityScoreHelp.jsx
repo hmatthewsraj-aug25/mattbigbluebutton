@@ -219,4 +219,4 @@ const ActivityScoreHelp = () => {
   );
 };
 
-export default injectIntl(ActivityScoreHelp);
+export default ActivityScoreHelp;
