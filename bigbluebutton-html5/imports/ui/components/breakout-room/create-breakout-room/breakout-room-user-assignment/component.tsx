@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { range } from '/imports/utils/array-utils';
+import KEYS from '/imports/utils/keys';
 import Icon from '/imports/ui/components/common/icon/icon-ts/component';
 import Styled from '../styles';
 import Auth from '/imports/ui/services/auth';
@@ -324,7 +325,7 @@ const BreakoutRoomUserAssignment: React.FC<ChildComponentProps> = ({
     e.stopPropagation();
     const element = e.target as HTMLElement;
     if (element.id.includes('breakoutBox')) {
-      if (e.key === 'Enter' || e.key === 'ArrowDown') {
+      if (e.key === KEYS.ENTER || e.key === KEYS.ARROW_DOWN) {
         (element.firstChild as HTMLElement).focus();
       }
     }
@@ -334,12 +335,12 @@ const BreakoutRoomUserAssignment: React.FC<ChildComponentProps> = ({
       const [userId, StringFrom] = splitted;
       const from = Number(StringFrom);
       const maxRooms = numberOfRooms;
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        const nextElement = e.key === 'ArrowDown' ? element.nextSibling : element.previousSibling;
+      if (e.key === KEYS.ARROW_DOWN || e.key === KEYS.ARROW_UP) {
+        const nextElement = e.key === KEYS.ARROW_DOWN ? element.nextSibling : element.previousSibling;
         if (nextElement) (nextElement as HTMLElement).focus();
       }
 
-      if (e.key === 'ArrowRight') {
+      if (e.key === KEYS.ARROW_RIGHT) {
         const nextRoom = from + 1;
         if (nextRoom <= maxRooms) {
           moveUser(userId, from, from + 1);
@@ -347,7 +348,7 @@ const BreakoutRoomUserAssignment: React.FC<ChildComponentProps> = ({
         }
       }
 
-      if (e.key === 'ArrowLeft') {
+      if (e.key === KEYS.ARROW_LEFT) {
         const prevRoom = from - 1;
         if (prevRoom >= 0) {
           moveUser(userId, from, from - 1 < 0 ? 0 : from - 1);

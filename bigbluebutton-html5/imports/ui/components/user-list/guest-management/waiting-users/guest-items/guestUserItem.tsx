@@ -2,6 +2,7 @@ import React, {
   ChangeEvent,
 } from 'react';
 import { getSettingsSingletonInstance } from '/imports/ui/services/settings';
+import KEYS from '/imports/utils/keys';
 import IconButton from '@mui/material/IconButton';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircle from '@mui/icons-material/CheckCircle';
@@ -79,7 +80,7 @@ const GuestUserItem: React.FC<GuestUserItemProps> = ({
   };
 
   const handleMessageKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.keyCode === 13 && e.shiftKey === false) {
+    if (e.key === KEYS.ENTER && e.shiftKey === false) {
       e.preventDefault();
       setPrivateGuestLobbyMessage(privateMessage);
       setPrivateMessage('');

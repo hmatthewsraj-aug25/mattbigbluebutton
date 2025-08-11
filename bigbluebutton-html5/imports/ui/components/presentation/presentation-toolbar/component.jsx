@@ -17,7 +17,7 @@ import Styled from './styles';
 import ZoomTool from './zoom-tool/component';
 import SmartMediaShareContainer from './smart-video-share/container';
 import TooltipContainer from '/imports/ui/components/common/tooltip/container';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import Spinner from '/imports/ui/components/common/spinner/component';
 import Separator from '/imports/ui/components/common/separator/component';
 
@@ -208,15 +208,15 @@ class PresentationToolbar extends PureComponent {
 
     if (isBody) {
       switch (which) {
-        case KEY_CODES.ARROW_LEFT:
-        case KEY_CODES.PAGE_UP:
+        case KEYS.ARROW_LEFT:
+        case KEYS.PAGE_UP:
           this.previousSlideHandler();
           break;
-        case KEY_CODES.ARROW_RIGHT:
-        case KEY_CODES.PAGE_DOWN:
+        case KEYS.ARROW_RIGHT:
+        case KEYS.PAGE_DOWN:
           this.nextSlideHandler();
           break;
-        case KEY_CODES.ENTER:
+        case KEYS.ENTER:
           this.fullscreenToggleHandler();
           break;
         default:

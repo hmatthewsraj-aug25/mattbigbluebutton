@@ -6,6 +6,7 @@ import React, {
 import { useMutation } from '@apollo/client';
 import { defineMessages, useIntl } from 'react-intl';
 import { useMeeting } from '/imports/ui/core/hooks/useMeeting';
+import KEYS from '/imports/utils/keys';
 import SendIcon from '@mui/icons-material/Send';
 import Tooltip from '/imports/ui/components/common/tooltip/component';
 import {
@@ -87,7 +88,7 @@ const GuestUsersManagementPanel: React.FC<GuestUsersManagementPanelProps> = ({
   };
 
   const handleMessageKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.keyCode === 13 && e.shiftKey === false) {
+    if (e.key === KEYS.ENTER && e.shiftKey === false) {
       e.preventDefault();
       setGuestLobbyMessage(message as string);
       setMessage('');

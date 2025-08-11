@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { PANELS, ACTIONS } from '/imports/ui/components/layout/enums';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import Session from '/imports/ui/services/storage/in-memory';
 import { DispatcherFunction } from '/imports/ui/components/layout/layoutTypes';
 
@@ -8,9 +8,9 @@ export const usePollShortcut = (layoutContextDispatch: DispatcherFunction, isPol
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     const {
       altKey, ctrlKey,
-      metaKey, keyCode,
+      metaKey, key,
     } = e;
-    const isPollShortcut = altKey && keyCode === KEY_CODES.P && (ctrlKey || metaKey);
+    const isPollShortcut = altKey && key === KEYS.p && (ctrlKey || metaKey);
 
     if (isPollShortcut) {
       e.preventDefault();

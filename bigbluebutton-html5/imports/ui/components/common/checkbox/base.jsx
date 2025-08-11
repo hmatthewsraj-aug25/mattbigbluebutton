@@ -1,4 +1,5 @@
 import React, { createRef, PureComponent } from 'react';
+import KEYS from '/imports/utils/keys';
 import PropTypes from 'prop-types';
 
 const propTypes = {
@@ -44,7 +45,7 @@ export default class Base extends PureComponent {
   handleKeyDown(event) {
     const { key } = event;
     const node = this.element.current;
-    if (key === 'Enter' && node) {
+    if (key === KEYS.ENTER && node) {
       const input = node.getElementsByTagName('input')[0];
       input?.click();
     }

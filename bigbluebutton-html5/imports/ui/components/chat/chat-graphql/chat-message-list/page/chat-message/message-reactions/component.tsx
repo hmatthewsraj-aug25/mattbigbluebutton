@@ -3,7 +3,7 @@ import emojiData from '@emoji-mart/data';
 import Styled from './styles';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
 import ReactionItem from './reaction-item/component';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 
 interface ChatMessageReactionsProps {
   reactions: {
@@ -41,11 +41,11 @@ const roving = (
   elementsList: HTMLElement,
   element?: HTMLElement | null,
 ) => {
-  if ([KEY_CODES.ESCAPE, KEY_CODES.TAB].includes(event.keyCode)) {
+  if ([KEYS.ESCAPE, KEYS.TAB].includes(event.key)) {
     changeState(null);
   }
 
-  if (event.keyCode === KEY_CODES.ARROW_RIGHT) {
+  if (event.key === KEYS.ARROW_RIGHT) {
     event.preventDefault();
     const firstElement = elementsList.firstChild as HTMLElement;
     const elRef = element && element.nextSibling ? (element.nextSibling as HTMLElement) : firstElement;
@@ -54,7 +54,7 @@ const roving = (
     changeState(elRef);
   }
 
-  if (event.keyCode === KEY_CODES.ARROW_LEFT) {
+  if (event.key === KEYS.ARROW_LEFT) {
     event.preventDefault();
     const lastElement = elementsList.lastChild as HTMLElement;
     const elRef = element && element.previousSibling ? (element.previousSibling as HTMLElement) : lastElement;

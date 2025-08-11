@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable jsx-a11y/no-access-key */
 import React, { useEffect } from 'react';
+import KEYS from '/imports/utils/keys';
 import { layoutSelect, layoutSelectInput, layoutDispatch } from '/imports/ui/components/layout/context';
 import { ACTIONS, PANELS } from '/imports/ui/components/layout/enums';
 import { defineMessages, useIntl } from 'react-intl';
@@ -95,7 +96,7 @@ const ChatListItem = (props: ChatListItemProps) => {
         hasNotification={chatsAggregateUnreadMessages > 0}
         // @ts-ignore
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === KEYS.ENTER) {
             e.preventDefault();
             e.stopPropagation();
           }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, injectIntl, IntlShape } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import Icon from '/imports/ui/components/common/icon/component';
 import Styled from '/imports/ui/components/sidebar-navigation/styles';
 import { ACTIONS, PANELS } from '/imports/ui/components/layout/enums';
@@ -54,7 +55,7 @@ const PollsListItem = ({
         active={sidebarContentPanel === PANELS.POLL}
         onClick={handleClickTogglePoll}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === KEYS.ENTER) {
             handleClickTogglePoll();
           }
         }}

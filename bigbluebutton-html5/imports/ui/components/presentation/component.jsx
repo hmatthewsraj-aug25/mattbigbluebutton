@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import WhiteboardContainer from '/imports/ui/components/whiteboard/container';
 import { HUNDRED_PERCENT, MAX_PERCENT, MIN_PERCENT } from '/imports/utils/slideCalcUtils';
-import { SPACE } from '/imports/utils/keyCodes';
+import { SPACE } from '/imports/utils/keys';
 import { defineMessages, injectIntl } from 'react-intl';
 import Session from '/imports/ui/services/storage/in-memory';
 import PresentationToolbarContainer from './presentation-toolbar/container';
@@ -365,7 +365,7 @@ class Presentation extends PureComponent {
   handlePanShortcut(e) {
     const { userIsPresenter } = this.props;
     const { isPanning } = this.state;
-    if (e.keyCode === SPACE && userIsPresenter) {
+    if (e.key === SPACE && userIsPresenter) {
       switch (e.type) {
         case 'keyup':
           return isPanning && this.setIsPanning();

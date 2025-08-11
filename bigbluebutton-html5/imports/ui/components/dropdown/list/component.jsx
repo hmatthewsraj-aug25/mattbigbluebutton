@@ -1,6 +1,6 @@
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import Styled from './styles';
 import ListItem from './item/component';
 import ListSeparator from './separator/component';
@@ -70,15 +70,15 @@ export default class DropdownList extends Component {
 
     const isHorizontal = horizontal;
     const navigationKeys = {
-      previous: KEY_CODES[`ARROW_${isHorizontal ? 'LEFT' : 'UP'}`],
-      next: KEY_CODES[`ARROW_${isHorizontal ? 'RIGHT' : 'DOWN'}`],
-      click: isHorizontal ? [KEY_CODES.ENTER] : [KEY_CODES.ENTER, KEY_CODES.ARROW_RIGHT],
-      close: [KEY_CODES.ESCAPE,
-        KEY_CODES.TAB,
-        KEY_CODES[`ARROW_${isHorizontal ? 'DOWN' : 'LEFT'}`]],
+      previous: KEYS[`ARROW_${isHorizontal ? 'LEFT' : 'UP'}`],
+      next: KEYS[`ARROW_${isHorizontal ? 'RIGHT' : 'DOWN'}`],
+      click: isHorizontal ? [KEYS.ENTER] : [KEYS.ENTER, KEYS.ARROW_RIGHT],
+      close: [KEYS.ESCAPE,
+        KEYS.TAB,
+        KEYS[`ARROW_${isHorizontal ? 'DOWN' : 'LEFT'}`]],
     };
 
-    if (navigationKeys.previous === event.which) {
+    if (navigationKeys.previous === event.key) {
       event.stopPropagation();
 
       nextFocusedIndex -= 1;
@@ -90,7 +90,7 @@ export default class DropdownList extends Component {
       }
     }
 
-    if ([navigationKeys.next].includes(event.keyCode)) {
+    if ([navigationKeys.next].includes(event.key)) {
       event.stopPropagation();
 
       nextFocusedIndex += 1;
@@ -100,13 +100,13 @@ export default class DropdownList extends Component {
       }
     }
 
-    if (navigationKeys.click.includes(event.keyCode)) {
+    if (navigationKeys.click.includes(event.key)) {
       nextFocusedIndex = false;
       event.stopPropagation();
       document.activeElement.firstChild.click();
     }
 
-    if (navigationKeys.close.includes(event.keyCode)) {
+    if (navigationKeys.close.includes(event.key)) {
       nextFocusedIndex = false;
       const { dropdownHide } = this.props;
 

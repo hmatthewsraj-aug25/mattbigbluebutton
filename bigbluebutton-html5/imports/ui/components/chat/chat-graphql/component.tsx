@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Button } from '@mui/material';
+import KEYS from '/imports/utils/keys';
 import BackButton from '/imports/ui/components/chat/chat-graphql/private-back-button/component';
 import ChatHeader from './chat-header/component';
 import { layoutSelect, layoutSelectInput } from '../../layout/context';
@@ -104,7 +105,7 @@ const Chat: React.FC<ChatProps> = ({
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isEditingMessage.current) {
+      if (e.key === KEYS.ESCAPE && isEditingMessage.current) {
         window.dispatchEvent(
           new CustomEvent(ChatEvents.CHAT_CANCEL_EDIT_REQUEST),
         );

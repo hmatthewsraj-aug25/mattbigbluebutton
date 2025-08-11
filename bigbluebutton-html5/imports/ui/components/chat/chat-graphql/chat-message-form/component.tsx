@@ -16,6 +16,7 @@ import { ChatFormUiDataPayloads } from 'bigbluebutton-html-plugin-sdk/dist/cjs/u
 import * as PluginSdk from 'bigbluebutton-html-plugin-sdk';
 import { layoutSelect } from '/imports/ui/components/layout/context';
 import { defineMessages, useIntl } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import {
   useIsEditChatMessageEnabled, useIsEmojiPickerEnabled,
 } from '/imports/ui/services/features';
@@ -492,7 +493,7 @@ const ChatMessageForm: React.FC<ChatMessageFormProps> = ({
 
     const handleMessageKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       // TODO Prevent send message pressing enter on mobile and/or virtual keyboard
-      if (e.keyCode === 13 && !e.shiftKey) {
+      if (e.key === KEYS.ENTER && !e.shiftKey) {
         e.preventDefault();
 
         const event = new Event('submit', {
@@ -501,7 +502,7 @@ const ChatMessageForm: React.FC<ChatMessageFormProps> = ({
         });
         handleSubmit(event);
       }
-      if (e.key === 'ArrowUp' && !editingMessage.current && messageRef.current === '' && CHAT_EDIT_ENABLED) {
+      if (e.key === KEYS.ARROW_UP && !editingMessage.current && messageRef.current === '' && CHAT_EDIT_ENABLED) {
         e.preventDefault();
         getUserLastSentMessage().then((msg) => {
           if (msg) {
