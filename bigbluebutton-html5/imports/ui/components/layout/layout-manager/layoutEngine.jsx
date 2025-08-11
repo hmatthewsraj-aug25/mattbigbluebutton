@@ -10,6 +10,8 @@ import VideoFocusLayout from '/imports/ui/components/layout/layout-manager/video
 import CamerasOnlyLayout from '/imports/ui/components/layout/layout-manager/camerasOnly';
 import PresentationOnlyLayout from '/imports/ui/components/layout/layout-manager/presentationOnlyLayout';
 import ParticipantsAndChatOnlyLayout from '/imports/ui/components/layout/layout-manager/participantsAndChatOnlyLayout';
+import PluginsOnlyLayout from '/imports/ui/components/layout/layout-manager/pluginsOnly';
+import { handleIsNotificationEnabled } from '/imports/ui/components/plugins-engine/ui-commands/notification/handler';
 import { useIsPresentationEnabled } from '/imports/ui/services/features';
 import Session from '/imports/ui/services/storage/in-memory';
 import MediaOnlyLayout from './mediaOnlyLayout';
@@ -346,6 +348,15 @@ const LayoutEngine = () => {
 
   const layout = document.getElementById('layout');
 
+  // The PLUGINS_ONLY layout is the only layout type that does not require notification system.
+  // This change restores the original behavior.
+  useEffect(() => {
+    if (selectedLayout !== LAYOUT_TYPE.PLUGINS_ONLY) {
+      handleIsNotificationEnabled({
+        isNotificationEnabled: true,
+      });
+    }
+  }, [selectedLayout]);
   switch (selectedLayout) {
     case LAYOUT_TYPE.CUSTOM_LAYOUT:
       layout?.setAttribute('data-layout', LAYOUT_TYPE.CUSTOM_LAYOUT);
@@ -371,6 +382,9 @@ const LayoutEngine = () => {
     case LAYOUT_TYPE.MEDIA_ONLY:
       layout?.setAttribute('data-layout', LAYOUT_TYPE.MEDIA_ONLY);
       return <MediaOnlyLayout {...common} isPresentationEnabled={isPresentationEnabled} />;
+    case LAYOUT_TYPE.PLUGINS_ONLY:
+      layout?.setAttribute('data-layout', LAYOUT_TYPE.PLUGINS_ONLY);
+      return <PluginsOnlyLayout {...common} isPresentationEnabled={isPresentationEnabled} />;
     default:
       layout?.setAttribute('data-layout', LAYOUT_TYPE.CUSTOM_LAYOUT);
       return <CustomLayout {...common} isPresentationEnabled={isPresentationEnabled} />;

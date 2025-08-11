@@ -8,6 +8,10 @@ import logger from '/imports/startup/client/logger';
 import useDeduplicatedSubscription from '../../core/hooks/useDeduplicatedSubscription';
 import useSettings from '/imports/ui/services/settings/hooks/useSettings';
 import { SETTINGS } from '/imports/ui/services/settings/enums';
+import {
+  layoutSelect,
+} from '/imports/ui/components/layout/context';
+import { LAYOUT_TYPE } from '../layout/enums';
 
 const StatusNotifierContainer = (props) => {
   const { data: currentUserData } = useCurrentUser((user) => ({
@@ -46,6 +50,8 @@ const StatusNotifierContainer = (props) => {
     raiseHandPushAlerts,
   } = useSettings(SETTINGS.APPLICATION);
 
+  const layoutType = layoutSelect((i) => i.layoutType);
+  if (layoutType === LAYOUT_TYPE.PLUGINS_ONLY) return null;
   return (
     <RaiseHandNotifier {...{
       ...props,
