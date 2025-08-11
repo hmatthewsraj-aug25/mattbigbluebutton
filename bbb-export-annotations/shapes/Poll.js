@@ -1,4 +1,5 @@
 import { Geo } from './Geo.js';
+import fs from 'fs';
 
 /**
  * Creates an SVG poll shape from Tldraw v2 JSON data.
@@ -24,22 +25,25 @@ export class Poll extends Geo {
     const maxValue = Math.max(0, ...values);
 
     if (maxValue === 0) {
-      return {
-        min: 0,
-        max: 4,
-        ticks: [0,1,2,3,4]
-      };
+      return [0, 1, 2, 3, 4];
     }
 
     const roughStep = maxValue / (maxTicks - 1);
-
-    const niceStep = this.getNiceNumber(roughStep);
+    const niceStep = Math.max(1, Math.round(this.getNiceNumber(roughStep)));
 
     const maxAxis = Math.ceil(maxValue / niceStep) * niceStep;
 
     const ticks = [];
     for (let v = 0; v <= maxAxis; v += niceStep) {
-      ticks.push(v);
+      const intV = Math.round(v);
+      if (!ticks.includes(intV)) {
+        ticks.push(intV);
+      }
+    }
+
+    while (ticks.length < 4) {
+      const lastTick = ticks[ticks.length - 1];
+      ticks.push(lastTick + niceStep);
     }
 
     return ticks;
@@ -94,13 +98,15 @@ export class Poll extends Geo {
     const titleFontSize = questionText ? 14 : 0;
     const titleSpacing = questionText ? 20 : 0;
 
+    const barColor = '#0C57A7';
+
     const titleLines = this.breakTextIntoLines(questionText, titleFontSize, width);
 
     const padding = {
-      top: 20 + ((titleFontSize + titleSpacing) * titleLines.length),
-      right: 40,
-      bottom: 20,
-      left: 80
+      top: 19 + ((titleFontSize + titleSpacing) * titleLines.length),
+      right: 39,
+      bottom: 29,
+      left: width * 0.3 - 1
     };
 
     const innerWidth = width - padding.left - padding.right;
@@ -110,7 +116,7 @@ export class Poll extends Geo {
 
     const expandedValues = this.getNiceAxisScale(uniqueValues);
 
-    const maxDisplayValue = Math.max(...uniqueValues, 1);
+    const maxDisplayValue = Math.max(...expandedValues, 1);
 
     const count = labels.length;
     const gap = 10;
@@ -124,10 +130,17 @@ export class Poll extends Geo {
       const w = valueToWidth(val);
       const x = padding.left;
       const y = padding.top + i * (barHeight + gap);
-      const displayText = (isQuiz && answers[i].isCorrectAnswer ? '✅ ' : '') + label;
+
+      // emoji does not work for now, using HTML entity
+      const checkmark = "&#10004;";
+      let displayText = (isQuiz && answers[i].isCorrectAnswer ? checkmark + ' ' : '') + label;
+
+      if (displayText.length > 20) {
+        displayText = displayText.slice(0, 20) + '...';
+      }
 
       bars += `
-        <rect x="${x}" y="${y}" width="${w}" height="${barHeight}" rx="4" ry="4" fill="#2b8cff" />
+        <rect x="${x}" y="${y}" width="${w}" height="${barHeight}" rx="4" ry="4" fill="${barColor}" />
         <text x="${x - 6}" y="${y + barHeight / 2 + 4}" font-size="12" text-anchor="end" fill="#333">${displayText}</text>
       `;
     });
@@ -147,12 +160,12 @@ export class Poll extends Geo {
     }).join('');
 
     return `
-      <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-        <rect width="100%" height="100%" fill="white" />
-        ${titleMarkup}
-        <g>${gridMarkup}</g>
-        <g>${xLabels}</g>
-        <g>${bars}</g>
+      <svg xmlns="http://www.w3.org/2000/svg" width="${width-2}" height="${height-2}" viewBox="0 0 ${width-2} ${height-2}">
+      <rect width="100%" height="100%" fill="white" stroke="#888" stroke-width="1" />
+      ${titleMarkup}
+      <g>${gridMarkup}</g>
+      <g>${xLabels}</g>
+      <g>${bars}</g>
       </svg>
     `.trim();
   }
