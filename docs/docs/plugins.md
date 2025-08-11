@@ -1161,6 +1161,7 @@ To use it, one first need to add the following lines to their `manifest.json`:
   // ...rest of manifest configuration
   "eventPersistence": {
       "isEnabled": true
+  }
 }
 ```
 
