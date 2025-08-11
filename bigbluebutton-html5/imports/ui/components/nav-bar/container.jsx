@@ -34,8 +34,6 @@ const NavBarContainer = ({ children, ...props }) => {
 
   const { sidebarContentPanel } = sidebarContent;
 
-  const toggleUserList = useShortcut('toggleUserList');
-
   const hasUnreadNotes = sidebarContentPanel !== PANELS.SHARED_NOTES && unread && !notesIsPinned;
 
   const { data: chats } = useChat((chat) => ({
@@ -111,7 +109,6 @@ const NavBarContainer = ({ children, ...props }) => {
         layoutContextDispatch,
         currentUserId: Auth.userID,
         pluginNavBarItems,
-        shortcuts: toggleUserList,
         meetingId: meeting?.meetingId,
         presentationTitle: meetingTitle,
         breakoutNum,
