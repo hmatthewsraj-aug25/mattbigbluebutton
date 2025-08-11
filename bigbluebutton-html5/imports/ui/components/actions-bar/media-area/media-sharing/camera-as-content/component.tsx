@@ -16,7 +16,7 @@ import MediaStreamUtils from '/imports/utils/media-stream-utils';
 import ProfileStyled from '/imports/ui/components/profile-settings/styles';
 import ModalStyled from '../styles';
 import * as ScreenShareService from '/imports/ui/components/screenshare/service';
-import { useHasVideoStream, useStopVideo, useStreams } from '/imports/ui/components/video-provider/hooks';
+import { useStopVideo, useStreams } from '/imports/ui/components/video-provider/hooks';
 
 interface CameraAsContentViewProps {
   intl: IntlShape;
@@ -132,7 +132,6 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
   const currentVideoStream = useRef<BBBVideoStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const hasVideoStream = useHasVideoStream();
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const allStreams = useStreams();
@@ -457,7 +456,7 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
   const startCameraAsContent = () => {
     const videoStream = currentVideoStream.current;
 
-    if (!videoStream || !videoStream.mediaStream) {
+    if (!videoStream?.mediaStream) {
       logger.error({
         logCode: 'camera_as_content_missing_stream',
         extraInfo: { deviceId: webcamDeviceId },
@@ -502,19 +501,28 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
   useEffect(() => {
     if (!isTransitioning) return;
 
-    if (!hasVideoStream) {
-      logger.info({
+    const isTargetStreamActive = allStreams.some((s) => VideoService.isLocalStream(s.stream)
+    && s.deviceId === webcamDeviceId);
+
+    if (!isTargetStreamActive) {
+      logger.debug({
         logCode: 'camera_as_content_transition_safe',
-      }, 'Video stream is confirmed stopped. Proceeding to share as content.');
+        extraInfo: { deviceId: webcamDeviceId },
+      }, 'Target video stream is confirmed stopped. Proceeding to share as content.');
 
       startCameraAsContent();
       setIsTransitioning(false);
     }
-  }, [isTransitioning, hasVideoStream]);
+  }, [isTransitioning, allStreams, webcamDeviceId]);
 
-  /** Clones the preview stream for a smooth transition */
+  // Clones the current video stream via a Media Stream API clone.
+  // The cloned stream substitutes the previous one in the component's ref.
+  // This method should only be used in scenarios where there are
+  // competing users of the same media stream - e.g.:
+  // video-provider and camera-as-content. Otherwise, this component may
+  // lose the stream if a secondary one releases it.
   const clonePreviewStream = () => {
-    if (!currentVideoStream.current || !currentVideoStream.current.originalStream) {
+    if (!currentVideoStream?.current?.originalStream) {
       logger.error({
         logCode: 'camera_as_content_clone_failed',
       }, 'Failed to clone preview stream: stream is missing.');
@@ -566,15 +574,15 @@ const CameraAsContentView: React.FC<CameraAsContentViewProps> = ({
             if (targetStream) {
               clonePreviewStream();
 
-              logger.info({
+              logger.debug({
                 logCode: 'camera_as_content_transition_start',
                 extraInfo: { streamToStop: targetStream.stream },
               }, 'Matching camera stream found. Transitioning to content share.');
 
               setIsTransitioning(true);
-              await stopVideo(targetStream.stream);
+              stopVideo(targetStream.stream);
             } else {
-              logger.info({ logCode: 'camera_as_content_no_video' }, 'No active video matching preview. Sharing as content directly.');
+              logger.debug({ logCode: 'camera_as_content_no_video' }, 'No active video matching preview. Sharing as content directly.');
               startCameraAsContent();
             }
           }}
