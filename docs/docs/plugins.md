@@ -734,7 +734,6 @@ See, it is basically a function that requires an array as an argument, with whic
 That being said, here are the extensible areas we have so far:
 
 - Action bar items (button, separator)
-- Action Button Dropdown Items (option, separator)
 - Audio settings dropdown items (option, separator)
 - Camera settings dropdown items (option, separator)
 - Options settings dropdown items (option, separator)
