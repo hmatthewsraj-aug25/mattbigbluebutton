@@ -180,7 +180,7 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
   const renderContent = () => {
     if (currentView === 'main') {
       return (
-        <Styled.MediaGrid>
+        <Styled.MediaGrid isMobile={isMobile}>
           <ScreenshareButtonContainer {...{
             amIPresenter,
             isMeteorConnected,

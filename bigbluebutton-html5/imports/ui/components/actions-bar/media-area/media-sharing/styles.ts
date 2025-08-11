@@ -67,9 +67,9 @@ const ModalContainer = styled.div<{
   ${({
     isMobile, isRTL, reducedWidth,
   }) => (isMobile ? `
-    left: 0;
-    right: 0;
-    width: 100%;
+    width: 70%;
+    right: 6%;
+    left: auto;
   ` : `
     width: ${reducedWidth ? MODAL_WIDTH_REDUCED : MODAL_WIDTH};
     ${isRTL ? `
@@ -107,10 +107,10 @@ const ContentContainer = styled.div`
 `;
 
 // Grid layout for displaying media options.
-const MediaGrid = styled.div`
-  padding: 1rem;
+const MediaGrid = styled.div<{ isMobile: boolean }>`
+  padding: ${({ isMobile }) => (isMobile ? '0.5rem' : '1rem')};
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: ${({ isMobile }) => (isMobile ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)')};
   text-align: center;
   justify-items: center;
 `;
