@@ -250,7 +250,11 @@ const Chat: React.FC<ChatProps> = ({
 };
 
 export const ChatLoading: React.FC<ChatLoadingProps> = () => {
-  return <Styled.CircularProgressContainer />;
+  return (
+    <Styled.LoadingWrapper>
+      <Styled.CircularProgressContainer />
+    </Styled.LoadingWrapper>
+  );
 };
 
 const ChatContainer: React.FC = () => {
