@@ -116,11 +116,7 @@ export interface UserBasicInfo {
   name: string;
   isModerator: boolean;
   role: string;
-  currentlyInMeeting: boolean;
   color: string;
   avatar: string;
-  reactionEmoji: string;
   presenter?: boolean;
-  away: boolean;
-  raiseHand: boolean;
 }

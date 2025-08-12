@@ -7,14 +7,10 @@ const USERS_BASIC_INFO_SUBSCRIPTION = gql`
       extId
       name
       isModerator
-      currentlyInMeeting
       color
       role
       avatar
-      reactionEmoji
       presenter
-      away
-      raiseHand
     }
   }
 `;
