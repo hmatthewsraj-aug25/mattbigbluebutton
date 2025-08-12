@@ -757,7 +757,7 @@
     "app.actionsBar.reactions.present": "Presente",
     "app.actionsBar.currentStatusDesc": "status atual {0}",
     "app.actionsBar.reactions.away": "Ausente",
-    "app.actionsBar.reactions.available": "presente",
+    "app.actionsBar.reactions.available": "Presente",
     "app.actionsBar.captions.start": "Iniciar legendas",
     "app.actionsBar.captions.stop": "Parar legendas",
     "app.audioNotification.audioFailedError1001": "WebSocket desconectado (erro 1001)",
