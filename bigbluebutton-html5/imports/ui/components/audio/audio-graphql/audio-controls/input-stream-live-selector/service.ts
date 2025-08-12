@@ -187,6 +187,11 @@ export const muteAway = (
   VideoService.setTrackEnabled(away);
 };
 
+export const isMutedAlertEnabled = () => {
+  const { enabled = false } = window.meetingClientSettings.public.app.mutedAlert;
+  return enabled;
+};
+
 export default {
   handleLeaveAudio,
   toggleMuteMicrophone,
@@ -197,4 +202,5 @@ export default {
   setSpeakerLevel,
   startPushToTalk,
   stopPushToTalk,
+  isMutedAlertEnabled,
 };
