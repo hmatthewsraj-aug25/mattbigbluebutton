@@ -20,7 +20,7 @@ const intlMessages = defineMessages({
   },
 });
 
-const NavBarContainer = ({ ...props }) => {
+const NavBarContainer = (props) => {
   const { pluginsExtensibleAreasAggregatedState } = useContext(PluginsContext);
   const unread = useHasUnreadNotes();
   const intl = useIntl();

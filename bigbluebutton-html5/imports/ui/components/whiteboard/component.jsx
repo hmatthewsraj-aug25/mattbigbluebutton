@@ -731,7 +731,7 @@ const Whiteboard = React.memo((props) => {
     }
 
     if (event.ctrlKey || event.metaKey) {
-      if (key === KEYS.z) {
+      if (key === KEYS.z || key === KEYS.Z) {
         event.preventDefault();
         event.stopPropagation();
         if (event.shiftKey) {
@@ -744,7 +744,7 @@ const Whiteboard = React.memo((props) => {
         return;
       }
 
-      if (key === KEYS.l && event.shiftKey) {
+      if (key === KEYS.L && event.shiftKey) {
         event.preventDefault();
         event.stopPropagation();
         tlEditorRef.current?.toggleLock(tlEditorRef.current?.getSelectedShapes());
