@@ -16,11 +16,11 @@ import { ChatFormUiDataPayloads } from 'bigbluebutton-html-plugin-sdk/dist/cjs/u
 import * as PluginSdk from 'bigbluebutton-html-plugin-sdk';
 import { layoutSelect } from '/imports/ui/components/layout/context';
 import { defineMessages, useIntl } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import {
   useIsEditChatMessageEnabled, useIsEmojiPickerEnabled,
 } from '/imports/ui/services/features';
 import { checkText } from 'smile2emoji';
-import { findDOMNode } from 'react-dom';
 import AddReactionIcon from '@mui/icons-material/AddReaction';
 import SendIcon from '@mui/icons-material/Send';
 import Tooltip from '@mui/material/Tooltip';
@@ -146,7 +146,7 @@ const ChatMessageForm: React.FC<ChatMessageFormProps> = ({
   const [message, setMessage] = React.useState('');
   const [showEmojiPicker, setShowEmojiPicker] = React.useState(false);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
-  const emojiPickerButtonRef = useRef(null);
+  const emojiPickerButtonRef = useRef<HTMLButtonElement>(null);
   const [isTextAreaFocused, setIsTextAreaFocused] = React.useState(false);
   const [repliedMessageId, setRepliedMessageId] = React.useState<string | null>(null);
   const [emojisToExclude, setEmojisToExclude] = React.useState<string[]>([]);
@@ -493,7 +493,7 @@ const ChatMessageForm: React.FC<ChatMessageFormProps> = ({
 
     const handleMessageKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       // TODO Prevent send message pressing enter on mobile and/or virtual keyboard
-      if (e.keyCode === 13 && !e.shiftKey) {
+      if (e.key === KEYS.ENTER && !e.shiftKey) {
         e.preventDefault();
 
         const event = new Event('submit', {
@@ -502,7 +502,7 @@ const ChatMessageForm: React.FC<ChatMessageFormProps> = ({
         });
         handleSubmit(event);
       }
-      if (e.key === 'ArrowUp' && !editingMessage.current && messageRef.current === '' && CHAT_EDIT_ENABLED) {
+      if (e.key === KEYS.ARROW_UP && !editingMessage.current && messageRef.current === '' && CHAT_EDIT_ENABLED) {
         e.preventDefault();
         getUserLastSentMessage().then((msg) => {
           if (msg) {
@@ -588,7 +588,7 @@ const ChatMessageForm: React.FC<ChatMessageFormProps> = ({
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         // eslint-disable-next-line react/no-find-dom-node
-        const button = findDOMNode(emojiPickerButtonRef.current);
+        const button = emojiPickerButtonRef.current;
         if (
           (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node))
           && (button && !button.contains(event.target as Node))
@@ -664,6 +664,7 @@ const ChatMessageForm: React.FC<ChatMessageFormProps> = ({
                   }}
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                   data-test="emojiPickerButton"
+                  ref={emojiPickerButtonRef}
                 >
                   <AddReactionIcon />
                 </Styled.EmojiButton>

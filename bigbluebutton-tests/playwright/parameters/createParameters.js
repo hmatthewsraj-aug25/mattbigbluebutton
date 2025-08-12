@@ -215,7 +215,7 @@ class CreateParameters extends MultiUsers {
     await this.userPage.wasRemoved(e.joinVideo);
     await sleep(1000);
 
-    await checkScreenshots(this, 'should be the cameras only layout', [e.webcamContainer, e.webcamMirroredVideoContainer], 'presentation-only');
+    await checkScreenshots(this, 'should be the presentation only layout', [e.webcamContainer, e.webcamMirroredVideoContainer], 'presentation-only');
   }
 
   async participantsAndChatOnly() {

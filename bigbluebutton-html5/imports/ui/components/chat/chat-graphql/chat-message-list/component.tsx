@@ -25,7 +25,7 @@ import useReactiveRef from '/imports/ui/hooks/useReactiveRef';
 import useStickyScroll from '/imports/ui/hooks/useStickyScroll';
 import ChatReplyIntention from '../chat-reply-intention/component';
 import ChatEditingWarning from '../chat-editing-warning/component';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
 import {
@@ -144,11 +144,11 @@ const roving = (
 
   if (!(isTargetAChild || isTargetElement)) return;
 
-  if (event.keyCode === KEY_CODES.ESCAPE && isTargetAChild) {
+  if (event.key === KEYS.ESCAPE && isTargetAChild) {
     elementsList.focus();
   }
 
-  if (event.keyCode === KEY_CODES.ARROW_DOWN) {
+  if (event.key === KEYS.ARROW_DOWN) {
     event.preventDefault();
     const firstElement = findFirstFocusableChild(elementsList);
     let elRef = element && numberOfChilds > 1 ? (element.nextSibling as HTMLElement) : firstElement;
@@ -162,7 +162,7 @@ const roving = (
     setFocused?.(elRef);
   }
 
-  if (event.keyCode === KEY_CODES.ARROW_UP) {
+  if (event.key === KEYS.ARROW_UP) {
     event.preventDefault();
     const lastElement = findLastFocusableChild(elementsList);
     let elRef = element ? (element.previousSibling as HTMLElement) : lastElement;
@@ -176,7 +176,7 @@ const roving = (
     setFocused?.(elRef);
   }
 
-  if ([KEY_CODES.SPACE, KEY_CODES.ENTER].includes(event.keyCode) && isTargetElement) {
+  if ([KEYS.SPACE, KEYS.ENTER].includes(event.key) && isTargetElement) {
     const elRef = document.activeElement?.firstChild as HTMLElement;
     elRef?.focus?.();
     setFocused?.(elRef);

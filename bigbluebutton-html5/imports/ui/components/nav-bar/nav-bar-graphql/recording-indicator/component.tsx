@@ -5,6 +5,7 @@ import React, {
   useState,
 } from 'react';
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
+import KEYS from '/imports/utils/keys';
 import deviceInfo, { isMobile } from '/imports/utils/deviceInfo';
 import { defineMessages, useIntl } from 'react-intl';
 import {
@@ -226,10 +227,10 @@ const RecordingIndicator: React.FC<RecordingIndicatorProps> = ({
         recordingToggle(micUser, recording);
       }}
       onKeyDown={(ev) => {
-        if (ev.key !== 'Tab') {
+        if (ev.key !== KEYS.TAB) {
           ev.preventDefault();
         }
-        if (ev.key === 'Enter') {
+        if (ev.key === KEYS.ENTER) {
           recordingToggle(micUser, recording);
         }
       }}

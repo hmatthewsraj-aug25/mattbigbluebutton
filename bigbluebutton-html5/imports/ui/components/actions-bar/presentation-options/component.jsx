@@ -110,7 +110,7 @@ const PresentationOptionsContainer = ({
       id="restore-presentation"
       disabled={!isThereCurrentPresentation}
       data-test={!presentationIsOpen ? 'restorePresentation' : 'minimizePresentation'}
-      isDarkThemeEnabled={isDarkThemeEnabled}
+      $isDarkThemeEnabled={isDarkThemeEnabled}
       hoverColor={listItemBgHover}
     />
   );

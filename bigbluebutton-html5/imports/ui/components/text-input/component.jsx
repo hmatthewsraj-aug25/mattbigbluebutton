@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import PropTypes from 'prop-types';
 import { isMobile } from '/imports/utils/deviceInfo';
 import logger from '/imports/startup/client/logger';
@@ -57,10 +58,10 @@ class TextInput extends PureComponent {
   }
 
   handleOnKeyDown(e) {
-    if (e.keyCode === 13 && e.shiftKey === false) {
+    if (e.key === KEYS.ENTER && e.shiftKey === false) {
       e.preventDefault();
       this.handleOnClick();
-    } else if (e.keyCode === 27) { //Escape key
+    } else if (e.key === KEYS.ESCAPE) {
       const { showEmojiPicker } = this.state;
 
       //if the emoji picker is opened, close it

@@ -2,6 +2,7 @@
 import React from 'react';
 import TooltipContainer from '/imports/ui/components/common/tooltip/container';
 import { defineMessages, useIntl } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import Icon from '/imports/ui/components/common/icon/component';
 import { PANELS, ACTIONS } from '../../layout/enums';
 import { layoutDispatch, layoutSelectInput } from '/imports/ui/components/layout/context';
@@ -62,7 +63,7 @@ const UsersListItem = () => {
         onClick={toggleUsersListPanel}
         // @ts-ignore
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === KEYS.ENTER) {
             toggleUsersListPanel();
           }
         }}

@@ -3,7 +3,7 @@ import { FormattedMessage, defineMessages } from 'react-intl';
 import Auth from '/imports/ui/services/auth';
 import Storage from '/imports/ui/services/storage/session';
 import AudioService from '/imports/ui/components/audio/service';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import logger from '/imports/startup/client/logger';
 import Session from '/imports/ui/services/storage/in-memory';
 import { getSettingsSingletonInstance } from '/imports/ui/services/settings';
@@ -309,16 +309,16 @@ const roving = (...args) => {
   if (menuOpen) {
     const menuChildren = document.activeElement.getElementsByTagName('li');
 
-    if ([KEY_CODES.ESCAPE, KEY_CODES.ARROW_LEFT].includes(event.keyCode)) {
+    if ([KEYS.ESCAPE, KEYS.ARROW_LEFT].includes(event.key)) {
       Session.setItem('dropdownOpen', false);
       document.activeElement.click();
     }
 
-    if ([KEY_CODES.ARROW_UP].includes(event.keyCode)) {
+    if ([KEYS.ARROW_UP].includes(event.key)) {
       menuChildren[menuChildren.length - 1].focus();
     }
 
-    if ([KEY_CODES.ARROW_DOWN].includes(event.keyCode)) {
+    if ([KEYS.ARROW_DOWN].includes(event.key)) {
       for (let i = 0; i < menuChildren.length; i += 1) {
         if (menuChildren[i].hasAttribute('tabIndex')) {
           menuChildren[i].focus();
@@ -330,12 +330,12 @@ const roving = (...args) => {
     return;
   }
 
-  if ([KEY_CODES.ESCAPE, KEY_CODES.TAB].includes(event.keyCode)) {
+  if ([KEYS.ESCAPE, KEYS.TAB].includes(event.key)) {
     Session.setItem('dropdownOpen', false);
     changeState(null);
   }
 
-  if (event.keyCode === KEY_CODES.ARROW_DOWN) {
+  if (event.key === KEYS.ARROW_DOWN) {
     const firstElement = elementsList.firstChild;
     let elRef = element && numberOfChilds > 1 ? element.nextSibling : firstElement;
 
@@ -343,14 +343,14 @@ const roving = (...args) => {
     changeState(elRef);
   }
 
-  if (event.keyCode === KEY_CODES.ARROW_UP) {
+  if (event.key === KEYS.ARROW_UP) {
     const lastElement = elementsList.lastChild;
     let elRef = element ? element.previousSibling : lastElement;
     elRef = elRef || lastElement;
     changeState(elRef);
   }
 
-  if ([KEY_CODES.ARROW_RIGHT, KEY_CODES.SPACE, KEY_CODES.ENTER].includes(event.keyCode)) {
+  if ([KEYS.ARROW_RIGHT, KEYS.SPACE, KEYS.ENTER].includes(event.key)) {
     const tether = document.activeElement.firstChild;
     const dropdownTrigger = tether.firstChild;
     dropdownTrigger?.click();

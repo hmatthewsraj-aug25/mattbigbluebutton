@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { UpdatedDataForUserCameraDomElement } from 'bigbluebutton-html-plugin-sdk/dist/cjs/dom-element-manipulation/user-camera/types';
 
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
@@ -33,7 +32,7 @@ interface VideoListItemContainerProps {
 
 const VideoListItemContainer: React.FC<VideoListItemContainerProps> = (props) => {
   const {
-    cameraId,
+    cameraId = '',
     focused,
     isStream,
     name,
@@ -99,7 +98,3 @@ const VideoListItemContainer: React.FC<VideoListItemContainerProps> = (props) =>
 };
 
 export default VideoListItemContainer;
-
-VideoListItemContainer.propTypes = {
-  cameraId: PropTypes.string.isRequired,
-};

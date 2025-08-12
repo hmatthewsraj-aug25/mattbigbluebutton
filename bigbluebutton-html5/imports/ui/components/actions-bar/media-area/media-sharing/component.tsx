@@ -3,6 +3,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { colorPrimary } from '/imports/ui/stylesheets/styled-components/palette';
 import CoPresentIcon from '@mui/icons-material/CoPresent';
+import KEYS from '/imports/utils/keys';
 import { useIsScreenGloballyBroadcasting, screenshareHasEnded } from '/imports/ui/components/screenshare/service';
 import { defineMessages, IntlShape } from 'react-intl';
 import { MediaAreaItemType } from 'bigbluebutton-html-plugin-sdk/dist/cjs/extensible-areas/media-area-item/enums';
@@ -145,7 +146,7 @@ const MediaSharingModal: React.FC<MediaSharingModalProps> = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === KEYS.ESCAPE) {
         handleClose();
       }
     };

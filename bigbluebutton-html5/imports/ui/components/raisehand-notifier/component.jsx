@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { defineMessages, injectIntl } from 'react-intl';
 import { toast } from 'react-toastify';
 import Icon from '/imports/ui/components/common/icon/component';
-import { ENTER } from '/imports/utils/keyCodes';
+import { ENTER } from '/imports/utils/keys';
 import Styled from './styles';
 import TooltipContainer from '/imports/ui/components/common/tooltip/container';
 import Auth from '/imports/ui/services/auth/index';
@@ -132,7 +132,7 @@ class RaiseHandNotifier extends Component {
           role="button"
           tabIndex={0}
           onClick={() => lowerUserHands(u.userId)}
-          onKeyDown={(e) => (e.keyCode === ENTER ? lowerUserHands(u.userId) : null)}
+          onKeyDown={(e) => (e.key === ENTER ? lowerUserHands(u.userId) : null)}
           data-test="avatarsWrapperAvatar"
         >
           <Styled.Avatar

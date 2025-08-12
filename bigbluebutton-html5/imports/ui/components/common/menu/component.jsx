@@ -4,7 +4,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import { Divider } from '@mui/material';
 import Icon from '/imports/ui/components/common/icon/component';
 import { SMALL_VIEWPORT_BREAKPOINT } from '/imports/ui/components/layout/enums';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import MenuSkeleton from './skeleton';
 import GenericContentItem from '/imports/ui/components/generic-content/generic-content-item/component';
 import Styled from './styles';
@@ -48,24 +48,25 @@ class BBBMenu extends React.Component {
   handleKeyDown(event) {
     const { anchorEl } = this.state;
     const { isHorizontal } = this.props;
+    const { key } = event;
     const isMenuOpen = Boolean(anchorEl);
 
-    const previousKey = isHorizontal ? KEY_CODES.ARROW_LEFT : KEY_CODES.ARROW_UP;
-    const nextKey = isHorizontal ? KEY_CODES.ARROW_RIGHT : KEY_CODES.ARROW_DOWN;
+    const previousKey = isHorizontal ? KEYS.ARROW_LEFT : KEYS.ARROW_UP;
+    const nextKey = isHorizontal ? KEYS.ARROW_RIGHT : KEYS.ARROW_DOWN;
 
-    if ([KEY_CODES.ESCAPE, KEY_CODES.TAB].includes(event.which)) {
+    if ([KEYS.ESCAPE, KEYS.TAB].includes(key)) {
       this.handleClose();
       return;
     }
 
-    if (isMenuOpen && [previousKey, nextKey].includes(event.which)) {
+    if (isMenuOpen && [previousKey, nextKey].includes(key)) {
       event.preventDefault();
       event.stopPropagation();
       const menuItems = Array.from(document.querySelectorAll('[data-key^="menuItem-"]'));
       if (menuItems.length === 0) return;
 
       const focusedIndex = menuItems.findIndex((item) => item === document.activeElement);
-      const nextIndex = event.which === previousKey ? focusedIndex - 1 : focusedIndex + 1;
+      const nextIndex = key === previousKey ? focusedIndex - 1 : focusedIndex + 1;
       let indexToFocus = 0;
       if (nextIndex < 0) {
         indexToFocus = menuItems.length - 1;
@@ -263,7 +264,7 @@ class BBBMenu extends React.Component {
           }}
           onKeyPress={(e) => {
             e.persist();
-            if (e.which !== KEY_CODES.ENTER) return null;
+            if (e.key !== KEYS.ENTER) return null;
             this.handleClick(e);
           }}
           accessKey={accessKey}

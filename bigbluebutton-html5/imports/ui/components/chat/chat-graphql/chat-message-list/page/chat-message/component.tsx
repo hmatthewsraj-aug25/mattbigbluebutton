@@ -39,7 +39,7 @@ import ChatMessageNotificationContent from './message-content/notification-conte
 import { getValueByPointer } from '/imports/utils/object-utils';
 import Tooltip from '/imports/ui/components/common/tooltip/container';
 import Auth from '/imports/ui/services/auth';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import ConfirmationModal from '/imports/ui/components/common/modal/confirmation/component';
 import logger from '/imports/startup/client/logger';
 import { CHAT_DELETE_MESSAGE_MUTATION } from './mutations';
@@ -806,7 +806,7 @@ const ChatMessage = React.forwardRef<ChatMessageRef, ChatMessageProps>(({
       data-focusable={focusable}
       onKeyDown={(e) => {
         const isTargetElement = e.target === e.currentTarget;
-        if (e.keyCode === KEY_CODES.TAB && isTargetElement) {
+        if (e.key === KEYS.TAB && isTargetElement) {
           setKeyboardFocused(true);
         }
       }}
@@ -828,6 +828,7 @@ const ChatMessage = React.forwardRef<ChatMessageRef, ChatMessageProps>(({
                 moderator={messageContent.isModerator}
                 you={message.user?.userId === Auth.userID}
               >
+                {/* @ts-ignore */}
                 {typeof avatarDisplay === 'string' ? <span>{avatarDisplay}</span> : avatarDisplay}
               </ChatAvatar>
             )}

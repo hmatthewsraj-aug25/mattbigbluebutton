@@ -49,12 +49,6 @@ const propTypes = {
   pluginNavBarItems: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
   })).isRequired,
-  sidebarNavigation: PropTypes.shape({
-    isOpen: PropTypes.boolean,
-  }).isRequired,
-  sidebarContent: PropTypes.shape({
-    isOpen: PropTypes.boolean,
-  }).isRequired,
 };
 
 const defaultProps = {

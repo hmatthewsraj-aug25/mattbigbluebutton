@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client';
 import React, { useCallback, useEffect, useRef } from 'react';
+import KEYS from '/imports/utils/keys';
 import { defineMessages, useIntl } from 'react-intl';
 import { escapeHtml } from '/imports/utils/string-utils';
 import { BREAKOUT_ROOM_SEND_MESSAGE_TO_ALL } from '../../mutations';
@@ -100,7 +101,7 @@ const BreakoutMessageForm: React.FC = () => {
   }, []);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === KEYS.ENTER && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage(message);
     }

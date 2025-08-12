@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useMutation } from '@apollo/client';
+import KEYS from '/imports/utils/keys';
 import Styled from '../styles';
 import { useShortcut } from '/imports/ui/core/hooks/useShortcut';
 import { getSettingsSingletonInstance } from '/imports/ui/services/settings';
@@ -81,7 +82,7 @@ export const MuteToggle: React.FC<MuteToggleProps> = ({
     if (
       !pushToTalkEnabled
         || cooldownActive.current
-        || event.key !== 'm'
+        || event.key !== KEYS.m
         || event.altKey
         || event.ctrlKey
         || isInputField

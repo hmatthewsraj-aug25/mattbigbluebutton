@@ -24,6 +24,7 @@ const SkeletonUserListItem: React.FC<SkeletonUserListItemProps> = ({
           <listItemStyles.UserItemContents>
             <Styled.UserAvatar data-test="userAvatar">
               <listItemStyles.Avatar isSkeleton>
+                {/* @ts-ignore */}
                 <Skeleton circle />
               </listItemStyles.Avatar>
             </Styled.UserAvatar>

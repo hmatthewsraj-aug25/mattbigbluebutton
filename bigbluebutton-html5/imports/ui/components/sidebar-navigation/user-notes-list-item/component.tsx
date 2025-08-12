@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import Icon from '/imports/ui/components/common/icon/component';
 import NotesService from '/imports/ui/components/notes/service';
 import { PANELS } from '/imports/ui/components/layout/enums';
@@ -7,6 +8,7 @@ import { notify } from '/imports/ui/services/notification';
 import { layoutSelectInput, layoutDispatch } from '/imports/ui/components/layout/context';
 import {
   PINNED_PAD_SUBSCRIPTION,
+  PinnedPadSubscriptionResponse,
 } from '/imports/ui/components/notes/queries';
 import Styled from './styles';
 import usePreviousValue from '/imports/ui/hooks/usePreviousValue';
@@ -132,7 +134,7 @@ const UserNotesGraphql: React.FC<UserNotesGraphqlProps> = (props) => {
             : null)}
           // @ts-ignore
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === KEYS.ENTER) {
               toggleNotesPanel(sidebarContentPanel, layoutContextDispatch);
             }
           }}
@@ -151,7 +153,8 @@ const UserNotesGraphql: React.FC<UserNotesGraphqlProps> = (props) => {
 };
 
 const UserNotesListItemContainerGraphql: React.FC = () => {
-  const { data: pinnedPadData } = useDeduplicatedSubscription(
+  const { data: pinnedPadData } = useDeduplicatedSubscription<
+  PinnedPadSubscriptionResponse>(
     PINNED_PAD_SUBSCRIPTION,
   );
   const NOTES_CONFIG = window.meetingClientSettings.public.notes;

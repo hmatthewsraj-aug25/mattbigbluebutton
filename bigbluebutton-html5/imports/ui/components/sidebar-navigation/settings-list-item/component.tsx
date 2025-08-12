@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import KEYS from '/imports/utils/keys';
 import TooltipContainer from '/imports/ui/components/common/tooltip/container';
 import { defineMessages, useIntl } from 'react-intl';
 import Icon from '/imports/ui/components/common/icon/component';
@@ -39,7 +40,7 @@ const SettingsListItem = () => {
           }}
           // @ts-ignore
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === KEYS.ENTER) {
               e.currentTarget.blur();
               openSettingsModal();
             }
