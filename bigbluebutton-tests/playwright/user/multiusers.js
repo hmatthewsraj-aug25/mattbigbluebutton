@@ -39,7 +39,7 @@ class MultiUsers {
     this.modPage2 = new Page(this.browser, page);
     await this.modPage2.init(true, shouldCloseAudioModal, options);
   }
-    
+
   async initUserPage(shouldCloseAudioModal = true, context = this.context, { fullName = 'Attendee', useModMeetingId = true, ...restOptions } = {}) {
     const options = {
       ...restOptions,
@@ -219,6 +219,64 @@ class MultiUsers {
     await this.userPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 2)`, this.userPage.username, 'should display the username of Attendee on the second pinned webcam for Attendee');
   }
 
+  async focusUnfocusWebcam() {
+    // Action: Create and join a meeting with 1 mod and 2 users;
+    // Action: Mod and User1 share webcam;
+    await this.modPage.shareWebcam();
+    await this.userPage2.shareWebcam();
+
+    // Action: Mod clicks on User1 video item dropdown:
+    await this.modPage.getLocator(e.dropdownWebcamButton)
+      .filter({ hasText: this.userPage2.username })
+      .click();
+
+    // (Mod) Assert focus option is not displayed (assert other option first to avoid false-positives eg. fullscreen webcam);
+    await this.modPage.wasRemoved(e.focusWebcamBtn, 'should not display the focus webcam button for the moderator');
+
+    // Action: User2 shares webcam;
+    await this.userPage.shareWebcam();
+
+    // Action: Mod focus User1 webcam;
+    await this.modPage.getLocator(e.dropdownWebcamButton)
+      .filter({ hasText: this.userPage2.username })
+      .click();
+    await this.modPage.getVisibleLocator(e.focusWebcamBtn).click();
+
+    // Assert focused webcam on mod view (should be first item; should be bigger than the others);
+    await this.modPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User2 on the focused webcam for Mod');
+
+    // Assert no propagation on webcam focus for User1 and User2;
+    await this.userPage2.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User2 on the first webcam for User1');
+
+    // Action: User2 focus User1;
+    await this.userPage.getLocator(e.dropdownWebcamButton)
+      .filter({ hasText: this.userPage2.username })
+      .click();
+    await this.userPage.getVisibleLocator(e.focusWebcamBtn).click();
+
+    // Assert focused webcam on User2 view (should be first item; should be bigger than the others);
+    await this.userPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User1 on the focused webcam for User2');
+
+    // Action: Mod unfocus focused webcam
+    await this.modPage.getLocator(e.dropdownWebcamButton)
+      .filter({ hasText: this.userPage2.username })
+      .click();
+    await this.modPage.getVisibleLocator(e.focusWebcamBtn).click(); // Unfocus webcam is the same button as focus webcam
+
+    // Assert webcam list should be the default (first item should be the current user; all webcams with the same sizes)
+    await this.modPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.modPage.username, 'should display the username of Mod on the first webcam for Mod');
+
+    // Assert no propagation when unfocusing (other users' webcam state should remain the same)
+    await this.userPage2.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User1 on the first webcam for User1');
+    await this.userPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User1 on the first webcam for User2');
+
+  }
+
+  // TODO:
+  // - remove comments
+  // - change 'user1/2' to attendee
+  // - validate test correctly before pushing
+
   async giveAndRemoveWhiteboardAccess() {
     await this.modPage.waitForSelector(e.whiteboard);
     await this.modPage.waitAndClick(e.userListItem);
@@ -251,7 +309,7 @@ class MultiUsers {
     await this.userPage2.hasElement(e.isTalking, 'should display the talking indicator for the second user');
   }
 
-  async muteAllUsersExceptPresenter(){
+  async muteAllUsersExceptPresenter() {
     // join audio
     await this.modPage.joinMicrophone();
     await this.modPage2.joinMicrophone();
@@ -354,7 +412,7 @@ class MultiUsers {
   async clearAllStatusIcon() {
     await this.modPage.waitForSelector(e.whiteboard);
     await this.modPage2.waitForSelector(e.whiteboard);
-    
+
     await this.modPage.waitAndClick(e.reactionsButton);
     await this.modPage.waitAndClick(`${e.singleReactionButton}:nth-child(1)`);
     await this.modPage.hasText(e.moderatorAvatar, '😃', 'should display the smiling emoji in the moderator avatar for the moderator');
