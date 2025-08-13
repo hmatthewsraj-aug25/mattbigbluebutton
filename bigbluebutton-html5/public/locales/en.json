@@ -14,6 +14,7 @@
     "app.chat.inputPlaceholder": "Message {chatName}",
     "app.chat.titlePublic": "Public Chat",
     "app.chat.titlePrivate": "Private Chat",
+    "app.chat.titlePrivateToUser": "Private Chat with {participantName}",
     "app.chat.partnerDisconnected": "{participantName} has left the session",
     "app.chat.moreMessages": "More messages below",
     "app.chat.dropdown.options": "Chat options",
