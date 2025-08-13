@@ -304,7 +304,7 @@ const PluginsOnlyLayout = (props) => {
     50, { trailing: true, leading: true });
 
   useEffect(() => {
-    window.addEventListener('resize', () => {
+    const handleWindowResize = () => {
       layoutContextDispatch({
         type: ACTIONS.SET_BROWSER_SIZE,
         value: {
@@ -312,7 +312,11 @@ const PluginsOnlyLayout = (props) => {
           height: window.document.documentElement.clientHeight,
         },
       });
-    });
+    };
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, []);
 
   const init = () => {
