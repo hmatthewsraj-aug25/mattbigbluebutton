@@ -11,7 +11,6 @@ import CamerasOnlyLayout from '/imports/ui/components/layout/layout-manager/came
 import PresentationOnlyLayout from '/imports/ui/components/layout/layout-manager/presentationOnlyLayout';
 import ParticipantsAndChatOnlyLayout from '/imports/ui/components/layout/layout-manager/participantsAndChatOnlyLayout';
 import PluginsOnlyLayout from '/imports/ui/components/layout/layout-manager/pluginsOnly';
-import { handleIsNotificationEnabled } from '/imports/ui/components/plugins-engine/ui-commands/notification/handler';
 import { useIsPresentationEnabled } from '/imports/ui/services/features';
 import Session from '/imports/ui/services/storage/in-memory';
 import MediaOnlyLayout from './mediaOnlyLayout';
@@ -348,15 +347,6 @@ const LayoutEngine = () => {
 
   const layout = document.getElementById('layout');
 
-  // The PLUGINS_ONLY layout is the only layout type that does not require notification system.
-  // This change restores the original behavior.
-  useEffect(() => {
-    if (selectedLayout !== LAYOUT_TYPE.PLUGINS_ONLY) {
-      handleIsNotificationEnabled({
-        isNotificationEnabled: true,
-      });
-    }
-  }, [selectedLayout]);
   switch (selectedLayout) {
     case LAYOUT_TYPE.CUSTOM_LAYOUT:
       layout?.setAttribute('data-layout', LAYOUT_TYPE.CUSTOM_LAYOUT);

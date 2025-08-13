@@ -3,7 +3,6 @@ import { throttle } from '/imports/utils/throttle';
 import { layoutDispatch, layoutSelect, layoutSelectInput } from '/imports/ui/components/layout/context';
 import DEFAULT_VALUES from '/imports/ui/components/layout/defaultValues';
 import { INITIAL_INPUT_STATE } from '/imports/ui/components/layout/initState';
-import { handleIsNotificationEnabled } from '/imports/ui/components/plugins-engine/ui-commands/notification/handler';
 
 import {
   ACTIONS,
@@ -313,9 +312,6 @@ const PluginsOnlyLayout = (props) => {
           height: window.document.documentElement.clientHeight,
         },
       });
-    });
-    handleIsNotificationEnabled({
-      isNotificationEnabled: false,
     });
   }, []);
 
