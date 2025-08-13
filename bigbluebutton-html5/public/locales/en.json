@@ -1144,7 +1144,7 @@
     "app.shortcut-help.gesture": "Gestures",
     "app.shortcut-help.fingerTap": "finger tap",
     "app.lock-viewers.title": "Restrict participants",
-    "app.lock-viewers.description": "Select the following options to <b>restrict the use of features</b> for other participants in the session. Moderators will not be affected.",
+    "app.lock-viewers.description": "Restrict participants from using specific features.",
     "app.lock-viewers.restrictParticipantsLabel": "Restrict participants from...",
     "app.lock-viewers.featuresLable": "Feature",
     "app.lock-viewers.lockStatusLabel": "Status",
