@@ -885,6 +885,7 @@
     "app.audio.captions.button.transcription": "النسخ",
     "app.audio.captions.button.transcriptionSettings": "إعدادات النسخ",
     "app.audio.captions.button.autoDetect": "الكشف التلقائي",
+    "app.audio.captions.live.captions": "النسخ المباشر",
     "app.audio.captions.speech.title": "النسخ التلقائي",
     "app.audio.captions.speech.tip": "لكي يتمكن المستخدمون الآخرون من رؤية تعليقاتك التوضيحية، يتعين عليك تمكين النسخ.",
     "app.audio.captions.speech.captions": "التعليقات",
