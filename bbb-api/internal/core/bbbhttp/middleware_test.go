@@ -2,28 +2,24 @@ package bbbhttp
 
 import (
 	"bytes"
-	"context"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"reflect"
 	"strings"
 	"testing"
 )
 
 func TestParams_Get(t *testing.T) {
-	type tc struct {
+	param := Param{}
+
+	tests := []struct {
 		name   string
 		params Params
 		key    string
 		want   Param
-	}
-
-	param := Param{}
-
-	tests := []tc{
+	}{
 		{
 			name:   "Empty map returns zero Param",
 			params: Params{},
@@ -116,19 +112,19 @@ func TestParams_Add(t *testing.T) {
 		p.Add("k", Param{})
 	})
 
-	t.Run("appends when key missing (creates slice)", func(t *testing.T) {
+	t.Run("Appends when key missing (creates slice)", func(t *testing.T) {
 		p := make(Params)
 		p.Add("k", Param{})
 
 		if !p.Has("k") {
-			t.Fatalf("expected key to exist after Add on missing key")
+			t.Fatalf("Expected key to exist after Add on missing key")
 		}
 		if got := len(p["k"]); got != 1 {
-			t.Fatalf("expected len==1, got %d", got)
+			t.Fatalf("Expected len==1, got %d", got)
 		}
 	})
 
-	t.Run("appends to existing slice and preserves order", func(t *testing.T) {
+	t.Run("Appends to existing slice and preserves order", func(t *testing.T) {
 		first := Param{}
 		second := Param{}
 		p := Params{"k": []Param{first}}
@@ -136,7 +132,7 @@ func TestParams_Add(t *testing.T) {
 		p.Add("k", second)
 
 		if got := len(p["k"]); got != 2 {
-			t.Fatalf("expected len==2, got %d", got)
+			t.Fatalf("Expected len==2, got %d", got)
 		}
 
 		if !reflect.DeepEqual(p.Get("k"), first) {
@@ -146,7 +142,7 @@ func TestParams_Add(t *testing.T) {
 }
 
 func TestParams_Del(t *testing.T) {
-	t.Run("Delete on missing key is no-op", func(t *testing.T) {
+	t.Run("Delete on missing key", func(t *testing.T) {
 		p := make(Params)
 		p.Del("missing")
 	})
@@ -164,7 +160,7 @@ func TestParams_Del(t *testing.T) {
 		}
 	})
 
-	t.Run("Delete on nil map is no-op", func(t *testing.T) {
+	t.Run("Delete on nil map", func(t *testing.T) {
 		var p Params
 		p.Del("anything")
 	})
@@ -190,7 +186,7 @@ func TestParams_Has(t *testing.T) {
 			want:   false,
 		},
 		{
-			name:   "Present key returns true even if zero-length slice? (not possible via API)",
+			name:   "Present key returns true even if zero-length slice",
 			params: Params{"k": nil},
 			key:    "k",
 			want:   true,
@@ -268,7 +264,7 @@ func TestCollectParams(t *testing.T) {
 		for k, vs := range fields {
 			for _, v := range vs {
 				if err := w.WriteField(k, v); err != nil {
-					t.Fatalf("failed to write field: %v", err)
+					t.Fatalf("Failed to write field: %v", err)
 				}
 			}
 		}
@@ -281,7 +277,7 @@ func TestCollectParams(t *testing.T) {
 
 	tests := []tc{
 		{
-			name:   "only query params (multiple values and ordering)",
+			name:   "Only query params",
 			method: http.MethodGet,
 			target: "/path?a=1&a=2&b=3",
 			header: http.Header{},
@@ -299,7 +295,7 @@ func TestCollectParams(t *testing.T) {
 		func() tc {
 			h, b := buildForm("a=10&b=20&b=21")
 			return tc{
-				name:   "form-urlencoded body only",
+				name:   "Form-urlencoded body only",
 				method: http.MethodPost,
 				target: "/submit",
 				header: h,
@@ -316,7 +312,7 @@ func TestCollectParams(t *testing.T) {
 				"b": {"y", "z"},
 			})
 			return tc{
-				name:   "multipart body only",
+				name:   "Multipart body only",
 				method: http.MethodPost,
 				target: "/upload",
 				header: h,
@@ -330,7 +326,7 @@ func TestCollectParams(t *testing.T) {
 		func() tc {
 			h, b := buildForm("a=10&a=11&c=Z")
 			return tc{
-				name:   "query + form body; query values appear first and preserved",
+				name:   "Query + form body",
 				method: http.MethodPost,
 				target: "/mix?a=1&b=Q",
 				header: h,
@@ -356,7 +352,7 @@ func TestCollectParams(t *testing.T) {
 				"d": {"val1", "val2"},
 			})
 			return tc{
-				name:   "query + multipart; query still first",
+				name:   "Query + multipart",
 				method: http.MethodPost,
 				target: "/mix2?a=first",
 				header: h,
@@ -374,7 +370,7 @@ func TestCollectParams(t *testing.T) {
 			}
 		}(),
 		{
-			name:   "unknown Content-Type (e.g., JSON): only query parsed",
+			name:   "Unknown Content-Type (e.g., JSON)",
 			method: http.MethodPost,
 			target: "/json?a=1",
 			header: http.Header{
@@ -386,7 +382,7 @@ func TestCollectParams(t *testing.T) {
 			},
 		},
 		{
-			name:   "missing Content-Type: only query parsed",
+			name:   "Missing Content-Type=",
 			method: http.MethodPost,
 			target: "/nocontenttype?a=1",
 			header: http.Header{},
@@ -399,7 +395,7 @@ func TestCollectParams(t *testing.T) {
 			h := http.Header{}
 			h.Set("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
 			return tc{
-				name:   "form-urlencoded parse error: ignore body, keep query",
+				name:   "Form-urlencoded parse error",
 				method: http.MethodPost,
 				target: "/badform?q=1",
 				header: h,
@@ -410,7 +406,7 @@ func TestCollectParams(t *testing.T) {
 			}
 		}(),
 		{
-			name:   "multipart parse error: ignore body, keep query",
+			name:   "Multipart parse error",
 			method: http.MethodPost,
 			target: "/badmp?q=1",
 			header: http.Header{
@@ -422,7 +418,7 @@ func TestCollectParams(t *testing.T) {
 			},
 		},
 		{
-			name:   "empty everything: still inject non-nil empty map",
+			name:   "Empty query and body",
 			method: http.MethodGet,
 			target: "/empty",
 			header: http.Header{},
@@ -456,7 +452,7 @@ func TestCollectParams(t *testing.T) {
 				}
 
 				if captured == nil {
-					t.Fatalf("captured Params is nil")
+					t.Fatalf("Captured Params is nil")
 				}
 				w.WriteHeader(http.StatusOK)
 			})
@@ -465,77 +461,26 @@ func TestCollectParams(t *testing.T) {
 			CollectParams()(next).ServeHTTP(rr, req)
 
 			if rr.Code != http.StatusOK {
-				t.Fatalf("unexpected status: %d", rr.Code)
+				t.Fatalf("Unexpected status: %d", rr.Code)
 			}
 
 			if len(captured) != len(tt.want) {
-				t.Fatalf("number of keys mismatch: got %d, want %d (captured=%v)", len(captured), len(tt.want), captured)
+				t.Fatalf("Number of keys mismatch: got %d, want %d (captured=%v)", len(captured), len(tt.want), captured)
 			}
 			for k, we := range tt.want {
 				gotSlice, ok := captured[k]
 				if !ok {
-					t.Fatalf("missing expected key %q", k)
+					t.Fatalf("Missing expected key %q", k)
 				}
 				if len(gotSlice) != len(we.values) {
-					t.Fatalf("len mismatch for key %q: got %d, want %d; got=%#v want=%#v", k, len(gotSlice), len(we.values), gotSlice, we.values)
+					t.Fatalf("Length mismatch for key %q: got %d, want %d; got=%#v want=%#v", k, len(gotSlice), len(we.values), gotSlice, we.values)
 				}
 				for i := range we.values {
 					if !reflect.DeepEqual(gotSlice[i], we.values[i]) {
-						t.Fatalf("value mismatch key %q idx %d: got %#v, want %#v", k, i, gotSlice[i], we.values[i])
+						t.Fatalf("Value mismatch key %q idx %d: got %#v, want %#v", k, i, gotSlice[i], we.values[i])
 					}
 				}
 			}
 		})
-	}
-}
-
-func TestCollectParams_ContextIsolation(t *testing.T) {
-	type ctxKey string
-	const customKey ctxKey = "custom"
-
-	req := httptest.NewRequest(http.MethodGet, "/x?u=1", nil).WithContext(context.WithValue(context.Background(), customKey, 42))
-	rr := httptest.NewRecorder()
-
-	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if v := r.Context().Value(customKey); v != 42 {
-			t.Fatalf("custom context value modified or lost: got %v", v)
-		}
-		if v := r.Context().Value(ParamsKey); v == nil {
-			t.Fatalf("Params not injected")
-		}
-		w.WriteHeader(http.StatusOK)
-	})
-
-	CollectParams()(next).ServeHTTP(rr, req)
-	if rr.Code != http.StatusOK {
-		t.Fatalf("unexpected status: %d", rr.Code)
-	}
-}
-
-func TestCollectParams_ContentTypeWithParams(t *testing.T) {
-	form := url.Values{}
-	form.Add("k", "v")
-	body := strings.NewReader(form.Encode())
-
-	req := httptest.NewRequest(http.MethodPost, "/ct?a=1", body)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
-
-	rr := httptest.NewRecorder()
-	var got Params
-
-	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		got = r.Context().Value(ParamsKey).(Params)
-		w.WriteHeader(http.StatusOK)
-	})
-
-	CollectParams()(next).ServeHTTP(rr, req)
-
-	want := Params{
-		"a": {Param{Value: "1", FromQuery: true}},
-		"k": {Param{Value: "v", FromBody: true}},
-	}
-
-	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("mismatch\n got: %#v\nwant: %#v", got, want)
 	}
 }

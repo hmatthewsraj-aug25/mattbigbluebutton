@@ -1,3 +1,6 @@
+// Package validation provides helper functions for
+// validating common parameter types in requests
+// to BBB APIs.
 package validation
 
 import (

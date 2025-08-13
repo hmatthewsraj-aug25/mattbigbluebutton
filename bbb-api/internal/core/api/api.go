@@ -1,5 +1,5 @@
 // Package api provides the functionality for quickly
-// standing up a new API.
+// standing up a new API server.
 package api
 
 import (
