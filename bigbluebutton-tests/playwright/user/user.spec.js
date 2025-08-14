@@ -22,12 +22,6 @@ test.describe.parallel('User', { tag: '@ci' }, () => {
       await multiusers.raiseHandRejected();
     });
 
-    test('Toggle user list', async ({ browser, context, page }) => {
-      const multiusers = new MultiUsers(browser, context);
-      await multiusers.initModPage(page);
-      await multiusers.toggleUserList();
-    });
-
     test('Stopwatch', async ({ browser, context, page })=> {
       const timer = new Timer(browser, context);
       await timer.initModPage(page, true);

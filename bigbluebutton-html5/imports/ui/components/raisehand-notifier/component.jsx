@@ -163,7 +163,7 @@ class RaiseHandNotifier extends Component {
     const { raiseHandUsers, intl, lowerUserHands } = this.props;
     const formattedRaisedHands = this.getRaisedHandNames();
     return (
-      <Styled.ToastContentWrapper>
+      <Styled.ToastContentWrapper data-test="raiseHandWrapper">
         <Styled.ToastContent>
           <Styled.IconWrapper>
             <Icon iconName="hand" />
