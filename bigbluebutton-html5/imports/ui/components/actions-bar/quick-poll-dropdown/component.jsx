@@ -252,7 +252,7 @@ const QuickPollDropdown = (props) => {
       });
     }
   });
-  
+
   if (question.length > 0
     && optionsPoll.length === 0
     && !doubleQuestion
