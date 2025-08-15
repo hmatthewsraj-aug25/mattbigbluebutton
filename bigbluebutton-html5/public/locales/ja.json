@@ -327,7 +327,7 @@
     "app.presentationUploader.currentPresentationLabel": "プレゼンテーションファイル",
     "app.presentationUploder.extraHint": "重要：それぞれのファイルが{maxFileSize}MB、{maxFilePages}ページを超えないようにしてください。",
     "app.presentationUploder.uploadLabel": "アップロード",
-    "app.presentationUploder.confirmLabel": "確認",
+    "app.presentationUploder.confirmLabel": "決定",
     "app.presentationUploder.confirmDesc": "変更を保存してプレゼンテーションを開始する",
     "app.presentationUploder.dismissLabel": "キャンセル",
     "app.presentationUploder.dismissDesc": "変更を保存せずウィンドウを閉じる",
