@@ -35,7 +35,7 @@ exports.sendFeedbackButton = 'button[data-test="sendFeedbackButton"]';
 exports.feedbackCommentInput = 'textarea#feedbackComment';
 exports.errorScreenMessage = 'h1[data-test="errorScreenMessage"]';
 exports.errorMessageLabel = 'span[id="error-message"]';
-exports.shareCameraAsContent = 'li[data-test="shareCameraAsContent"]';
+exports.shareCameraAsContent = 'div[data-test="cameraAsContent"]';
 exports.closePopup = 'button[data-test="closePopup"]';
 exports.restoreWelcomeMessages = 'li[data-test="restoreWelcomeMessages"]';
 exports.navigationSidebarContainer = 'div[data-test="navigationSidebarContainer"]';

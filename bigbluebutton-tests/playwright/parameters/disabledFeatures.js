@@ -133,7 +133,7 @@ class DisabledFeatures extends MultiUsers {
   }
 
   async chatExclude() {
-    await this.modPage.hasElement(e.hideMessagesButton, 'should display the hide public chat option when the public chat is open');
+    await this.modPage.hasElement(e.hidePublicChat, 'should display the hide public chat option when the public chat is open');
   }
 
   async externalVideosExclude() {
