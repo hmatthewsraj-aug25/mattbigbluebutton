@@ -453,7 +453,7 @@ exports.webcamVideoItem = 'div[data-test="webcamVideoItem"]';
 exports.videoDropdownMenu = 'button[data-test="videoDropdownMenu"]';
 exports.advancedVideoSettingsBtn = 'li[data-test="advancedVideoSettingsButton"]';
 exports.mirrorWebcamBtn = 'li[data-test="mirrorWebcamBtn"]';
-exports.focusWebcamBtn = 'li[data-test="FocusWebcamBtn"]';
+exports.focusWebcamBtn = 'li[data-test="focusWebcamBtn"]';
 exports.pinWebcamBtn = 'li[data-test="pinWebcamBtn"]';
 exports.pinVideoButton = 'button[data-test="pinVideoButton"]';
 exports.webcamsFullscreenButton = 'li[data-test="webcamsFullscreenButton"]';
