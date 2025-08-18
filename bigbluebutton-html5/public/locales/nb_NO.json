@@ -318,7 +318,7 @@
     "app.presentationUploader.exportingTimeout": "Eksporteringen bruker for lang tid...",
     "app.presentationUploader.export": "Send til chatten",
     "app.presentationUploader.exportCurrentStatePresentation": "Send ut en nedlastingslenke for presentasjonen inkludert tavlekommentarer",
-    "app.presentationUploader.enableOriginalPresentationDownload": "Aktiver nedlasting av presentasjonen ({fileExtension})",
+    "app.presentationUploader.enableOriginalPresentationDownload": "Aktivér nedlasting av presentasjonen ({fileExtension})",
     "app.presentationUploader.disableOriginalPresentationDownload": "Deaktiver nedlasting av den opprinnelige presentasjonen ({fileExtension})",
     "app.presentationUploader.export.withWhiteboardAnnotations": "med whiteboard-merknader",
     "app.presentationUploader.dropdownExportOptions": "Eksportalternativer",
