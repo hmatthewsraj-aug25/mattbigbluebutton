@@ -247,7 +247,7 @@ class MultiUsers {
     await this.userPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User2 on the focused webcam for User1');
 
     await user2DropdownWebcamButtonForModerator.click();
-    await this.modPage.getVisibleLocator(e.focusWebcamBtn).click(); // Unfocus webcam is the same button as focus webcam
+    await this.modPage.getVisibleLocator(e.unfocusWebcamBtn).click();
 
     await this.modPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.modPage.username, 'should display the username of Moderator on the first webcam for Moderator');
     await this.userPage2.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User2 on the first webcam for User2');
