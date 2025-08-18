@@ -304,7 +304,7 @@
     "app.presentation.modal.modClearAnnotationsDesc": "Er du sikker på at du vil slette alle whiteboard-kommentarer?",
     "app.presentation.modal.viewerClearAnnotationsDesc": "Er du sikker på at du vil slette alle dine whiteboard-kommentarer?",
     "app.presentation.modal.clearAnnotationsCancelLabel": "Avbryt",
-    "app.presentation.modal.clearAnnotationsConfirmLabel": "Slett",
+    "app.presentation.modal.clearAnnotationsConfirmLabel": "Tøm",
     "app.presentationUploder.title": "Presentasjon",
     "app.presentationUploder.message": "Som presentator har du muligheten til å laste opp ethvert officedokument eller PDF fil. Vi anbefaler PDF for optimalt resultat. Vennligst se at presentasjonen er valgt ved bruk av den runde avsjekksboksen på høyre side.",
     "app.presentationUploader.exportHint": "I menyen \"Eksporter alternativer\" har du muligheten til å aktivere nedlasting av den originale presentasjonen og gi brukerne en nedlastbar lenke med kommentarer i chatten.",
