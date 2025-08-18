@@ -3,7 +3,7 @@ import Button from '/imports/ui/components/common/button/component';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 
 const propTypes = {
   children: PropTypes.element.isRequired,
@@ -36,13 +36,14 @@ export default class DropdownTrigger extends Component {
   handleKeyDown(event) {
     event.stopPropagation();
     const { dropdownShow, dropdownHide } = this.props;
+    const { key } = event;
 
-    if ([KEY_CODES.SPACE, KEY_CODES.ENTER].includes(event.which)) {
+    if ([KEYS.SPACE, KEYS.ENTER].includes(key)) {
       event.preventDefault();
       event.stopPropagation();
-    } else if ([KEY_CODES.ARROW_UP, KEY_CODES.ARROW_DOWN].includes(event.which)) {
+    } else if ([KEYS.ARROW_UP, KEYS.ARROW_DOWN].includes(key)) {
       dropdownShow();
-    } else if (KEY_CODES.ESCAPE === event.which) {
+    } else if (KEYS.ESCAPE === key) {
       dropdownHide();
     }
   }

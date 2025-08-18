@@ -10,9 +10,13 @@ const ToolbarContainer = styled.div`
   align-items: center;
 `;
 
-const ToolbarItem = styled.div`
+const ToolbarItem = styled.div<{ disabled?: boolean }>`
   cursor: pointer;
   color: ${colorGrayIcons};
+
+  ${({ disabled }) => disabled && `
+    cursor: not-allowed;
+  `}
 `;
 
 const MoreItems = styled.div`

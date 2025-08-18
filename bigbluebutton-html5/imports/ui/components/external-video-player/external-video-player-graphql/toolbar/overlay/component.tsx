@@ -1,5 +1,5 @@
 import React from 'react';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import Styles from './styles';
 
 interface ExternalVideoOverlayProps {
@@ -16,7 +16,7 @@ const ExternalVideoOverlay: React.FC<ExternalVideoOverlayProps> = (props) => {
       onKeyDown={(e) => {
         if (e.target !== e.currentTarget) return;
 
-        if ([KEY_CODES.ARROW_DOWN, KEY_CODES.ARROW_UP].includes(e.keyCode)) {
+        if ([KEYS.ARROW_DOWN, KEYS.ARROW_UP].includes(e.key)) {
           onVerticalArrow?.();
         }
       }}

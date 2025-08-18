@@ -83,7 +83,7 @@ const intlMessages = defineMessages({
 interface UserActionProps {
   name: string;
   stream: VideoItem;
-  cameraId: string;
+  cameraId: string | null;
   numOfStreams: number;
   onHandleVideoFocus: ((id: string) => void) | null;
   focused: boolean;
@@ -102,7 +102,7 @@ interface UserActionProps {
 
 const UserActions: React.FC<UserActionProps> = (props) => {
   const {
-    name, cameraId, numOfStreams, onHandleVideoFocus, stream, focused, onHandleMirror,
+    name, cameraId = '', numOfStreams, onHandleVideoFocus, stream, focused, onHandleMirror,
     isVideoSqueezed = false, videoContainer, isRTL, isStream, isSelfViewDisabled, isMirrored,
     amIModerator, isFullscreenContext, layoutContextDispatch,
   } = props;
@@ -137,6 +137,7 @@ const UserActions: React.FC<UserActionProps> = (props) => {
   }, []);
 
   const getAvailableActions = () => {
+    if (!cameraId) return [];
     const pinned = stream.type === VIDEO_TYPES.STREAM && stream.user.pinned;
     const { userId } = stream;
     const isPinnedIntlKey = !pinned ? 'pin' : 'unpin';

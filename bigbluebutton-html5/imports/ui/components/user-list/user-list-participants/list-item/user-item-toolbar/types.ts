@@ -9,6 +9,7 @@ export interface ToolbarEntry {
   dataTest: string;
   label: string;
   key: string;
+  disabled?: boolean;
 }
 
 export interface UserItemToolbarProps {

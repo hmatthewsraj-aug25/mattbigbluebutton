@@ -5,8 +5,11 @@ import {
   colorText, colorGrayIcons, appsPanelTextColor,
 } from '/imports/ui/stylesheets/styled-components/palette';
 import { lgBorderRadius } from '/imports/ui/stylesheets/styled-components/general';
-import { fontSizeLarge, titlesFontWeight } from '/imports/ui/stylesheets/styled-components/typography';
+import { fontSizeBase, headingsFontWeight } from '/imports/ui/stylesheets/styled-components/typography';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
+
+const MODAL_WIDTH = '26.25rem';
+const MODAL_WIDTH_REDUCED = '250px';
 
 // This overlay covers the entire viewport and is used to catch outside clicks.
 const Overlay = styled.div`
@@ -46,7 +49,12 @@ const ConfirmationButton = styled(Button)`
 `;
 
 // Modal container positioned in the bottom right corner.
-const ModalContainer = styled.div<{ isMobile: boolean, isRTL: boolean, actionsBarHeight: number }>`
+const ModalContainer = styled.div<{
+  isMobile: boolean,
+  isRTL: boolean,
+  actionsBarHeight: number,
+  reducedWidth?: boolean,
+}>`
   position: fixed;
   background: ${colorWhite};
   box-shadow: -4px 4px 8px 0px rgba(0, 0, 0, 0.25);
@@ -56,12 +64,14 @@ const ModalContainer = styled.div<{ isMobile: boolean, isRTL: boolean, actionsBa
   bottom: ${({ actionsBarHeight }) => actionsBarHeight}px;
   border-radius: ${lgBorderRadius};
 
-  ${({ isMobile, isRTL }) => (isMobile ? `
-    left: 0;
-    right: 0;
-    width: 100%;
+  ${({
+    isMobile, isRTL, reducedWidth,
+  }) => (isMobile ? `
+    width: 70%;
+    right: 6%;
+    left: auto;
   ` : `
-    width: 420px;
+    width: ${reducedWidth ? MODAL_WIDTH_REDUCED : MODAL_WIDTH};
     ${isRTL ? `
       left: 24px;
       right: auto;
@@ -77,13 +87,13 @@ const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
+  padding: 1rem;
   border-bottom: 1px solid ${appsGalleryOutlineColor};
 
   h2 {
     margin: 0;
-    font-size: ${fontSizeLarge};
-    font-weight: ${titlesFontWeight};
+    font-size: ${fontSizeBase};
+    font-weight: ${headingsFontWeight};
     text-transform: uppercase;
   }
 `;
@@ -97,18 +107,17 @@ const ContentContainer = styled.div`
 `;
 
 // Grid layout for displaying media options.
-const MediaGrid = styled.div`
-  padding: 1.5rem;
+const MediaGrid = styled.div<{ isMobile: boolean }>`
+  padding: ${({ isMobile }) => (isMobile ? '0.5rem' : '1rem')};
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: ${({ isMobile }) => (isMobile ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)')};
   text-align: center;
   justify-items: center;
 `;
 
 // Footer container for the start/stop sharing button.
 const FooterContainer = styled.div`
-  padding: 1.5rem;
+  padding: 1rem;
   border-top: 1px solid ${appsGalleryOutlineColor};
   display: flex;
   justify-content: center;
@@ -180,11 +189,17 @@ const BecomePresenterViewContainer = styled.div`
   padding: 1rem;
   flex-direction: column;
   gap: 1rem;
+
+  ${ConfirmationButton} {
+    height: 2.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    min-width: 8.5rem;
+  }
 `;
 
-const BecomePresenterText = styled.p`
+const BecomePresenterText = styled.div`
   color: ${colorText};
-  font-size: ${fontSizeLarge};
 `;
 
 export default {

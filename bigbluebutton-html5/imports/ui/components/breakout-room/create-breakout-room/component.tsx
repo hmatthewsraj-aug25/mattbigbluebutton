@@ -14,7 +14,7 @@ import {
   getUser,
   getUserResponse,
 } from './queries';
-import { PRESENTATIONS_SUBSCRIPTION } from '/imports/ui/components/whiteboard/queries';
+import { PRESENTATIONS_SUBSCRIPTION, PresentationsSubscriptionResponse } from '/imports/ui/components/whiteboard/queries';
 import logger from '/imports/startup/client/logger';
 import BreakoutRoomUserAssignment from './breakout-room-user-assignment/component';
 import deviceInfo from '/imports/utils/deviceInfo';
@@ -569,23 +569,25 @@ const CreateBreakoutRoom: React.FC<CreateBreakoutRoomProps> = ({
             {leastOneUserIsValid ? (
               // @ts-ignore - button is js component
               <Styled.ResetAssignmentButton
-                aria-label={intl.formatMessage(intlMessages.resetAssignmentsDesc)}
                 tooltipLabel={intl.formatMessage(intlMessages.resetAssignmentsDesc)}
                 icon="close"
                 size="lg"
                 data-test="resetAssignments"
                 color="danger"
                 onClick={() => resetAssignmentsFunction.current()}
+                label={intl.formatMessage(intlMessages.resetAssignmentsDesc)}
+                hideLabel
               />
             ) : (
               // @ts-ignore - button is js component
               <Styled.RandomAssignButton
-                aria-label={intl.formatMessage(intlMessages.randomlyAssignDesc)}
                 tooltipLabel={intl.formatMessage(intlMessages.randomlyAssignDesc)}
                 icon="random"
                 size="lg"
                 data-test="randomlyAssign"
                 onClick={() => randomlyAssignFunction.current()}
+                label={intl.formatMessage(intlMessages.randomlyAssignDesc)}
+                hideLabel
               />
             )}
           </Styled.RandomAssignLabel>
@@ -728,7 +730,8 @@ const CreateBreakoutRoomContainer: React.FC<CreateBreakoutRoomContainerProps> = 
     error: meetingGroupError,
   } = useQuery<getMeetingGroupResponse>(getMeetingGroup);
 
-  const { data: presentationData } = useDeduplicatedSubscription(PRESENTATIONS_SUBSCRIPTION);
+  const { data: presentationData } = useDeduplicatedSubscription<
+    PresentationsSubscriptionResponse>(PRESENTATIONS_SUBSCRIPTION);
   const presentations = presentationData?.pres_presentation || [];
   const currentPresentation = presentations.find((p: Presentation) => p.current)?.presentationId || '';
 

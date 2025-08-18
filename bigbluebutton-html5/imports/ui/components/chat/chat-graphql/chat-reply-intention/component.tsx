@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import Styled from './styles';
 import useSettings from '/imports/ui/services/settings/hooks/useSettings';
+import KEYS from '/imports/utils/keys';
 import { SETTINGS } from '/imports/ui/services/settings/enums';
 import { ChatEvents } from '/imports/ui/core/enums/chat';
 import Tooltip from '/imports/ui/components/common/tooltip/container';
@@ -55,7 +56,7 @@ const ChatReplyIntention = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !hidden) {
+      if (e.key === KEYS.ESCAPE && !hidden) {
         window.dispatchEvent(
           new CustomEvent(ChatEvents.CHAT_CANCEL_REPLY_INTENTION),
         );

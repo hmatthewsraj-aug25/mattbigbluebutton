@@ -19,7 +19,6 @@ import {
 import useMeeting from '/imports/ui/core/hooks/useMeeting';
 import { Meeting } from '/imports/ui/Types/meeting';
 import logger from '/imports/startup/client/logger';
-import MutedAlert from '/imports/ui/components/muted-alert/component';
 import MuteToggle from './buttons/muteToggle';
 import ListenOnly from './buttons/listenOnly';
 import LiveSelection from './buttons/LiveSelection';
@@ -116,9 +115,6 @@ const InputStreamLiveSelector: React.FC<InputStreamLiveSelectorProps> = ({
 
   // @ts-ignore - temporary, while meteor exists in the project
   const { enableDynamicAudioDeviceSelection } = window.meetingClientSettings.public.app;
-  // @ts-ignore - temporary, while meteor exists in the project
-  const MUTE_ALERT_CONFIG = window.meetingClientSettings.public.app.mutedAlert;
-  const { enabled: muteAlertEnabled } = MUTE_ALERT_CONFIG;
 
   const updateRemovedDevices = useCallback((
     audioInputDevices: MediaDeviceInfo[],
@@ -211,19 +207,10 @@ const InputStreamLiveSelector: React.FC<InputStreamLiveSelectorProps> = ({
       toggleMuteMicrophoneSystem(muted, toggleVoice);
     }
   }, [inputDeviceId, isConnected, muted]);
+  const showMutedAlert = Boolean(inAudio && inputStream && !listenOnly && muted && showMute);
 
   return (
     <>
-      {inAudio && inputStream && muteAlertEnabled && !listenOnly && muted && showMute ? (
-        <div data-debug="live-watcher" aria-live="polite">
-          <MutedAlert
-            {...{
-              muted, inputStream, isPresenter,
-            }}
-            isViewer={!isModerator}
-          />
-        </div>
-      ) : null}
       {
 
         enableDynamicAudioDeviceSelection ? (
@@ -242,6 +229,10 @@ const InputStreamLiveSelector: React.FC<InputStreamLiveSelectorProps> = ({
             away={away}
             supportsTransparentListenOnly={supportsTransparentListenOnly}
             openAudioSettings={openAudioSettings}
+            showMutedAlert={showMutedAlert}
+            inputStream={inputStream}
+            isModerator={isModerator}
+            isPresenter={isPresenter}
           />
         ) : (
           <>
@@ -255,6 +246,10 @@ const InputStreamLiveSelector: React.FC<InputStreamLiveSelectorProps> = ({
                 away={away}
                 openAudioSettings={openAudioSettings}
                 noInputDevice={inputDeviceId === 'listen-only'}
+                showMutedAlert={showMutedAlert}
+                inputStream={inputStream}
+                isModerator={isModerator}
+                isPresenter={isPresenter}
               />
             )}
             <ListenOnly

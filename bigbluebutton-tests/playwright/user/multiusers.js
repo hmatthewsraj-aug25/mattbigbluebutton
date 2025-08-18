@@ -77,6 +77,8 @@ class MultiUsers {
   }
 
   async userPresence() {
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
+    await this.userPage.waitAndClick(e.usersListSidebarButton);
     await this.modPage.hasElementCount(e.currentUser, 1, 'should contain one current user for the moderator');
     await this.modPage.hasElementCount(e.userListItem, 1, 'should contain one user on user list for the moderator');
     await this.userPage.hasElementCount(e.currentUser, 1, 'should contain one current user for the attendee');
@@ -84,21 +86,23 @@ class MultiUsers {
   }
 
   async makePresenter() {
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
     await this.modPage.waitAndClick(e.userListItem);
+    await this.modPage.waitAndClick(e.moreOptionsUserItemButton);
     await this.modPage.waitAndClick(e.makePresenter);
     await this.modPage.wasRemoved(e.wbToolbar, 'should not display the whiteboard toolbar for the moderator');
 
     await this.userPage.hasElement(e.startScreenSharing, 'should display the start screenshare button for the attendee');
     await this.userPage.hasElement(e.presentationToolbarWrapper, 'should display the presentation toolbar for the attendee');
     await this.userPage.hasElement(e.wbToolbar, 'should display the whiteboard toolbar for the attendee');
-    await this.userPage.hasElement(e.mediaAreaButton, 'should display the media area button for the attendee');
+    await this.userPage.waitAndClick(e.usersListSidebarButton);
     await this.userPage.hasElement(e.userListItem, 'should display the user list item for the attendee');
-    const isPresenter = await checkIsPresenter(this.userPage);
-    await expect(isPresenter, 'should the attendee be presenter').toBeTruthy();
+    await this.userPage.hasText(e.currentUser, 'Presenter', 'should the attendee to be the presenter');
   }
 
   async takePresenter() {
-    await this.modPage2.waitAndClick(e.currentUser);
+    await this.modPage2.waitAndClick(e.usersListSidebarButton);
+    await this.modPage2.waitAndClick(e.moreOptionsUserItemButton);
     await this.modPage2.waitAndClick(e.takePresenter);
     await this.modPage.wasRemoved(e.wbToolbar, 'should not display the whiteboard toolbar for the moderator');
 
@@ -106,8 +110,7 @@ class MultiUsers {
     await this.modPage2.hasElement(e.wbToolbar, 'should display the whiteboard toolbar for the second moderator');
     await this.modPage2.hasElement(e.presentationToolbarWrapper, 'should presentation toolbar for the second moderator');
     await this.modPage2.hasElement(e.userListItem, 'should display the user list item for the second moderator');
-    const isPresenter = await checkIsPresenter(this.modPage2);
-    await expect(isPresenter, 'should the second moderator to be presenter').toBeTruthy();
+    await this.modPage2.hasText(e.currentUser, 'Presenter', 'should the second moderator to be the presenter');
     await this.modPage2.waitAndClick(e.mediaAreaButton);
     await this.modPage2.hasElement(e.managePresentations, 'should display the manage presentations for the second moderator');
     await this.modPage2.hasElement(e.pollSidebarButton, 'should display the polling option for the second moderator');
@@ -115,21 +118,27 @@ class MultiUsers {
   }
 
   async promoteToModerator() {
+    await this.userPage.waitAndClick(e.usersListSidebarButton);
     await checkAvatarIcon(this.userPage, false);
-    await this.userPage.wasRemoved(e.manageUsers, 'should not display the manage users  for the attendee');
-    await this.modPage.waitAndClick(e.userListItem);
+    await this.userPage.wasRemoved(e.moreOptionsUserItemButton, 'should not display the more options button for the attendee');
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
+    await this.modPage.waitAndClick(e.moreOptionsUserItemButton);
     await this.modPage.waitAndClick(e.promoteToModerator);
     await checkAvatarIcon(this.userPage);
-    await this.userPage.hasElement(e.manageUsers, 'should display the manage users for the attendee');
+    const userMoreOptionsButtonLocator = await this.userPage.getLocator(e.moreOptionsUserItemButton).first();
+    await expect(userMoreOptionsButtonLocator, 'should display the more options button for the attendee').toBeVisible();
   }
 
   async demoteToViewer() {
+    await this.modPage2.waitAndClick(e.usersListSidebarButton);
     await checkAvatarIcon(this.modPage2);
-    await this.modPage2.hasElement(e.manageUsers, 'should display the manage users for the second moderator');
-    await this.modPage.waitAndClick(e.userListItem);
+    const modPage2moreOptionsButtonLocator = await this.modPage2.getLocator(e.moreOptionsUserItemButton).first();
+    await expect(modPage2moreOptionsButtonLocator, 'should display the more options button for the second moderator').toBeVisible();
+    await this.modPage.waitAndClick(e.usersListSidebarButton)
+    await this.modPage.waitAndClick(e.moreOptionsUserItemButton);
     await this.modPage.waitAndClick(e.demoteToViewer);
     await checkAvatarIcon(this.modPage2, false);
-    await this.modPage2.wasRemoved(e.manageUsers, 'should not display the manage users for the second moderator');
+    await expect(modPage2moreOptionsButtonLocator, 'should not display the more options button for the second moderator').toBeHidden();
   }
 
   async raiseAndLowerHand() {
@@ -138,7 +147,8 @@ class MultiUsers {
     await this.userPage.waitForSelector(e.whiteboard);
     await this.userPage.waitAndClick(e.raiseHandBtn);
     await this.userPage.hasElement(e.lowerHandBtn, 'should display the lower hand button after raising the hand');
-    await this.modPage.comparingSelectorsBackgroundColor(e.avatarsWrapperAvatar, `${e.userListItem} div:first-child`);
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
+    await this.modPage.comparingSelectorsBackgroundColor(e.avatarsWrapperAvatar, `${e.raiseHandWrapper} >> ${e.avatarsWrapperAvatar}`);
     await sleep(1000);
     await this.userPage.waitAndClick(e.lowerHandBtn);
     await this.userPage.hasElement(e.raiseHandBtn, 'should display the raise hand button after lowering the hand');
@@ -150,20 +160,10 @@ class MultiUsers {
     await this.userPage.waitAndClick(e.raiseHandBtn);
     await this.userPage.hasElement(e.lowerHandBtn, 'should display the lower hand button for the attendee');
     await this.userPage.press('Escape');
-    await this.modPage.comparingSelectorsBackgroundColor(e.avatarsWrapperAvatar, `${e.userListItem} div:first-child`);
+    await this.modPage.waitAndClick(e.usersListSidebarButton)
+    await this.modPage.comparingSelectorsBackgroundColor(e.avatarsWrapperAvatar, `${e.raiseHandWrapper} >> ${e.avatarsWrapperAvatar}`);
     await this.modPage.waitAndClick(e.raiseHandRejection);
     await this.userPage.hasElement(e.raiseHandBtn, 'should display the raise hand button after rejection');
-  }
-
-  async toggleUserList() {
-    await this.modPage.hasElement(e.chatBox, 'should display the public chat box for the moderator');
-    await this.modPage.hasElement(e.chatButton, 'should display the public chat button for the moderator');
-    await this.modPage.waitAndClick(e.userListToggleBtn);
-    await this.modPage.wasRemoved(e.chatBox, 'should not display the public chat box for the moderator');
-    await this.modPage.wasRemoved(e.chatButton, 'should not display the public chat button for the moderator');
-    await this.modPage.waitAndClick(e.userListToggleBtn);
-    await this.modPage.wasRemoved(e.chatBox, 'should not display the public chat box for the moderator');
-    await this.modPage.hasElement(e.chatButton, 'should display the public chat button for the moderator');
   }
 
   async saveUserNames(testInfo) {
@@ -221,12 +221,11 @@ class MultiUsers {
 
   async giveAndRemoveWhiteboardAccess() {
     await this.modPage.waitForSelector(e.whiteboard);
-    await this.modPage.waitAndClick(e.userListItem);
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
     await this.modPage.waitAndClick(e.changeWhiteboardAccess);
-    await this.modPage.hasElement(e.multiUsersWhiteboardOff);
-    await this.modPage.waitAndClick(e.userListItem);
+    await this.modPage.hasElement(e.multiUsersWhiteboardOff, 'should display the multi users whiteboard off');
     await this.modPage.waitAndClick(e.changeWhiteboardAccess);
-    await this.modPage.hasElement(e.multiUsersWhiteboardOn);
+    await this.modPage.hasElement(e.multiUsersWhiteboardOn, 'should display the multi users whiteboard on');
   }
 
   async disabledUsersJoinMuted() {
@@ -271,7 +270,8 @@ class MultiUsers {
   }
 
   async removeUser() {
-    await this.modPage.waitAndClick(e.userListItem);
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
+    await this.modPage.waitAndClick(e.moreOptionsUserItemButton);
     await this.modPage.waitAndClick(e.removeUser);
     await this.modPage.waitAndClick(e.removeUserConfirmationBtn);
     await this.modPage.wasRemoved(e.userListItem, 'should not display a user on the user list for the moderator');
@@ -286,11 +286,12 @@ class MultiUsers {
   }
 
   async removeUserAndPreventRejoining(context) {
-    await this.modPage.waitAndClick(e.userListItem);
+    await this.modPage.waitAndClick(e.usersListSidebarButton);
+    await this.modPage.waitAndClick(e.moreOptionsUserItemButton);
     await this.modPage.waitAndClick(e.removeUser);
     await this.modPage.waitAndClick(e.confirmationCheckbox);
     await this.modPage.waitAndClick(e.removeUserConfirmationBtn);
-    await this.modPage.wasRemoved(e.userListItem, 'should not display the user on the user list for the moderator');
+    await this.modPage.wasRemoved(e.moreOptionsUserItemButton, 'should not display the user on the user list for the moderator');
 
     // Will be modified when the issue is fixed and accept just one of both screens
     // https://github.com/bigbluebutton/bigbluebutton/issues/16463
@@ -318,10 +319,12 @@ class MultiUsers {
     // use the smiling reaction
     await this.modPage.waitAndClick(e.reactionsButton);
     await this.modPage.waitAndClick(`${e.singleReactionButton}:nth-child(1)`);
+    await this.modPage.waitAndClick(e.usersListSidebarButton); 
     await this.modPage.hasText(e.moderatorAvatar, '😃', 'should display the smiling emoji in the moderator avatar for the moderator');
     await this.modPage.hasText(e.reactionsButton, '😃', 'should display the smiling emoji on the reactions button when used');
+    await this.userPage.waitAndClick(e.usersListSidebarButton);
     await this.userPage.hasText(e.moderatorAvatar, '😃', 'should display the smiling emoji in the moderator avatar for the viewer');
-
+    
     // change the reaction to the thumbs up
     await this.modPage.waitAndClick(e.reactionsButton);
     await this.modPage.waitAndClick(`${e.singleReactionButton}:nth-child(5)`);

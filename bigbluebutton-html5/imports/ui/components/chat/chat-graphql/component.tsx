@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Button } from '@mui/material';
+import KEYS from '/imports/utils/keys';
 import BackButton from '/imports/ui/components/chat/chat-graphql/private-back-button/component';
 import ChatHeader from './chat-header/component';
 import { layoutSelect, layoutSelectInput } from '../../layout/context';
@@ -104,7 +105,7 @@ const Chat: React.FC<ChatProps> = ({
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isEditingMessage.current) {
+      if (e.key === KEYS.ESCAPE && isEditingMessage.current) {
         window.dispatchEvent(
           new CustomEvent(ChatEvents.CHAT_CANCEL_EDIT_REQUEST),
         );
@@ -249,7 +250,11 @@ const Chat: React.FC<ChatProps> = ({
 };
 
 export const ChatLoading: React.FC<ChatLoadingProps> = () => {
-  return <Styled.CircularProgressContainer />;
+  return (
+    <Styled.LoadingWrapper>
+      <Styled.CircularProgressContainer />
+    </Styled.LoadingWrapper>
+  );
 };
 
 const ChatContainer: React.FC = () => {
@@ -281,7 +286,7 @@ const ChatContainer: React.FC = () => {
     && chat.totalUnread > 0
   ));
   const filteredPrivateChats = (chats || [] as ChatType[]).filter(
-    (chat) => !chat.public && chat.totalMessages !== 0,
+    (chat) => !chat.public && chat.totalMessages && chat.totalMessages !== 0,
   );
 
   let participantName = '';
@@ -311,7 +316,12 @@ const ChatContainer: React.FC = () => {
   }
 
   if (sidebarContent.sidebarContentPanel !== PANELS.CHAT) return null;
-  if (!idChatOpen && !isLocked) return <ChatLoading isRTL={isRTL} />;
+  if (!idChatOpen && !isLocked) {
+    if (sidebarContent.sidebarContentIsOpen) {
+      return <ChatLoading isRTL={isRTL} />;
+    }
+    return null;
+  }
 
   return (
     <Chat

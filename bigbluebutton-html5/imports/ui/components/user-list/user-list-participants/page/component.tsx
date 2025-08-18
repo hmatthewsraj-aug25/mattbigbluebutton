@@ -4,7 +4,7 @@ import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedS
 import { MEETING_PERMISSIONS_SUBSCRIPTION } from '../queries';
 import { setLocalUserList, useLoadedUserList } from '/imports/ui/core/hooks/useLoadedUserList';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
-import { CURRENT_PRESENTATION_PAGE_SUBSCRIPTION } from '/imports/ui/components/whiteboard/queries';
+import { CURRENT_PRESENTATION_PAGE_SUBSCRIPTION, CurrentPresentationPageSubscriptionResponse } from '/imports/ui/components/whiteboard/queries';
 import { User } from '/imports/ui/Types/user';
 import { GraphqlDataHookSubscriptionResponse } from '/imports/ui/Types/hook';
 import { Meeting } from '/imports/ui/Types/meeting';
@@ -15,6 +15,7 @@ import { Layout } from '/imports/ui/components/layout/layoutTypes';
 import SkeletonUserListItem from '../list-item/skeleton/component';
 import { PluginsContext } from '/imports/ui/components/components-data/plugin-context/context';
 import USERS_PER_USER_LIST_PAGE from '../constants';
+import { MeetingPermissionsSubscriptionResponse } from '/imports/ui/components/user-list/types';
 
 interface UserListParticipantsContainerProps {
   index: number;
@@ -25,7 +26,7 @@ interface UserListParticipantsContainerProps {
 
 interface UsersListParticipantsPage {
   users: Array<User>;
-  meeting: Meeting;
+  meeting: Meeting | undefined;
   currentUser: Partial<User>;
   pageId: string;
   offset: number;
@@ -47,6 +48,8 @@ const UsersListParticipantsPage: React.FC<UsersListParticipantsPage> = ({
       ...pluginsExtensibleAreasAggregatedState.userListDropdownItems,
     ];
   }
+
+  if (!meeting) return null;
 
   return (
     <>
@@ -86,7 +89,8 @@ const UserListParticipantsPageContainer: React.FC<UserListParticipantsContainerP
   const {
     data: meetingData,
     loading: meetingLoading,
-  } = useDeduplicatedSubscription(MEETING_PERMISSIONS_SUBSCRIPTION);
+  } = useDeduplicatedSubscription<
+    MeetingPermissionsSubscriptionResponse>(MEETING_PERMISSIONS_SUBSCRIPTION);
   const { meeting: meetingArray } = (meetingData || {});
   const meeting = meetingArray && meetingArray[0];
 
@@ -125,9 +129,10 @@ const UserListParticipantsPageContainer: React.FC<UserListParticipantsContainerP
   const {
     data: presentationData,
     loading: presentationLoading,
-  } = useDeduplicatedSubscription(CURRENT_PRESENTATION_PAGE_SUBSCRIPTION);
-  const presentationPage = presentationData?.pres_page_curr[0] || {};
-  const pageId = presentationPage?.pageId;
+  } = useDeduplicatedSubscription<
+    CurrentPresentationPageSubscriptionResponse>(CURRENT_PRESENTATION_PAGE_SUBSCRIPTION);
+  const presentationPage = presentationData?.pres_page_curr[0];
+  const pageId = presentationPage?.pageId || '';
 
   useEffect(() => {
     setVisibleUsers((prev) => {
@@ -169,7 +174,7 @@ const UserListParticipantsPageContainer: React.FC<UserListParticipantsContainerP
   return (
     <UsersListParticipantsPage
       users={users ?? []}
-      meeting={meeting ?? {}}
+      meeting={meeting}
       currentUser={currentUser ?? {}}
       pageId={pageId}
       offset={offset}

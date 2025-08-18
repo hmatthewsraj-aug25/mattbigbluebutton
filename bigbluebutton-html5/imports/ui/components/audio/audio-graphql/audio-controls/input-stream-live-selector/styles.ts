@@ -10,7 +10,6 @@ import {
   colorWhite,
   colorSuccess,
 } from '/imports/ui/stylesheets/styled-components/palette';
-import { smallOnly } from '/imports/ui/stylesheets/styled-components/breakpoints';
 
 const pulse = keyframes`
   0% {
@@ -50,20 +49,10 @@ export const MuteToggleButton = styled(Button)`
         box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5);
       }
     `}
-  
-      @media ${smallOnly} {
-        margin-right: 0.75rem;
-      }
-  
-      [dir='rtl'] & {
-        margin-right: 0;
-        margin-left: -0.75rem;
-  
-        @media ${smallOnly} {
-          margin-left: 0.75rem;
-        }
-      }
-    }
+`;
+
+export const RelativePositioningContainer = styled.div`
+  position: relative;
 `;
 
 export const DisabledLabel = {
@@ -109,6 +98,7 @@ export const AudioDropdown = styled(ButtonEmoji)`
 `;
 
 export default {
+  RelativePositioningContainer,
   MuteToggleButton,
   DisabledLabel,
   DeviceLabel,

@@ -4,6 +4,7 @@ import React, {
 import ReactDOM from 'react-dom';
 import { useMutation } from '@apollo/client';
 import { defineMessages, useIntl } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import Checkbox from '/imports/ui/components/common/checkbox/component';
 import useCurrentUser from '/imports/ui/core/hooks/useCurrentUser';
 import {
@@ -132,7 +133,7 @@ const PollingGraphql: React.FC<PollingGraphqlProps> = (props) => {
   };
 
   const handleMessageKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.keyCode === 13 && typedAns.length > 0) {
+    if (e.key === KEYS.ENTER && typedAns.length > 0) {
       handleTypedVote(poll.pollId, typedAns);
     }
   };

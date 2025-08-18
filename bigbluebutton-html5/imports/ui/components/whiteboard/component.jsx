@@ -24,7 +24,7 @@ import '@bigbluebutton/tldraw/tldraw.css';
 import { compressToBase64, decompressFromBase64 } from 'lz-string';
 import SlideCalcUtil, { HUNDRED_PERCENT } from '/imports/utils/slideCalcUtils';
 import getFromUserSettings from '/imports/ui/services/users-settings';
-import KEY_CODES from '/imports/utils/keyCodes';
+import KEYS from '/imports/utils/keys';
 import { debounce } from '/imports/utils/debounce';
 import logger from '/imports/startup/client/logger';
 import Styled from './styles';
@@ -586,9 +586,8 @@ const Whiteboard = React.memo((props) => {
       return;
     }
 
-    const key = event.key.toLowerCase();
-
-    if (key === 'escape' || event.keyCode === 27) {
+    const { key } = event;
+    if (key === KEYS.ESCAPE) {
       tlEditorRef.current?.deselect(...tlEditorRef.current?.getSelectedShapes());
       return;
     }
@@ -603,7 +602,7 @@ const Whiteboard = React.memo((props) => {
       return;
     }
 
-    if (key === ' ' && tlEditorRef.current?.getCurrentToolId() !== 'hand' && isPresenterRef.current) {
+    if (key === KEYS.SPACE && tlEditorRef.current?.getCurrentToolId() !== 'hand' && isPresenterRef.current) {
       previousTool.current = tlEditorRef.current?.getCurrentToolId();
       tlEditorRef.current?.setCurrentTool('hand');
       return;
@@ -732,7 +731,7 @@ const Whiteboard = React.memo((props) => {
     }
 
     if (event.ctrlKey || event.metaKey) {
-      if (key === 'z') {
+      if (key === KEYS.z || key === KEYS.Z) {
         event.preventDefault();
         event.stopPropagation();
         if (event.shiftKey) {
@@ -745,7 +744,7 @@ const Whiteboard = React.memo((props) => {
         return;
       }
 
-      if (key === 'l' && event.shiftKey) {
+      if (key === KEYS.L && event.shiftKey) {
         event.preventDefault();
         event.stopPropagation();
         tlEditorRef.current?.toggleLock(tlEditorRef.current?.getSelectedShapes());
@@ -811,10 +810,10 @@ const Whiteboard = React.memo((props) => {
       ArrowRight: { x: moveDistance, y: 0 },
     };
 
-    if (arrowKeyMap[event.key]) {
+    if (arrowKeyMap[key]) {
       event.preventDefault();
       event.stopPropagation();
-      tlEditorRef.current?.nudgeShapes(selectedShapes, arrowKeyMap[event.key], { squashing: true });
+      tlEditorRef.current?.nudgeShapes(selectedShapes, arrowKeyMap[key], { squashing: true });
     }
   }, [
     tlEditorRef, isPresenterRef, hasWBAccessRef, previousTool, handleCut, handleCopy, handlePaste,
@@ -1761,9 +1760,9 @@ const Whiteboard = React.memo((props) => {
       };
 
       if (!shapeSelected) {
-        if (event.keyCode === KEY_CODES.ARROW_RIGHT) {
+        if (event.key === KEYS.ARROW_RIGHT) {
           changeSlide(1); // Move to the next slide
-        } else if (event.keyCode === KEY_CODES.ARROW_LEFT) {
+        } else if (event.key === KEYS.ARROW_LEFT) {
           changeSlide(-1); // Move to the previous slide
         }
       }
@@ -1771,15 +1770,15 @@ const Whiteboard = React.memo((props) => {
 
     const handleKeyDown2 = (event) => {
       if (
-        (event.keyCode === KEY_CODES.ARROW_RIGHT
-          || event.keyCode === KEY_CODES.ARROW_LEFT)
+        (event.key === KEYS.ARROW_RIGHT
+          || event.key === KEYS.ARROW_LEFT)
         && isPresenterRef.current
       ) {
         handleArrowPress(event);
       }
 
       if (
-        event.keyCode === KEY_CODES.ENTER
+        event.key === KEYS.ENTER
         && event.target.classList.contains('tl-frame-name-input')
       ) {
         tlEditorRef.current?.selectNone();
@@ -1788,7 +1787,7 @@ const Whiteboard = React.memo((props) => {
     };
 
     const handleKeyUp = (event) => {
-      if (event.key === ' ') {
+      if (event.key === KEYS.SPACE) {
         if (previousTool.current) {
           tlEditorRef.current?.setCurrentTool(previousTool.current);
           previousTool.current = null;

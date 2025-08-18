@@ -1,5 +1,6 @@
 import React from 'react';
 import TooltipContainer from '/imports/ui/components/common/tooltip/container';
+import KEYS from '/imports/utils/keys';
 import { defineMessages, useIntl } from 'react-intl';
 import Icon from '/imports/ui/components/common/icon/component';
 import { PANELS, ACTIONS } from '../../layout/enums';
@@ -52,7 +53,7 @@ const AppsListItem = () => {
         onClick={toggleAppsGalleryPanel}
         // @ts-ignore
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === KEYS.ENTER) {
             toggleAppsGalleryPanel();
           }
         }}

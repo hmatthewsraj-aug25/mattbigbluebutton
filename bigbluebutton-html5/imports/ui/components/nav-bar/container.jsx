@@ -20,7 +20,7 @@ const intlMessages = defineMessages({
   },
 });
 
-const NavBarContainer = ({ children, ...props }) => {
+const NavBarContainer = (props) => {
   const { pluginsExtensibleAreasAggregatedState } = useContext(PluginsContext);
   const unread = useHasUnreadNotes();
   const intl = useIntl();
@@ -33,8 +33,6 @@ const NavBarContainer = ({ children, ...props }) => {
   const { isPinned: notesIsPinned } = sharedNotes;
 
   const { sidebarContentPanel } = sidebarContent;
-
-  const toggleUserList = useShortcut('toggleUserList');
 
   const hasUnreadNotes = sidebarContentPanel !== PANELS.SHARED_NOTES && unread && !notesIsPinned;
 
@@ -111,7 +109,6 @@ const NavBarContainer = ({ children, ...props }) => {
         layoutContextDispatch,
         currentUserId: Auth.userID,
         pluginNavBarItems,
-        shortcuts: toggleUserList,
         meetingId: meeting?.meetingId,
         presentationTitle: meetingTitle,
         breakoutNum,
@@ -123,9 +120,7 @@ const NavBarContainer = ({ children, ...props }) => {
         ...props,
       }}
       style={{ ...navBar }}
-    >
-      {children}
-    </NavBar>
+    />
   );
 };
 

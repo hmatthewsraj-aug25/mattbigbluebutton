@@ -91,6 +91,7 @@ const ReactionsButton = (props) => {
           label={intl.formatMessage(intlMessages.removeReactionsLabel)}
           description={intl.formatMessage(intlMessages.removeReactionsLabel)}
           onKeyPress={() => { }}
+          onClick={() => {}}
           hideLabel
           circle
           disabled={currentUserReaction === 'none'}

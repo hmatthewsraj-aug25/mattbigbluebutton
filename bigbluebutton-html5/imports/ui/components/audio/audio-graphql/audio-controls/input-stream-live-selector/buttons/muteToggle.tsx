@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useMutation } from '@apollo/client';
+import KEYS from '/imports/utils/keys';
 import Styled from '../styles';
 import { useShortcut } from '/imports/ui/core/hooks/useShortcut';
 import { getSettingsSingletonInstance } from '/imports/ui/services/settings';
@@ -10,6 +11,7 @@ import VideoService from '/imports/ui/components/video-provider/service';
 import {
   startPushToTalk,
   stopPushToTalk,
+  isMutedAlertEnabled,
 } from '../service';
 import {
   muteAway,
@@ -17,6 +19,7 @@ import {
   useIsMuteLoading,
 } from '/imports/ui/components/audio/audio-graphql/audio-controls/input-stream-live-selector/service';
 import { listItemBgHover } from '/imports/ui/stylesheets/styled-components/palette';
+import MutedAlert from '/imports/ui/components/muted-alert/component';
 
 const intlMessages = defineMessages({
   muteAudio: {
@@ -42,6 +45,10 @@ interface MuteToggleProps {
   away: boolean;
   noInputDevice?: boolean;
   openAudioSettings: (props?: { unmuteOnExit?: boolean }) => void;
+  showMutedAlert: boolean;
+  inputStream: string;
+  isModerator: boolean;
+  isPresenter: boolean;
 }
 
 export const MuteToggle: React.FC<MuteToggleProps> = ({
@@ -53,11 +60,16 @@ export const MuteToggle: React.FC<MuteToggleProps> = ({
   away,
   noInputDevice = false,
   openAudioSettings,
+  showMutedAlert,
+  inputStream,
+  isModerator,
+  isPresenter,
 }) => {
   const intl = useIntl();
   const toggleMuteShourtcut = useShortcut('toggleMute');
   const toggleVoice = useToggleVoice();
   const [setAway] = useMutation(SET_AWAY);
+  const MUTED_ALERT_ENABLED = isMutedAlertEnabled();
 
   const unmuteAudioLabel = away ? intlMessages.umuteAudioAndSetActive : intlMessages.unmuteAudio;
   const label = muted ? intl.formatMessage(unmuteAudioLabel)
@@ -81,7 +93,7 @@ export const MuteToggle: React.FC<MuteToggleProps> = ({
     if (
       !pushToTalkEnabled
         || cooldownActive.current
-        || event.key !== 'm'
+        || event.key !== KEYS.m
         || event.altKey
         || event.ctrlKey
         || isInputField
@@ -148,24 +160,36 @@ export const MuteToggle: React.FC<MuteToggleProps> = ({
   };
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-access-key
-    <Styled.MuteToggleButton
-      onClick={onClickCallback}
-      disabled={disabled || isAudioLocked}
-      hideLabel
-      label={label}
-      aria-label={label}
-      color={!muted ? 'primary' : 'default'}
-      icon={muted ? 'mute' : 'unmute'}
-      size="lg"
-      circle
-      accessKey={toggleMuteShourtcut}
-      $talking={talking || undefined}
-      animations={animations}
-      loading={isMuteLoading}
-      data-test={muted ? 'unmuteMicButton' : 'muteMicButton'}
-      hoverColor={listItemBgHover}
-    />
+    <Styled.RelativePositioningContainer>
+      {showMutedAlert && MUTED_ALERT_ENABLED ? (
+        <div data-debug="live-watcher" aria-live="polite">
+          <MutedAlert
+            {...{
+              muted, inputStream, isPresenter,
+            }}
+            isViewer={!isModerator}
+          />
+        </div>
+      ) : null}
+      {/* eslint-disable-next-line jsx-a11y/no-access-key */}
+      <Styled.MuteToggleButton
+        onClick={onClickCallback}
+        disabled={disabled || isAudioLocked}
+        hideLabel
+        label={label}
+        aria-label={label}
+        color={!muted ? 'primary' : 'default'}
+        icon={muted ? 'mute' : 'unmute'}
+        size="lg"
+        circle
+        accessKey={toggleMuteShourtcut}
+        $talking={talking || undefined}
+        animations={animations}
+        loading={isMuteLoading}
+        data-test={muted ? 'unmuteMicButton' : 'muteMicButton'}
+        hoverColor={listItemBgHover}
+      />
+    </Styled.RelativePositioningContainer>
   );
 };
 

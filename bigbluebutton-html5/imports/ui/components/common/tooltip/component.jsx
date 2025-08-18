@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { ESCAPE } from '/imports/utils/keyCodes';
+import { ESCAPE } from '/imports/utils/keys';
 import { getSettingsSingletonInstance } from '/imports/ui/services/settings';
 import Tippy, { roundArrow } from 'tippy.js';
 import 'tippy.js/dist/svg-arrow.css';
@@ -19,7 +19,7 @@ const TIP_OFFSET = [0, 10];
 
 const propTypes = {
   title: PropTypes.string,
-  position: PropTypes.oneOf(['bottom','top']),
+  position: PropTypes.oneOf(['right', 'left', 'bottom', 'top']),
   children: PropTypes.element.isRequired,
   className: PropTypes.string,
 };
@@ -156,7 +156,7 @@ class Tooltip extends Component {
 
   handleEscapeHide(e) {
     if (this.tooltip
-      && e.keyCode === ESCAPE
+      && e.key === ESCAPE
       && this.tooltip.tooltips
       && this.tooltip.tooltips[0]) {
       this.tooltip.tooltips[0].hide();

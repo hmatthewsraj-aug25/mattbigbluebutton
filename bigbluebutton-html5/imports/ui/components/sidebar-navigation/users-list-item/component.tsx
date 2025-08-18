@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/no-access-key */
 import React from 'react';
 import TooltipContainer from '/imports/ui/components/common/tooltip/container';
 import { defineMessages, useIntl } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import Icon from '/imports/ui/components/common/icon/component';
 import { PANELS, ACTIONS } from '../../layout/enums';
 import { layoutDispatch, layoutSelectInput } from '/imports/ui/components/layout/context';
@@ -8,6 +10,7 @@ import { Input } from '/imports/ui/components/layout/layoutTypes';
 import Styled from '../styles';
 import { GET_GUEST_WAITING_USERS_SUBSCRIPTION, GuestWaitingUsers } from '../../user-list/guest-management/waiting-users/queries';
 import useDeduplicatedSubscription from '/imports/ui/core/hooks/useDeduplicatedSubscription';
+import { useShortcut } from '/imports/ui/core/hooks/useShortcut';
 
 const intlMessages = defineMessages({
   usersListLabel: {
@@ -18,6 +21,7 @@ const intlMessages = defineMessages({
 
 const UsersListItem = () => {
   const CURRENT_PANEL = PANELS.USERLIST;
+  const TOGGLE_USER_LIST_SHORTCUT = useShortcut('toggleUserList');
   const intl = useIntl();
   const layoutContextDispatch = layoutDispatch();
   const sidebarContent = layoutSelectInput((i: Input) => i.sidebarContent);
@@ -49,6 +53,7 @@ const UsersListItem = () => {
     >
       <Styled.ListItem
         id="users-list-toggle-button"
+        accessKey={TOGGLE_USER_LIST_SHORTCUT}
         aria-label={label}
         aria-describedby="usersList"
         active={sidebarContentPanel === CURRENT_PANEL}
@@ -58,7 +63,7 @@ const UsersListItem = () => {
         onClick={toggleUsersListPanel}
         // @ts-ignore
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === KEYS.ENTER) {
             toggleUsersListPanel();
           }
         }}

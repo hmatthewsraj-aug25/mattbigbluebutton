@@ -7,8 +7,8 @@ const { MobileDevices } = require('./mobileDevices');
 const { Timer } = require('./timer');
 const iPhone11 = devices['iPhone 11'];
 
-test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
-  test.describe.parallel('Actions', () => {
+test.describe.parallel('User', { tag: '@ci' }, () => {
+  test.describe.parallel('Actions', { tag: '@flaky-3.1' }, () => {
     // https://docs.bigbluebutton.org/3.0/testing/release-testing/#set-status--raise-hand-automated
     test('Raise and lower Hand', async ({ browser, context, page }) => {
       const multiusers = new MultiUsers(browser, context);
@@ -20,12 +20,6 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
       const multiusers = new MultiUsers(browser, context);
       await multiusers.initModPage(page, true);
       await multiusers.raiseHandRejected();
-    });
-
-    test('Toggle user list', async ({ browser, context, page }) => {
-      const multiusers = new MultiUsers(browser, context);
-      await multiusers.initModPage(page);
-      await multiusers.toggleUserList();
     });
 
     test('Stopwatch', async ({ browser, context, page })=> {
@@ -41,7 +35,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
     });
   });
 
-  test.describe.parallel('Reactions', () => {
+  test.describe.parallel('Reactions', { tag: '@flaky-3.1' }, () => {
     test('Use reactions', async ({ browser, context, page }) => {
       const multiusers = new MultiUsers(browser, context);
       await multiusers.initModPage(page, true);
@@ -112,7 +106,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
     });
   });
 
-  test.describe.parallel('Manage', () => {
+  test.describe.parallel('Manage', { tag: '@flaky-3.1' }, () => {
     test.describe.parallel('Guest policy', () => {
       test.describe.parallel('ASK_MODERATOR', () => {
         // https://docs.bigbluebutton.org/3.0/testing/release-testing/#ask-moderator
@@ -238,19 +232,19 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
     });
 
     // https://docs.bigbluebutton.org/3.0/testing/release-testing/#saving-usernames
-    test('Save user names', async ({ browser, context, page }, testInfo) => {
+    test('Save user names', { tag: '@flaky-3.1' }, async ({ browser, context, page }, testInfo) => {
       const multiusers = new MultiUsers(browser, context);
       await multiusers.initPages(page);
       await multiusers.saveUserNames(testInfo);
     });
 
-    test('Disable users join muted', async ({ browser, context, page }) => {
+    test('Disable users join muted', { tag: '@flaky-3.1' }, async ({ browser, context, page }) => {
       const multiusers = new MultiUsers(browser, context);
       await multiusers.initModPage(page);
       await multiusers.disabledUsersJoinMuted();
     });
 
-    test('Mute all users except presenter', async ({ browser, context, page }) => {
+    test('Mute all users except presenter', { tag: '@flaky-3.1' }, async ({ browser, context, page }) => {
       const multiusers = new MultiUsers(browser, context);
       await multiusers.initModPage(page, false);
       await multiusers.initModPage2(false);
@@ -258,7 +252,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
       await multiusers.muteAllUsersExceptPresenter();
     });
 
-    test('Clear all status icon', async ({ browser, context, page }) => {
+    test('Clear all status icon', { tag: '@flaky-3.1' }, async ({ browser, context, page }) => {
       const multiusers = new MultiUsers(browser, context);
       await multiusers.initModPage(page, true);
       await multiusers.initModPage2(true);
@@ -271,7 +265,7 @@ test.describe.parallel('User', { tag: ['@ci', '@flaky-3.1'] }, () => {
       test.skip(browserName === 'firefox', 'Mobile tests are not able in Firefox browser');
     });
 
-    test('Mobile Tag Name For Mobile User', async ({ browser }) => {
+    test('Mobile Tag Name For Mobile User', { tag: '@flaky-3.1' }, async ({ browser }) => {
       const context = await browser.newContext({ ...iPhone11 });
       const mobilePage = await context.newPage();
       const mobileDevices = new MobileDevices(browser, context);

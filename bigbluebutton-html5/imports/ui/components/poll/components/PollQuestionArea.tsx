@@ -1,5 +1,6 @@
 import React from 'react';
 import { defineMessages, useIntl } from 'react-intl';
+import KEYS from '/imports/utils/keys';
 import DraggableTextArea from './DragAndDrop';
 import { pollTypes } from '../service';
 import Styled from '../styles';
@@ -70,7 +71,7 @@ const PollQuestionArea: React.FC<PollQuestionAreaProps> = ({
         onCut={(e) => { e.stopPropagation(); }}
         onCopy={(e) => { e.stopPropagation(); }}
         onKeyPress={(event) => {
-          if (event.key === 'Enter' && customInput) {
+          if (event.key === KEYS.ENTER && customInput) {
             handlePollLetterOptions();
           }
         }}

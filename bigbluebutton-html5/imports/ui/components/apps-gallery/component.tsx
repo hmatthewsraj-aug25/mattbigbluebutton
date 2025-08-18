@@ -89,6 +89,8 @@ const AppsGallery: React.FC<AppsGalleryProps> = ({ registeredApps, pinnedApps })
             type="button"
             icon={icon}
             $pinned={isPinned}
+            label=""
+            onClick={() => {}}
           />
           <Styled.AppTitle>
             {name}
