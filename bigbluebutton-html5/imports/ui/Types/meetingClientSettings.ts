@@ -469,7 +469,10 @@ export interface Poll {
   maxCustom: number
   maxTypedAnswerLength: number
   chatMessage: boolean
-  quickPollConfirmationStep: boolean
+  quickPoll: {
+    confirmationStep: boolean
+    confirmationStepModifierKey: 'shift' | 'ctrl' | 'alt'
+  }
   quiz: {
     enabled: boolean
     quickPollCorrectAnswerSuffix: string
