@@ -885,6 +885,7 @@
     "app.audio.captions.button.transcription": "Trascrizione",
     "app.audio.captions.button.transcriptionSettings": "Impostazioni trascrizione",
     "app.audio.captions.button.autoDetect": "Rilevamento automatico",
+    "app.audio.captions.live.captions": "Trascrizione dal vivo",
     "app.audio.captions.speech.title": "Trascrizione automatica",
     "app.audio.captions.speech.tip": "Per far sì che gli altri utenti possano vedere i tuoi sottotitoli, devi abilitare la trascrizione.",
     "app.audio.captions.speech.captions": "Sottotitoli",
