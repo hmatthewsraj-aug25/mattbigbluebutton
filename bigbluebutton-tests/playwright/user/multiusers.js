@@ -223,32 +223,31 @@ class MultiUsers {
     await this.modPage.shareWebcam();
     await this.userPage2.shareWebcam();
 
-    await this.modPage.getLocator(e.dropdownWebcamButton)
-      .filter({ hasText: this.userPage2.username })
-      .click();
+    const user2DropdownWebcamButtonForModerator =
+      await this.modPage.getLocator(e.dropdownWebcamButton).filter({ hasText: this.userPage2.username })
+
+    await user2DropdownWebcamButtonForModerator.click();
 
     await this.modPage.wasRemoved(e.focusWebcamBtn, 'should not display the focus webcam button for the moderator');
 
     await this.userPage.shareWebcam();
 
-    await this.modPage.getLocator(e.dropdownWebcamButton)
-      .filter({ hasText: this.userPage2.username })
-      .click();
+    await user2DropdownWebcamButtonForModerator.click();
     await this.modPage.getVisibleLocator(e.focusWebcamBtn).click();
 
     await this.modPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User2 on the focused webcam for Mod');
     await this.userPage2.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User2 on the first webcam for User1');
 
-    await this.userPage.getLocator(e.dropdownWebcamButton)
-      .filter({ hasText: this.userPage2.username })
-      .click();
+    const user2DropdownWebcamButtonForUser =
+      await this.userPage.getLocator(e.dropdownWebcamButton).filter({ hasText: this.userPage2.username })
+      
+    await user2DropdownWebcamButtonForUser.click()
+
     await this.userPage.getVisibleLocator(e.focusWebcamBtn).click();
 
     await this.userPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.userPage2.username, 'should display the username of User1 on the focused webcam for User2');
 
-    await this.modPage.getLocator(e.dropdownWebcamButton)
-      .filter({ hasText: this.userPage2.username })
-      .click();
+    await user2DropdownWebcamButtonForModerator.click();
     await this.modPage.getVisibleLocator(e.focusWebcamBtn).click(); // Unfocus webcam is the same button as focus webcam
 
     await this.modPage.hasText(`:nth-match(${e.dropdownWebcamButton}, 1)`, this.modPage.username, 'should display the username of Mod on the first webcam for Mod');
