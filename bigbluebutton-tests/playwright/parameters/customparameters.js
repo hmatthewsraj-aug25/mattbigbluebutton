@@ -398,11 +398,13 @@ class CustomParameters extends MultiUsers {
   }
 
   async overrideDefaultLocaleTest() {
-<<<<<<< HEAD
-    await this.modPage.hasText(e.chatButton, 'Bate-papo público', 'should display the new overridden default locale');
-=======
     await this.modPage.hasText(e.chatTitle, 'Mensagens','should display the new overridden default locale');
->>>>>>> dfa5cb7e8d (update few parameters tests)
+    await this.modPage.checkTooltip(e.profileSidebarButton, 'Perfil');
+    await this.modPage.checkTooltip(e.usersListSidebarButton, 'Participantes');
+    await this.modPage.checkTooltip(e.sharedNotesSidebarButton, 'Notas compartilhadas');
+    await this.modPage.checkTooltip(e.appsGallerySidebarButton, 'Galeria de Apps');
+    await this.modPage.checkTooltip(e.pollSidebarButton, 'Enquete');
+    await this.modPage.checkTooltip(e.learningDashboardSidebarButton, 'Painel Analítico de Aprendizagem');
   }
 
   async hideNavBarTest() {

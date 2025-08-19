@@ -39,6 +39,7 @@ exports.shareCameraAsContent = 'li[data-test="shareCameraAsContent"]';
 exports.closePopup = 'button[data-test="closePopup"]';
 exports.restoreWelcomeMessages = 'li[data-test="restoreWelcomeMessages"]';
 exports.navigationSidebarContainer = 'div[data-test="navigationSidebarContainer"]';
+exports.appsGallerySidebarButton = 'div[data-test="appsGallerySidebarButton"]';
 
 // Accesskey
 exports.userListButton = 'button[accesskey="U"]';
@@ -122,7 +123,6 @@ exports.currentSlideBreakoutOption = 'option[data-test="currentSlideBreakoutOpti
 exports.chatBox = 'textarea[id="message-input"]';
 exports.chatMessageItem = 'div[data-test="chatMessageItem"]';
 exports.partnerDisconnectedMessage = 'span[data-test="partnerDisconnected"]';
-exports.chatButton = 'div[data-test="chatButton"]';
 exports.messagesSidebarButton = 'div[data-test="chatButton"]';
 exports.sendButton = 'button[data-test="sendMessageButton"]';
 exports.chatPollMessageText = 'div[data-test="chatPollMessageText"]';
@@ -488,6 +488,7 @@ exports.dropAreaRight = 'div[data-test="dropArea-contentRight"]';
 exports.dropAreaTop = 'div[data-test="dropArea-contentTop"]';
 exports.dropAreaSidebarBottom = 'div[data-test="dropArea-sidebarContentBottom"]';
 exports.selfViewDisableBtn = 'li[data-test="selfViewDisableBtn"]';
+exports.profileSidebarButton = 'div[data-test="profileSidebarButton"]';
 
 exports.videoQualitySelector = 'select[id="setQuality"]';
 exports.webcamItemTalkingUser = 'div[data-test="webcamItemTalkingUser"]';
