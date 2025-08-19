@@ -64,7 +64,7 @@ class CustomParameters extends MultiUsers {
   }
 
   async customStyle() {
-    await this.modPage.hasElement(e.chatButton, 'should display the chat button');
+    await this.modPage.hasElement(e.messagesSidebarButton, 'should display the chat button');
     const resp = await this.modPage.page.evaluate((elem) => {
       return document.querySelectorAll(elem)[0].offsetHeight == 0;
     }, e.presentationTitle);
