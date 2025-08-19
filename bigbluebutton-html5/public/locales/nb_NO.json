@@ -404,7 +404,7 @@
     "app.navBar.settingsDropdown.endMeetingLabel": "Avslutt møtet",
     "app.navBar.userListToggleBtnLabel": "Brukerliste",
     "app.navBar.toggleUserList.ariaLabel": "Brukere og meldinger",
-    "app.navBar.toggleUserList.newMessages": "med ny meldingsvarsling",
+    "app.navBar.toggleUserList.newMessages": "med varsling om ny melding",
     "app.navBar.toggleUserList.newMsgAria": "Ny melding fra {0}",
     "app.navBar.recording": "Dette møtet blir spilt inn",
     "app.navBar.recording.on": "Spiller inn",
