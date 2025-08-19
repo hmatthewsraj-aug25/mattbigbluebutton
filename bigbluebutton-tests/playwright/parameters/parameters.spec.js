@@ -385,7 +385,7 @@ test.describe.parallel('Create Parameters', { tag: '@ci' }, () => {
       });
     });
 
-    test.describe.serial('', { tag: '@flaky-3.1' }, () => {
+    test.describe.serial('', () => {
       test('Import Presentation With Annotations From Breakout Rooms', async ({ browser, context, page }) => {
         const disabledFeatures = new DisabledFeatures(browser, context);
         await disabledFeatures.initModPage(page, true, { createParameter: c.importPresentationWithAnnotationsFromBreakoutRoomsDisabled });
