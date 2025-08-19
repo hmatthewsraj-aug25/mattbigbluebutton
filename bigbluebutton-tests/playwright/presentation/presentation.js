@@ -37,7 +37,7 @@ class Presentation extends MultiUsers {
 
     await this.modPage.waitAndClick(e.mediaAreaButton);
     await this.modPage.waitAndClick(e.shareCameraAsContent);
-    await this.modPage.hasElement(e.webcamMirroredVideoPreview, 'should display the camera preview when sharing camera as content');
+    await this.modPage.hasElement(e.videoPreview, 'should display the camera preview when sharing camera as content');
     await this.modPage.waitAndClick(e.startCameraAsContent);
     await this.modPage.hasElement(e.screenShareVideo);
     await this.modPage.waitAndClick(e.closeIcon);
