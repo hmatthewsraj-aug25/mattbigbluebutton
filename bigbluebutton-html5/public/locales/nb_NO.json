@@ -402,7 +402,7 @@
     "app.navBar.settingsDropdown.helpDesc": "Sender brukeren til opplæringsvideoer (åpnes i ny fane)",
     "app.navBar.settingsDropdown.endMeetingDesc": "Avslutter det nåværende møtet",
     "app.navBar.settingsDropdown.endMeetingLabel": "Avslutt møtet",
-    "app.navBar.userListToggleBtnLabel": "Brukerliste",
+    "app.navBar.userListToggleBtnLabel": "Bryter for brukerliste",
     "app.navBar.toggleUserList.ariaLabel": "Brukere og meldinger",
     "app.navBar.toggleUserList.newMessages": "med varsling om ny melding",
     "app.navBar.toggleUserList.newMsgAria": "Ny melding fra {0}",
