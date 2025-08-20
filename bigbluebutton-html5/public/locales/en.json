@@ -1454,7 +1454,7 @@
     "app.externalVideo.start": "Share a new video",
     "app.externalVideo.title": "Share an external video",
     "app.externalVideo.input": "External Video URL",
-    "app.externalVideo.urlInput": "Copy and paste a video link to upload",
+    "app.externalVideo.urlInput": "Copy and paste a video link to share",
     "app.externalVideo.urlError": "This video URL isn't supported",
     "app.externalVideo.close": "Close",
     "app.externalVideo.autoPlayWarning": "Play the video to enable media synchronization",
