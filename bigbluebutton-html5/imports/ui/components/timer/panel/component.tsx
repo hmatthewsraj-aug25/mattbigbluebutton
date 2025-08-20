@@ -482,44 +482,70 @@ const TimerPanel: React.FC<TimerPanelProps> = ({
 
 const TimerPanelContaier: React.FC = () => {
   const [timerActivate] = useMutation(TIMER_ACTIVATE);
+  const [hasActivated, setHasActivated] = useState(() => {
+    return localStorage.getItem('timer-has-activated') === 'true';
+  });
 
-  const {
-    data: timerData,
-  } = useTimer();
+  const { data: timerData } = useTimer();
 
   const activateTimer = useCallback(() => {
+    if (hasActivated) {
+      return;
+    }
+    
     const TIMER_CONFIG = window.meetingClientSettings.public.timer;
     const stopwatch = false;
     const running = false;
     const time = TIMER_CONFIG.time * MILLI_IN_MINUTE;
+    
+    timerActivate({ variables: { stopwatch, running, time } })
+      .then(() => {
+        setHasActivated(true);
+        localStorage.setItem('timer-has-activated', 'true');
+      })
+      .catch((error) => {
+        console.error('Erro ao ativar timer:', error);
+      });
+  }, [timerActivate, hasActivated]);
 
-    return timerActivate({ variables: { stopwatch, running, time } });
-  }, []);
+  useEffect(() => {
+    if (timerData && !timerData.active && hasActivated) {
+      localStorage.removeItem('timer-has-activated');
+      setHasActivated(false);
+    }
+  }, [timerData?.active, hasActivated]);
+
+  useEffect(() => {
+    if (!timerData?.active && !hasActivated) {
+      activateTimer();
+    }
+  }, [timerData?.active, hasActivated, activateTimer]);
 
   const currentTimer = timerData;
-  if (!currentTimer?.active) {
-    activateTimer();
-    return null;
-  }
-  const {
-    stopwatch,
-    songTrack,
-    running,
-    time,
-    timePassed = 0,
-    startedAt,
-  } = currentTimer;
 
-  return (
-    <TimerPanel
-      stopwatch={stopwatch}
-      songTrack={songTrack}
-      running={running}
-      timePassed={timePassed}
-      time={time}
-      isPaused={!running && startedAt !== null}
-    />
-  );
+  if (currentTimer?.active) {
+    const {
+      stopwatch,
+      songTrack,
+      running,
+      time,
+      timePassed = 0,
+      startedAt,
+    } = currentTimer;
+
+    return (
+      <TimerPanel
+        stopwatch={stopwatch}
+        songTrack={songTrack}
+        running={running}
+        timePassed={timePassed}
+        time={time}
+        isPaused={!running && startedAt !== null}
+      />
+    );
+  }
+  
+  return null;
 };
 
 export default TimerPanelContaier;
