@@ -356,6 +356,14 @@ object VoiceApp extends SystemConfiguration {
     checkAndEjectOldDuplicateVoiceConfUser(intId, liveMeeting, outGW)
 
     val isListenOnly = if (callerIdName.startsWith("LISTENONLY")) true else false
+    val isDialInUser = if (intId.startsWith(IntIdPrefixType.DIAL_IN)) {
+      true
+    } else {
+      Users2x.findWithIntId(liveMeeting.users2x, intId) match {
+        case Some(u) => u.clientType == ClientType.DIAL_IN
+        case None    => true // If no user is found, we assume it's dial-in (i.e. voice-only)
+      }
+    }
 
     val voiceUserState = VoiceUserState(
       intId,
@@ -415,7 +423,7 @@ object VoiceApp extends SystemConfiguration {
       // If the meeting is muted tell freeswitch to mute the new person
       // Dial-in users may skip this if dialInEnforceMuteOnStart=false (akka-apps config)
       if (MeetingStatus2x.isMeetingMuted(liveMeeting.status)
-        && (dialInEnforceMuteOnStart || !intId.startsWith(IntIdPrefixType.DIAL_IN))) {
+        && (dialInEnforceMuteOnStart || !isDialInUser)) {
         val event = MsgBuilder.buildMuteUserInVoiceConfSysMsg(
           liveMeeting.props.meetingProp.intId,
           voiceConf,
