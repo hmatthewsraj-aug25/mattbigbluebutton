@@ -15,8 +15,6 @@ const MEETING_SUBSCRIPTION = gql`
           hideViewersCursor
           hideViewersAnnotation
           webcamsOnlyForModerator
-          lockOnJoin
-          lockOnJoinConfigurable
         }
 
         learningDashboard {
