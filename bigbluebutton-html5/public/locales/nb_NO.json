@@ -1289,7 +1289,7 @@
     "app.learningDashboard.usersTable.notAvailable": "N/A",
     "app.learningDashboard.pollsTable.title": "Avstemninger",
     "app.learningDashboard.pollsTable.anonymousAnswer": "Anonym avstemning (svar på siste rad)",
-    "app.learningDashboard.pollsTable.anonymousRowName": "Anonymt",
+    "app.learningDashboard.pollsTable.anonymousRowName": "Anonym",
     "app.learningDashboard.pollsTable.noPollsCreatedHeading": "Ingen avstemming har blitt opprettet",
     "app.learningDashboard.pollsTable.noPollsCreatedMessage": "Når en avstemning har blitt sendt til brukerne, vil resultatene deres vises i denne listen.",
     "app.learningDashboard.pollsTable.answerTotal": "Totalt",
