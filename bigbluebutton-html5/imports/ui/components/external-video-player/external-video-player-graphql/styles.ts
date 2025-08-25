@@ -73,6 +73,7 @@ export const VideoPlayer = styled(ReactPlayer)`
 `;
 
 export const ExternalVideoCloseButton = styled(Button)`
+  z-index: 1;
   position: absolute;
   top: 0;
   right: 0;
