@@ -671,7 +671,6 @@ const ExternalVideoPlayer: React.FC<ExternalVideoPlayerProps> = ({
         {
           isPresenter ? (
             <Styled.ExternalVideoCloseButton
-              role="button"
               color="primary"
               icon="close"
               size="sm"
