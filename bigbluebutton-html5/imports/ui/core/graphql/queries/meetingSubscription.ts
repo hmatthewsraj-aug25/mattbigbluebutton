@@ -3,13 +3,7 @@ import { gql } from '@apollo/client';
 const MEETING_SUBSCRIPTION = gql`
   subscription MeetingSubscription {
       meeting {
-        disabledFeatures
         durationInSeconds
-        extId
-        endWhenNoModerator
-        endWhenNoModeratorDelayInMinutes
-        createdTime
-        loginUrl
         lockSettings {
           disableCam
           disableMic
@@ -21,32 +15,12 @@ const MEETING_SUBSCRIPTION = gql`
           hideViewersCursor
           hideViewersAnnotation
           webcamsOnlyForModerator
-          lockOnJoin
-          lockOnJoinConfigurable
         }
-        maxPinnedCameras
-        meetingCameraCap
-        cameraBridge
-        screenShareBridge
-        audioBridge
-        meetingId
-        name
-        notifyRecordingIsOn
-        presentationUploadExternalDescription
-        presentationUploadExternalUrl
-        recordingPolicies {
-          allowStartStopRecording
-          autoStartRecording
-          record
-          keepEvents
-        }
-        groups {
-          groupId
-          name
-        }
+
         learningDashboard {
           learningDashboardAccessToken
         }
+
         screenshare {
           contentType
           hasAudio
@@ -60,17 +34,7 @@ const MEETING_SUBSCRIPTION = gql`
           voiceConf
         }
         usersPolicies {
-          allowModsToEjectCameras
-          allowModsToUnmuteUsers
-          authenticatedGuest
           guestPolicy
-          maxUserConcurrentAccesses
-          maxUsers
-          meetingLayout
-          moderatorsCanMuteAudio
-          moderatorsCanUnmuteAudio
-          userCameraCap
-          webcamsOnlyForModerator
           guestLobbyMessage
         }
         layout {
@@ -83,31 +47,14 @@ const MEETING_SUBSCRIPTION = gql`
           propagateLayout
           updatedAt
         }
-        isBreakout
-        breakoutPolicies {
-          breakoutRooms
-          captureNotes
-          captureNotesFilename
-          captureSlides
-          captureSlidesFilename
-          freeJoin
-          parentId
-          privateChatEnabled
-          record
-          sequence
-        }
+        
         breakoutRoomsCommonProperties {
           durationInSeconds
           freeJoin
           sendInvitationToModerators
           startedAt
         }
-        voiceSettings {
-          dialNumber
-          muteOnStart
-          voiceConf
-          telVoice
-        }
+
         externalVideo {
           externalVideoId
           playerCurrentTime
@@ -118,6 +65,7 @@ const MEETING_SUBSCRIPTION = gql`
           stoppedSharingAt
           updatedAt
         }
+
         componentsFlags {
           hasCaption
           hasBreakoutRoom

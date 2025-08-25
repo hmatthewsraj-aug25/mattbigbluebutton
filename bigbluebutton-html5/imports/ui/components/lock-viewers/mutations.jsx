@@ -8,8 +8,6 @@ export const SET_LOCK_SETTINGS_PROPS = gql`
     $disablePubChat: Boolean!,
     $disableNotes: Boolean!,
     $hideUserList: Boolean!,
-    $lockOnJoin: Boolean!,
-    $lockOnJoinConfigurable: Boolean!,
     $hideViewersCursor: Boolean!,
     $hideViewersAnnotation: Boolean!) {
       meetingLockSettingsSetProps(
