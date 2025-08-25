@@ -816,7 +816,7 @@ public:
     pinnable: true
   layout:
     hidePresentationOnJoin: false
-    showParticipantsOnLogin: false
+    showParticipantsOnLogin: true
     showPushLayoutButton: true
     showPushLayoutToggle: true
     showSessionDetailsOnJoin: true
