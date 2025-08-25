@@ -28,6 +28,13 @@ export interface BreakoutRoomsSummary {
   totalOfJoinURL: number;
 }
 
+export interface Meeting {
+  ended: boolean;
+  endedReasonCode: string;
+  endedByUserName: string;
+  logoutUrl: string;
+}
+
 export interface Voice {
   joined: boolean;
   listenOnly: boolean;
@@ -61,6 +68,7 @@ export interface Livekit {
 }
 
 export interface User {
+  logoutUrl: string;
   authToken: string;
   userId: string;
   extId: string;
@@ -108,6 +116,7 @@ export interface User {
   userLockSettings: userLockSettings;
   sessionCurrent: sessionCurrent;
   livekit?: Livekit;
+  meeting: Meeting;
 }
 
 export interface UserBasicInfo {
