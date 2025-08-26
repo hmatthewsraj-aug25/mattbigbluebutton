@@ -237,7 +237,7 @@ export default {
     .setBreakoutAudioTransferStatus(status),
   getBreakoutAudioTransferStatus: () => AudioManager
     .getBreakoutAudioTransferStatus(),
-  getStats: () => AudioManager.getStats(),
+  getStats: (additionalStatsTypes = []) => AudioManager.getStats(additionalStatsTypes),
   getAudioConstraints,
   doGUM,
   supportsTransparentListenOnly: () => AudioManager.supportsTransparentListenOnly(),
