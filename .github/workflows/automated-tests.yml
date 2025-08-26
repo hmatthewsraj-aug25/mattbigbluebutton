@@ -339,13 +339,18 @@ jobs:
             SDK_VERSION=$(jq -r '.packages["node_modules/bigbluebutton-html-plugin-sdk"]["version"]' package-lock.json)
             echo "SDK_URL=https://github.com/bigbluebutton/bigbluebutton-html-plugin-sdk/archive/refs/tags/v${SDK_VERSION}.tar.gz" >> $GITHUB_ENV
           fi
-      - name: Download plugins SDK
+      - name: Plugins SDK - Download bigbluebutton-html-plugin-sdk.tar.gz
         working-directory: bigbluebutton-tests
         run: |
           wget -O bigbluebutton-html-plugin-sdk.tar.gz $SDK_URL
           mkdir -p bigbluebutton-html-plugin-sdk
           tar -xzf bigbluebutton-html-plugin-sdk.tar.gz -C bigbluebutton-html-plugin-sdk --strip-components=1
-      - name: Install plugins SDK dependencies
+      - name: Plugins SDK - Cache node dependencies
+        uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+          cache-dependency-path: bigbluebutton-html-plugin-sdk/package-lock.json
+      - name: Plugins SDK - Install node dependencies
         working-directory: ./bigbluebutton-tests/bigbluebutton-html-plugin-sdk
         run: |
           echo "Installing plugins SDK dependencies"
