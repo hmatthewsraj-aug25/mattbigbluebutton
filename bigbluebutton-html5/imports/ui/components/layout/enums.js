@@ -6,6 +6,7 @@ export const LAYOUT_TYPE = {
   CAMERAS_ONLY: 'camerasOnly',
   PRESENTATION_ONLY: 'presentationOnly',
   PARTICIPANTS_AND_CHAT_ONLY: 'participantsAndChatOnly',
+  PLUGINS_ONLY: 'pluginsOnly',
   MEDIA_ONLY: 'mediaOnly',
 };
 
