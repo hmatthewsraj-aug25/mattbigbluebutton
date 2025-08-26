@@ -252,8 +252,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install BBB
-        timeout-minutes: 25
+        timeout-minutes: 30
         uses: ./.github/actions/install-bbb
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+          cache-dependency-path: bigbluebutton-tests/playwright/package-lock.json
       - name: Install test dependencies
         working-directory: ./bigbluebutton-tests/playwright
         timeout-minutes: 25
@@ -349,7 +353,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           cache: 'npm'
-          cache-dependency-path: bigbluebutton-html-plugin-sdk/package-lock.json
+          cache-dependency-path: |
+                bigbluebutton-tests/bigbluebutton-html-plugin-sdk/package-lock.json
+                bigbluebutton-tests/bigbluebutton-html-plugin-sdk/samples/**/package-lock.json
       - name: Plugins SDK - Install node dependencies
         working-directory: ./bigbluebutton-tests/bigbluebutton-html-plugin-sdk
         run: |
@@ -391,7 +397,7 @@ jobs:
               echo "Sample not found: $sample"
             fi
           done
-      - name: Install test dependencies
+      - name: Install test dependencies for plugins SDK
         working-directory: ./bigbluebutton-tests/bigbluebutton-html-plugin-sdk
         timeout-minutes: 25
         run: |
